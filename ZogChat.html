@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Démonstration PeerJS</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.0/peerjs.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+        
+        .subtitle {
+            text-align: center;
+            margin-bottom: 30px;
+            opacity: 0.8;
+        }
+        
+        .section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .peer-id {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            font-family: monospace;
+            font-size: 16px;
+            margin: 10px 0;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            font-size: 16px;
+            margin: 10px 0;
+            box-sizing: border-box;
+        }
+        
+        button {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: transform 0.2s;
+            margin: 5px;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+        }
+        
+        button:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .status {
+            padding: 10px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        
+        .status.connected {
+            background: rgba(39, 174, 96, 0.3);
+            border: 1px solid #27ae60;
+        }
+        
+        .status.disconnected {
+            background: rgba(231, 76, 60, 0.3);
+            border: 1px solid #e74c3c;
+        }
+        
+        .status.waiting {
+            background: rgba(241, 196, 15, 0.3);
+            border: 1px solid #f1c40f;
+        }
+        
+        .chat-container {
+            height: 300px;
+            overflow-y: auto;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .message {
+            margin: 10px 0;
+            padding: 8px 12px;
+            border-radius: 15px;
+            max-width: 80%;
+        }
+        
+        .message.sent {
+            background: rgba(52, 152, 219, 0.7);
+            margin-left: auto;
+            text-align: right;
+        }
+        
+        .message.received {
+            background: rgba(46, 204, 113, 0.7);
+            margin-right: auto;
+        }
+        
+        .input-group {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .input-group input {
+            flex: 1;
+            margin: 0;
+        }
+        
+        .copy-btn {
+            background: linear-gradient(45deg, #3498db, #2980b9);
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔗 Chat P2P avec PeerJS</h1>
+        <p class="subtitle">Communication directe entre navigateurs sans serveur</p>
+        
+        <div class="section">
+            <h3>📋 Votre ID de connexion</h3>
+            <div class="peer-id" id="myPeerId">Génération de l'ID...</div>
+            <button class="copy-btn" onclick="copyPeerId()">📋 Copier l'ID</button>
+            <div class="status disconnected" id="connectionStatus">
+                🔴 Non connecté
+            </div>
+        </div>
+        
+        <div class="section">
+            <h3>🤝 Se connecter à un pair</h3>
+            <input type="text" id="connectPeerId" placeholder="Collez l'ID du pair ici...">
+            <button onclick="connectToPeer()" id="connectBtn">Se connecter</button>
+        </div>
+        
+        <div class="section">
+            <h3>💬 Chat</h3>
+            <div class="chat-container" id="chatContainer">
+                <div style="text-align: center; opacity: 0.6; padding: 20px;">
+                    Connectez-vous à un pair pour commencer à chatter
+                </div>
+            </div>
+            <div class="input-group">
+                <input type="text" id="messageInput" placeholder="Tapez votre message..." disabled>
+                <button onclick="sendMessage()" id="sendBtn" disabled>Envoyer</button>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h3>ℹ️ Instructions</h3>
+            <ol>
+                <li>Copiez votre ID et partagez-le avec un ami</li>
+                <li>Demandez à votre ami de coller son ID dans le champ de connexion</li>
+                <li>Cliquez sur "Se connecter"</li>
+                <li>Commencez à chatter en temps réel !</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        let peer = null;
+        let connection = null;
+        
+        // Initialiser PeerJS
+        function initializePeer() {
+            // Créer un peer avec un ID aléatoire
+            peer = new Peer();
+            
+            peer.on('open', function(id) {
+                document.getElementById('myPeerId').textContent = id;
+                updateStatus('waiting', '🟡 En attente de connexion...');
+            });
+            
+            peer.on('connection', function(conn) {
+                handleConnection(conn);
+            });
+            
+            peer.on('error', function(err) {
+                console.error('Erreur PeerJS:', err);
+                updateStatus('disconnected', '🔴 Erreur: ' + err.message);
+            });
+        }
+        
+        // Gérer une nouvelle connexion
+        function handleConnection(conn) {
+            connection = conn;
+            
+            conn.on('open', function() {
+                updateStatus('connected', '🟢 Connecté à: ' + conn.peer);
+                enableChat();
+            });
+            
+            conn.on('data', function(data) {
+                displayMessage(data, 'received');
+            });
+            
+            conn.on('close', function() {
+                updateStatus('disconnected', '🔴 Connexion fermée');
+                disableChat();
+            });
+        }
+        
+        // Se connecter à un pair
+        function connectToPeer() {
+            const peerId = document.getElementById('connectPeerId').value.trim();
+            if (!peerId) {
+                alert('Veuillez entrer un ID de pair');
+                return;
+            }
+            
+            if (!peer) {
+                alert('Peer non initialisé');
+                return;
+            }
+            
+            updateStatus('waiting', '🟡 Connexion en cours...');
+            
+            const conn = peer.connect(peerId);
+            handleConnection(conn);
+        }
+        
+        // Envoyer un message
+        function sendMessage() {
+            const messageInput = document.getElementById('messageInput');
+            const message = messageInput.value.trim();
+            
+            if (!message || !connection) return;
+            
+            connection.send(message);
+            displayMessage(message, 'sent');
+            messageInput.value = '';
+        }
+        
+        // Afficher un message dans le chat
+        function displayMessage(message, type) {
+            const chatContainer = document.getElementById('chatContainer');
+            
+            // Vider le message d'accueil si c'est le premier message
+            if (chatContainer.children.length === 1 && 
+                chatContainer.children[0].style.textAlign === 'center') {
+                chatContainer.innerHTML = '';
+            }
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+            messageDiv.textContent = message;
+            
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+        
+        // Mettre à jour le statut de connexion
+        function updateStatus(type, message) {
+            const statusDiv = document.getElementById('connectionStatus');
+            statusDiv.className = `status ${type}`;
+            statusDiv.textContent = message;
+        }
+        
+        // Activer le chat
+        function enableChat() {
+            document.getElementById('messageInput').disabled = false;
+            document.getElementById('sendBtn').disabled = false;
+            document.getElementById('messageInput').focus();
+        }
+        
+        // Désactiver le chat
+        function disableChat() {
+            document.getElementById('messageInput').disabled = true;
+            document.getElementById('sendBtn').disabled = true;
+        }
+        
+        // Copier l'ID du pair
+        function copyPeerId() {
+            const peerIdText = document.getElementById('myPeerId').textContent;
+            if (peerIdText !== 'Génération de l\'ID...') {
+                navigator.clipboard.writeText(peerIdText).then(() => {
+                    alert('ID copié dans le presse-papiers !');
+                });
+            }
+        }
+        
+        // Gérer l'envoi de message avec Entrée
+        document.getElementById('messageInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+        
+        // Initialiser quand la page est chargée
+        window.onload = function() {
+            initializePeer();
+        };
+        
+        // Nettoyer à la fermeture
+        window.onbeforeunload = function() {
+            if (connection) {
+                connection.close();
+            }
+            if (peer) {
+                peer.destroy();
+            }
+        };
+    </script>
+</body>
+</html>
