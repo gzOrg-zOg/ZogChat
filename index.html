@@ -496,9 +496,97 @@
                 height: 4rem;
             }
         }
+        /* Contrôles audio */
+        .audio-controls {
+            position: fixed;
+            bottom: 1rem;
+            right: 1rem;
+            background: linear-gradient(to bottom, var(--stone-medium), var(--stone-dark));
+            border: 0.125rem ridge var(--gold-dark);
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            box-shadow: 0 0.25rem 0.5rem rgba(0,0,0,0.8);
+            z-index: 1000;
+        }
+        
+        .audio-controls button {
+            padding: 0.5rem;
+            min-height: auto;
+            width: auto;
+            margin: 0;
+            font-size: 1.25rem;
+            background: linear-gradient(to bottom, var(--gold-medium), var(--gold-dark));
+            border-width: 0.125rem;
+        }
+        
+        .audio-controls button:hover {
+            background: linear-gradient(to bottom, var(--gold-bright), var(--gold-medium));
+        }
+        
+        .audio-controls button.muted {
+            background: linear-gradient(to bottom, var(--iron-grey), #333);
+        }
+        
+        .volume-slider {
+            width: 5rem;
+            height: 0.5rem;
+            -webkit-appearance: none;
+            appearance: none;
+            background: var(--stone-dark);
+            outline: none;
+            border: 1px inset var(--gold-dark);
+        }
+        
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 1rem;
+            height: 1rem;
+            background: linear-gradient(to bottom, var(--gold-bright), var(--gold-medium));
+            cursor: pointer;
+            border: 2px outset var(--gold-dark);
+            border-radius: 50%;
+        }
+        
+        .volume-slider::-moz-range-thumb {
+            width: 1rem;
+            height: 1rem;
+            background: linear-gradient(to bottom, var(--gold-bright), var(--gold-medium));
+            cursor: pointer;
+            border: 2px outset var(--gold-dark);
+            border-radius: 50%;
+        }
+        
+        @media (max-width: 768px) {
+            .audio-controls {
+                bottom: 0.5rem;
+                right: 0.5rem;
+                padding: 0.375rem;
+                gap: 0.375rem;
+            }
+            
+            .volume-slider {
+                width: 3.5rem;
+            }
+            
+            .audio-controls button {
+                font-size: 1rem;
+                padding: 0.375rem;
+            }
+        }
     </style>
 </head>
 <body>
+    <!-- Contrôles audio -->
+    <div class="audio-controls">
+        <button id="soundToggle" onclick="toggleSound()" title="Activer/Désactiver les sons">🔊</button>
+        <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="50" onchange="changeVolume(this.value)">
+        <button id="musicToggle" onclick="toggleMusic()" title="Musique d'ambiance">🎵</button>
+    </div>
+    
     <div class="container">
         <div class="logo-container">
             <img src="gzOrg-zOg-1024px.png" alt="ZogChat Logo" class="logo">
@@ -549,6 +637,331 @@
         let peer = null;
         let connection = null;
         
+        // Système audio
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        let soundEnabled = true;
+        let musicEnabled = false;
+        let globalVolume = 0.5;
+        let ambientMusic = null;
+        
+        // Créer les effets sonores synthétiques
+        const sounds = {
+            // Son de cor de guerre / fanfare
+            startup: () => {
+                const duration = 1.5;
+                const osc1 = audioContext.createOscillator();
+                const osc2 = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                osc1.type = 'sawtooth';
+                osc2.type = 'square';
+                osc1.frequency.setValueAtTime(220, audioContext.currentTime);
+                osc1.frequency.exponentialRampToValueAtTime(440, audioContext.currentTime + duration);
+                osc2.frequency.setValueAtTime(110, audioContext.currentTime);
+                osc2.frequency.exponentialRampToValueAtTime(220, audioContext.currentTime + duration);
+                
+                gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+                gainNode.gain.linearRampToValueAtTime(0.3 * globalVolume, audioContext.currentTime + 0.1);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + duration);
+                
+                osc1.connect(gainNode);
+                osc2.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                osc1.start(audioContext.currentTime);
+                osc2.start(audioContext.currentTime);
+                osc1.stop(audioContext.currentTime + duration);
+                osc2.stop(audioContext.currentTime + duration);
+            },
+            
+            // Son métallique (clic de bouton)
+            buttonClick: () => {
+                const duration = 0.1;
+                const osc = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                const filter = audioContext.createBiquadFilter();
+                
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(800, audioContext.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(400, audioContext.currentTime + duration);
+                
+                filter.type = 'highpass';
+                filter.frequency.setValueAtTime(1000, audioContext.currentTime);
+                
+                gainNode.gain.setValueAtTime(0.2 * globalVolume, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + duration);
+                
+                osc.connect(filter);
+                filter.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                osc.start(audioContext.currentTime);
+                osc.stop(audioContext.currentTime + duration);
+            },
+            
+            // Son de parchemin
+            parchment: () => {
+                const duration = 0.3;
+                const noise = audioContext.createBufferSource();
+                const noiseBuffer = audioContext.createBuffer(1, audioContext.sampleRate * duration, audioContext.sampleRate);
+                const data = noiseBuffer.getChannelData(0);
+                
+                for (let i = 0; i < data.length; i++) {
+                    data[i] = (Math.random() * 2 - 1) * 0.1;
+                }
+                
+                noise.buffer = noiseBuffer;
+                
+                const filter = audioContext.createBiquadFilter();
+                filter.type = 'bandpass';
+                filter.frequency.setValueAtTime(2000, audioContext.currentTime);
+                filter.frequency.exponentialRampToValueAtTime(500, audioContext.currentTime + duration);
+                
+                const gainNode = audioContext.createGain();
+                gainNode.gain.setValueAtTime(0.3 * globalVolume, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + duration);
+                
+                noise.connect(filter);
+                filter.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                noise.start(audioContext.currentTime);
+            },
+            
+            // Son de portail magique
+            portal: () => {
+                const duration = 2;
+                const osc1 = audioContext.createOscillator();
+                const osc2 = audioContext.createOscillator();
+                const osc3 = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                const filter = audioContext.createBiquadFilter();
+                
+                osc1.type = 'sine';
+                osc2.type = 'sine';
+                osc3.type = 'sine';
+                
+                osc1.frequency.setValueAtTime(100, audioContext.currentTime);
+                osc1.frequency.exponentialRampToValueAtTime(300, audioContext.currentTime + duration);
+                osc2.frequency.setValueAtTime(150, audioContext.currentTime);
+                osc2.frequency.exponentialRampToValueAtTime(450, audioContext.currentTime + duration);
+                osc3.frequency.setValueAtTime(200, audioContext.currentTime);
+                osc3.frequency.exponentialRampToValueAtTime(600, audioContext.currentTime + duration);
+                
+                filter.type = 'lowpass';
+                filter.frequency.setValueAtTime(200, audioContext.currentTime);
+                filter.frequency.exponentialRampToValueAtTime(2000, audioContext.currentTime + duration);
+                filter.Q.setValueAtTime(10, audioContext.currentTime);
+                
+                gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+                gainNode.gain.linearRampToValueAtTime(0.2 * globalVolume, audioContext.currentTime + 0.5);
+                gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + duration);
+                
+                osc1.connect(filter);
+                osc2.connect(filter);
+                osc3.connect(filter);
+                filter.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                osc1.start(audioContext.currentTime);
+                osc2.start(audioContext.currentTime);
+                osc3.start(audioContext.currentTime);
+                osc1.stop(audioContext.currentTime + duration);
+                osc2.stop(audioContext.currentTime + duration);
+                osc3.stop(audioContext.currentTime + duration);
+            },
+            
+            // Son de corbeau
+            raven: () => {
+                const duration = 0.5;
+                const osc = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                const filter = audioContext.createBiquadFilter();
+                
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(600, audioContext.currentTime);
+                osc.frequency.setValueAtTime(800, audioContext.currentTime + 0.1);
+                osc.frequency.setValueAtTime(600, audioContext.currentTime + 0.2);
+                osc.frequency.setValueAtTime(700, audioContext.currentTime + 0.3);
+                osc.frequency.setValueAtTime(500, audioContext.currentTime + 0.4);
+                
+                filter.type = 'bandpass';
+                filter.frequency.setValueAtTime(700, audioContext.currentTime);
+                filter.Q.setValueAtTime(5, audioContext.currentTime);
+                
+                gainNode.gain.setValueAtTime(0.3 * globalVolume, audioContext.currentTime);
+                gainNode.gain.setValueAtTime(0.3 * globalVolume, audioContext.currentTime + 0.4);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + duration);
+                
+                osc.connect(filter);
+                filter.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                osc.start(audioContext.currentTime);
+                osc.stop(audioContext.currentTime + duration);
+            },
+            
+            // Son de cloche
+            bell: () => {
+                const duration = 1.5;
+                const fundamental = 523.25; // C5
+                const partials = [1, 2.1, 3.4, 5.8];
+                const gains = [1, 0.5, 0.3, 0.2];
+                
+                partials.forEach((partial, index) => {
+                    const osc = audioContext.createOscillator();
+                    const gainNode = audioContext.createGain();
+                    
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(fundamental * partial, audioContext.currentTime);
+                    
+                    gainNode.gain.setValueAtTime(gains[index] * 0.2 * globalVolume, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + duration);
+                    
+                    osc.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+                    
+                    osc.start(audioContext.currentTime);
+                    osc.stop(audioContext.currentTime + duration);
+                });
+            },
+            
+            // Son de rupture
+            disconnect: () => {
+                const duration = 0.8;
+                const osc = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                const filter = audioContext.createBiquadFilter();
+                
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(200, audioContext.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(50, audioContext.currentTime + duration);
+                
+                filter.type = 'lowpass';
+                filter.frequency.setValueAtTime(1000, audioContext.currentTime);
+                filter.frequency.exponentialRampToValueAtTime(100, audioContext.currentTime + duration);
+                
+                gainNode.gain.setValueAtTime(0.3 * globalVolume, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + duration);
+                
+                osc.connect(filter);
+                filter.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                osc.start(audioContext.currentTime);
+                osc.stop(audioContext.currentTime + duration);
+            }
+        };
+        
+        // Fonction pour jouer un son
+        function playSound(soundName) {
+            if (!soundEnabled || !sounds[soundName]) return;
+            
+            // Débloquer l'AudioContext si nécessaire
+            if (audioContext.state === 'suspended') {
+                audioContext.resume();
+            }
+            
+            try {
+                sounds[soundName]();
+            } catch (e) {
+                console.error('Erreur lors de la lecture du son:', e);
+            }
+        }
+        
+        // Fonction pour créer la musique d'ambiance
+        function createAmbientMusic() {
+            if (ambientMusic) {
+                ambientMusic.stop();
+            }
+            
+            const chord = [130.81, 164.81, 196.00, 261.63]; // C3, E3, G3, C4
+            const oscillators = [];
+            const gainNode = audioContext.createGain();
+            
+            chord.forEach((freq, index) => {
+                const osc = audioContext.createOscillator();
+                const oscGain = audioContext.createGain();
+                
+                osc.type = index < 2 ? 'sine' : 'triangle';
+                osc.frequency.setValueAtTime(freq, audioContext.currentTime);
+                
+                // Légère modulation de fréquence
+                const lfo = audioContext.createOscillator();
+                const lfoGain = audioContext.createGain();
+                lfo.type = 'sine';
+                lfo.frequency.setValueAtTime(0.2 + index * 0.1, audioContext.currentTime);
+                lfoGain.gain.setValueAtTime(2, audioContext.currentTime);
+                
+                lfo.connect(lfoGain);
+                lfoGain.connect(osc.frequency);
+                
+                oscGain.gain.setValueAtTime(0.05 * globalVolume, audioContext.currentTime);
+                
+                osc.connect(oscGain);
+                oscGain.connect(gainNode);
+                
+                osc.start();
+                lfo.start();
+                
+                oscillators.push({ osc, lfo });
+            });
+            
+            // Filtre pour adoucir le son
+            const filter = audioContext.createBiquadFilter();
+            filter.type = 'lowpass';
+            filter.frequency.setValueAtTime(800, audioContext.currentTime);
+            
+            gainNode.connect(filter);
+            filter.connect(audioContext.destination);
+            
+            ambientMusic = {
+                stop: () => {
+                    oscillators.forEach(({ osc, lfo }) => {
+                        osc.stop();
+                        lfo.stop();
+                    });
+                    ambientMusic = null;
+                }
+            };
+        }
+        
+        // Contrôles audio
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            const btn = document.getElementById('soundToggle');
+            btn.textContent = soundEnabled ? '🔊' : '🔇';
+            btn.classList.toggle('muted', !soundEnabled);
+            
+            if (soundEnabled) {
+                playSound('buttonClick');
+            }
+        }
+        
+        function toggleMusic() {
+            musicEnabled = !musicEnabled;
+            const btn = document.getElementById('musicToggle');
+            btn.classList.toggle('muted', !musicEnabled);
+            
+            if (musicEnabled) {
+                createAmbientMusic();
+                playSound('buttonClick');
+            } else {
+                if (ambientMusic) {
+                    ambientMusic.stop();
+                }
+            }
+        }
+        
+        function changeVolume(value) {
+            globalVolume = value / 100;
+            // Si la musique est en cours, recréer avec le nouveau volume
+            if (musicEnabled && ambientMusic) {
+                ambientMusic.stop();
+                createAmbientMusic();
+            }
+        }
+        
         // Initialiser PeerJS
         function initializePeer() {
             // Créer un peer avec un ID aléatoire
@@ -557,6 +970,7 @@
             peer.on('open', function(id) {
                 document.getElementById('myPeerId').textContent = id;
                 updateStatus('waiting', '⏳ En attente d\'un allié...');
+                playSound('startup');
             });
             
             peer.on('connection', function(conn) {
@@ -576,20 +990,24 @@
             conn.on('open', function() {
                 updateStatus('connected', '⚔ Alliance forgée avec: ' + conn.peer);
                 enableChat();
+                playSound('portal');
             });
             
             conn.on('data', function(data) {
                 displayMessage(data, 'received');
+                playSound('bell');
             });
             
             conn.on('close', function() {
                 updateStatus('disconnected', '💀 Alliance rompue');
                 disableChat();
+                playSound('disconnect');
             });
         }
         
         // Se connecter à un pair
         function connectToPeer() {
+            playSound('buttonClick');
             const peerId = document.getElementById('connectPeerId').value.trim();
             if (!peerId) {
                 alert('Inscrivez le sceau de votre allié !');
@@ -609,6 +1027,7 @@
         
         // Envoyer un message
         function sendMessage() {
+            playSound('buttonClick');
             const messageInput = document.getElementById('messageInput');
             const message = messageInput.value.trim();
             
@@ -617,6 +1036,7 @@
             connection.send(message);
             displayMessage(message, 'sent');
             messageInput.value = '';
+            playSound('raven');
         }
         
         // Afficher un message dans le chat
@@ -659,6 +1079,7 @@
         
         // Copier l'ID du pair
         function copyPeerId() {
+            playSound('parchment');
             const peerIdText = document.getElementById('myPeerId').textContent;
             if (peerIdText !== 'Génération de l\'ID...') {
                 navigator.clipboard.writeText(peerIdText).then(() => {
@@ -672,6 +1093,33 @@
             if (e.key === 'Enter') {
                 sendMessage();
             }
+        });
+        
+        // Ajouter des sons aux boutons
+        document.addEventListener('DOMContentLoaded', function() {
+            // Ajouter le son de clic à tous les boutons
+            const buttons = document.querySelectorAll('button:not(#soundToggle):not(#musicToggle)');
+            buttons.forEach(button => {
+                if (!button.onclick || button.id === 'connectBtn' || button.id === 'sendBtn' || button.onclick.toString().includes('copyPeerId')) {
+                    // Ces boutons ont déjà leur propre son
+                    return;
+                }
+                const originalOnclick = button.onclick;
+                button.onclick = function(e) {
+                    playSound('buttonClick');
+                    if (originalOnclick) {
+                        originalOnclick.call(this, e);
+                    }
+                };
+            });
+            
+            // Activer l'AudioContext au premier clic
+            document.addEventListener('click', function initAudio() {
+                if (audioContext.state === 'suspended') {
+                    audioContext.resume();
+                }
+                document.removeEventListener('click', initAudio);
+            }, { once: true });
         });
         
         // Initialiser quand la page est chargée
