@@ -8,8 +8,7 @@ ZogChat a été refactorisé en une architecture modulaire ES6 moderne, remplaç
 
 ```
 ZogChat/
-├── index.html (fichier original - à conserver pour compatibilité)
-├── index-modular.html (nouvelle version modulaire)
+├── index.html (fichier principal modulaire)
 ├── css/
 │   ├── themes.css (variables CSS des thèmes)
 │   └── main.css (styles principaux et composants)
@@ -51,13 +50,8 @@ ZogChat/
 
 ### Version modulaire (recommandée)
 ```html
-<!-- Utiliser index-modular.html -->
+<!-- Utiliser index.html -->
 <script type="module" src="js/main.js"></script>
-```
-
-### Version originale (compatibilité)
-```html
-<!-- Utiliser index.html (fichier original) -->
 ```
 
 ## ✅ Avantages de la refactorisation
@@ -79,22 +73,18 @@ ZogChat/
 ## 🔄 Migration
 
 ### Depuis l'ancienne version
-1. Sauvegarder `index.html` (renommer en `index-backup.html`)
-2. Utiliser `index-modular.html` comme nouveau fichier principal
-3. Tester la fonctionnalité
-4. Supprimer l'ancien fichier une fois validé
-
-### Compatibilité
-- Toutes les fonctionnalités existantes sont préservées
-- Interface utilisateur identique
-- Performance améliorée
-- Code plus robuste
+1. L'ancien fichier `index.html` a été supprimé
+2. `index-modular.html` a été renommé en `index.html`
+3. Toutes les fonctionnalités existantes sont préservées
+4. Interface utilisateur identique
+5. Performance améliorée
+6. Code plus robuste
 
 ## 🧪 Tests
 
 Pour tester la nouvelle architecture :
 
-1. Ouvrir `index-modular.html` dans un navigateur moderne
+1. Ouvrir `index.html` dans un navigateur moderne
 2. Vérifier le changement de thèmes
 3. Tester l'audio et la musique
 4. Vérifier la connexion P2P
