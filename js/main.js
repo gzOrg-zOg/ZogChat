@@ -57,17 +57,25 @@ class ZogChat {
         themeButtons.forEach(button => {
             button.addEventListener('click', (e) => {
                 e.preventDefault();
-                const theme = button.getAttribute('onclick')?.match(/'([^']+)'/)?.[1];
+                
+                // Déterminer le thème basé sur l'ID du bouton
+                let theme = null;
+                if (button.id === 'theme-warcraft') {
+                    theme = 'warcraft';
+                } else if (button.id === 'theme-onepiece') {
+                    theme = 'onepiece';
+                } else if (button.id === 'theme-neon') {
+                    theme = 'neon';
+                }
+                
                 if (theme) {
+                    console.log(`🎨 Changement de thème vers: ${theme}`);
                     this.themeManager.changeTheme(theme);
                 }
             });
         });
 
-        // Supprimer les onclick inline et les remplacer par des event listeners
-        themeButtons.forEach(button => {
-            button.removeAttribute('onclick');
-        });
+        console.log('🎯 Événements des thèmes configurés');
     }
 }
 
