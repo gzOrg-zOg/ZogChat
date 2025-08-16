@@ -525,6 +525,128 @@
             margin: 0;
         }
         
+        /* Styles pour le transfert de fichiers */
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+        
+        .file-input-wrapper input[type="file"] {
+            position: absolute;
+            left: -9999px;
+        }
+        
+        .file-button {
+            padding: 0.75rem;
+            min-height: 2.75rem;
+            width: auto;
+            margin: 0;
+            font-size: 1.25rem;
+            background: linear-gradient(to bottom, var(--accent-medium), var(--accent-dark));
+            border: 0.1875rem outset var(--accent-dark);
+        }
+        
+        .file-button:hover {
+            background: linear-gradient(to bottom, var(--accent-bright), var(--accent-medium));
+        }
+        
+        /* Zone de drag & drop */
+        .chat-container.drag-over {
+            background: linear-gradient(to bottom, rgba(255,215,0,0.1), rgba(255,215,0,0.2));
+            border-color: var(--accent-bright);
+            box-shadow: inset 0 0 20px var(--glow-color);
+        }
+        
+        [data-theme="neon"] .chat-container.drag-over {
+            background: linear-gradient(to bottom, rgba(0,255,255,0.1), rgba(0,255,255,0.2));
+        }
+        
+        /* Indicateur de progression */
+        .file-transfer {
+            background: linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0.6));
+            border: 0.125rem var(--border-style) var(--accent-dark);
+            padding: 0.625rem;
+            margin: 0.625rem 0;
+            font-family: var(--font-body);
+            font-size: 0.875rem;
+        }
+        
+        .file-transfer .filename {
+            color: var(--accent-bright);
+            margin-bottom: 0.25rem;
+        }
+        
+        .progress-bar {
+            height: 0.5rem;
+            background: var(--primary-dark);
+            border: 1px inset var(--accent-dark);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(to right, var(--accent-dark), var(--accent-bright));
+            transition: width 0.3s ease;
+            position: relative;
+        }
+        
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.3) 50%, transparent 100%);
+            animation: progress-shine 1s linear infinite;
+        }
+        
+        @keyframes progress-shine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        .file-status {
+            font-size: 0.75rem;
+            color: var(--accent-medium);
+            margin-top: 0.25rem;
+        }
+        
+        /* Aperçu d'image */
+        .message.image {
+            padding: 0.625rem;
+        }
+        
+        .message.image img {
+            max-width: 100%;
+            max-height: 200px;
+            border: 2px ridge var(--accent-dark);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .message.image img:hover {
+            transform: scale(1.05);
+        }
+        
+        /* Message de fichier */
+        .message.file {
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .message.file:hover {
+            filter: brightness(1.2);
+        }
+        
+        .file-icon {
+            font-size: 1.5rem;
+            margin-right: 0.5rem;
+            vertical-align: middle;
+        }
+        
         .copy-btn {
             background: linear-gradient(to bottom, var(--accent-medium), var(--accent-dark));
             padding: 0.5rem 1rem;
@@ -871,6 +993,10 @@
             </div>
             <div class="input-group">
                 <input type="text" id="messageInput" placeholder="Rédigez votre missive..." disabled>
+                <div class="file-input-wrapper">
+                    <input type="file" id="fileInput" onchange="handleFileSelect(event)" disabled>
+                    <button class="file-button" onclick="document.getElementById('fileInput').click()" id="fileBtn" disabled title="Envoyer un fichier">📎</button>
+                </div>
                 <button onclick="sendMessage()" id="sendBtn" disabled>Envoyer le Corbeau</button>
             </div>
         </div>
@@ -891,9 +1017,13 @@
         let connection = null;
         let currentTheme = 'warcraft';
         
+        // Variables pour le transfert de fichiers
+        const CHUNK_SIZE = 16384; // 16KB par chunk
+        const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB max
+        let fileTransfers = new Map(); // Stock les transferts en cours
+        
         // Charger le thème sauvegardé
         const savedTheme = localStorage.getItem('zogchat-theme') || 'warcraft';
-        changeTheme(savedTheme);
         
         // Système audio
         const audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -1036,6 +1166,9 @@
             // Jouer un son de changement de thème
             playSound('themeChange');
         }
+        
+        // Initialiser le thème sauvegardé
+        changeTheme(savedTheme);
         
         // Créer les effets sonores synthétiques
         const sounds = {
@@ -1415,6 +1548,121 @@
                 osc2.start(audioContext.currentTime);
                 osc1.stop(audioContext.currentTime + 0.2);
                 osc2.stop(audioContext.currentTime + 0.2);
+            },
+            
+            // Son de sélection de fichier
+            fileSelect: () => {
+                const duration = 0.2;
+                const osc = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                if (currentTheme === 'neon') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(1500, audioContext.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(2000, audioContext.currentTime + duration);
+                } else {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(600, audioContext.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(800, audioContext.currentTime + duration);
+                }
+                
+                gainNode.gain.setValueAtTime(0.2 * globalVolume, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + duration);
+                
+                osc.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                osc.start(audioContext.currentTime);
+                osc.stop(audioContext.currentTime + duration);
+            },
+            
+            // Son de transfert de fichier
+            fileTransfer: () => {
+                if (currentTheme === 'neon') {
+                    // Son de data stream
+                    const duration = 0.5;
+                    const osc = audioContext.createOscillator();
+                    const gainNode = audioContext.createGain();
+                    const filter = audioContext.createBiquadFilter();
+                    
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(100, audioContext.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(1000, audioContext.currentTime + duration);
+                    
+                    filter.type = 'bandpass';
+                    filter.frequency.setValueAtTime(500, audioContext.currentTime);
+                    filter.Q.setValueAtTime(10, audioContext.currentTime);
+                    
+                    gainNode.gain.setValueAtTime(0.1 * globalVolume, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + duration);
+                    
+                    osc.connect(filter);
+                    filter.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+                    
+                    osc.start(audioContext.currentTime);
+                    osc.stop(audioContext.currentTime + duration);
+                } else {
+                    // Son de parchemin qui se déroule
+                    const duration = 0.8;
+                    const noise = audioContext.createBufferSource();
+                    const noiseBuffer = audioContext.createBuffer(1, audioContext.sampleRate * duration, audioContext.sampleRate);
+                    const data = noiseBuffer.getChannelData(0);
+                    
+                    for (let i = 0; i < data.length; i++) {
+                        data[i] = (Math.random() * 2 - 1) * 0.2;
+                    }
+                    
+                    noise.buffer = noiseBuffer;
+                    
+                    const filter = audioContext.createBiquadFilter();
+                    filter.type = 'lowpass';
+                    filter.frequency.setValueAtTime(3000, audioContext.currentTime);
+                    filter.frequency.exponentialRampToValueAtTime(500, audioContext.currentTime + duration);
+                    
+                    const gainNode = audioContext.createGain();
+                    gainNode.gain.setValueAtTime(0.2 * globalVolume, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + duration);
+                    
+                    noise.connect(filter);
+                    filter.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+                    
+                    noise.start(audioContext.currentTime);
+                }
+            },
+            
+            // Son de fin de transfert
+            fileComplete: () => {
+                const osc1 = audioContext.createOscillator();
+                const osc2 = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                osc1.type = 'sine';
+                osc2.type = 'sine';
+                
+                if (currentTheme === 'neon') {
+                    osc1.frequency.setValueAtTime(1000, audioContext.currentTime);
+                    osc2.frequency.setValueAtTime(1500, audioContext.currentTime);
+                } else if (currentTheme === 'onepiece') {
+                    osc1.frequency.setValueAtTime(600, audioContext.currentTime);
+                    osc2.frequency.setValueAtTime(900, audioContext.currentTime);
+                } else {
+                    osc1.frequency.setValueAtTime(523.25, audioContext.currentTime); // C5
+                    osc2.frequency.setValueAtTime(783.99, audioContext.currentTime); // G5
+                }
+                
+                gainNode.gain.setValueAtTime(0.3 * globalVolume, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.5);
+                
+                osc1.connect(gainNode);
+                osc2.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                osc1.start(audioContext.currentTime);
+                osc2.start(audioContext.currentTime);
+                osc1.stop(audioContext.currentTime + 0.5);
+                osc2.stop(audioContext.currentTime + 0.5);
             }
         };
         
@@ -1604,8 +1852,18 @@
             });
             
             conn.on('data', function(data) {
-                displayMessage(data, 'received');
-                playSound('bell');
+                // Vérifier si c'est un transfert de fichier
+                if (data.type === 'file-start') {
+                    handleFileStart(data);
+                } else if (data.type === 'file-chunk') {
+                    handleFileChunk(data);
+                } else if (data.type === 'file-end') {
+                    handleFileEnd(data);
+                } else {
+                    // Message texte normal
+                    displayMessage(data, 'received');
+                    playSound('bell');
+                }
             });
             
             conn.on('close', function() {
@@ -1678,6 +1936,8 @@
         function enableChat() {
             document.getElementById('messageInput').disabled = false;
             document.getElementById('sendBtn').disabled = false;
+            document.getElementById('fileInput').disabled = false;
+            document.getElementById('fileBtn').disabled = false;
             document.getElementById('messageInput').focus();
         }
         
@@ -1685,6 +1945,8 @@
         function disableChat() {
             document.getElementById('messageInput').disabled = true;
             document.getElementById('sendBtn').disabled = true;
+            document.getElementById('fileInput').disabled = true;
+            document.getElementById('fileBtn').disabled = true;
         }
         
         // Copier l'ID du pair
