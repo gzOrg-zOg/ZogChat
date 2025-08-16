@@ -2,7 +2,7 @@ export class AudioManager {
     constructor() {
         this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
         this.soundEnabled = true;
-        this.musicEnabled = false;
+        this.musicEnabled = true; // Activé par défaut
         this.globalVolume = 0.5;
         this.ambientMusic = null;
         this.sounds = this.createSounds();
@@ -13,6 +13,13 @@ export class AudioManager {
         // Initialiser les contrôles audio
         this.updateAudioControls();
         this.bindAudioEvents();
+        
+        // Démarrer automatiquement la musique d'ambiance
+        setTimeout(() => {
+            if (this.musicEnabled) {
+                this.createAmbientMusic();
+            }
+        }, 1000); // Délai de 1 seconde pour laisser le thème se charger
     }
 
     createSounds() {
