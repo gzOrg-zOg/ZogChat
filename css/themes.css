@@ -1,0 +1,121 @@
+/* Thèmes */
+:root[data-theme="warcraft"] {
+    /* Style Warcraft */
+    --primary-dark: #1a1611;
+    --primary-medium: #2d241a;
+    --primary-light: #3e342a;
+    --accent-bright: #ffcc00;
+    --accent-medium: #d4af37;
+    --accent-dark: #b8860b;
+    --danger-dark: #8b0000;
+    --danger-light: #dc143c;
+    --neutral-grey: #4a4a4a;
+    --text-primary: #f4e4bc;
+    --success-dark: #2d4a2b;
+    --font-title: 'Cinzel', serif;
+    --font-body: 'MedievalSharp', serif;
+    --border-style: ridge;
+    --glow-color: rgba(255, 204, 0, 0.5);
+    --glow-color-strong: rgba(255, 204, 0, 0.8);
+    --bg-gradient-1: rgba(139, 0, 0, 0.1);
+    --bg-gradient-2: rgba(212, 175, 55, 0.05);
+    --bg-gradient-3: rgba(45, 74, 43, 0.08);
+}
+
+:root[data-theme="onepiece"] {
+    /* Style One Piece */
+    --primary-dark: #1a1a2e;
+    --primary-medium: #16213e;
+    --primary-light: #0f3460;
+    --accent-bright: #ffd700;
+    --accent-medium: #ff6b6b;
+    --accent-dark: #c41e3a;
+    --danger-dark: #8b0000;
+    --danger-light: #ff4757;
+    --neutral-grey: #4a5568;
+    --text-primary: #f8f9fa;
+    --success-dark: #00b894;
+    --font-title: 'Pirata One', cursive;
+    --font-body: 'Bebas Neue', cursive;
+    --border-style: solid;
+    --glow-color: rgba(255, 215, 0, 0.6);
+    --glow-color-strong: rgba(255, 215, 0, 0.9);
+    --bg-gradient-1: rgba(255, 107, 107, 0.1);
+    --bg-gradient-2: rgba(255, 215, 0, 0.05);
+    --bg-gradient-3: rgba(0, 184, 148, 0.08);
+}
+
+:root[data-theme="neon"] {
+    /* Style Neon Futuriste */
+    --primary-dark: #0a0a0a;
+    --primary-medium: #1a1a1a;
+    --primary-light: #2a2a2a;
+    --accent-bright: #00ffff;
+    --accent-medium: #ff00ff;
+    --accent-dark: #7700ff;
+    --danger-dark: #ff0066;
+    --danger-light: #ff3366;
+    --neutral-grey: #666666;
+    --text-primary: #ffffff;
+    --success-dark: #00ff88;
+    --font-title: 'Orbitron', monospace;
+    --font-body: 'Orbitron', monospace;
+    --border-style: solid;
+    --glow-color: rgba(0, 255, 255, 0.8);
+    --glow-color-strong: rgba(0, 255, 255, 1);
+    --bg-gradient-1: rgba(255, 0, 102, 0.1);
+    --bg-gradient-2: rgba(0, 255, 255, 0.05);
+    --bg-gradient-3: rgba(119, 0, 255, 0.08);
+}
+
+/* Valeurs par défaut */
+:root {
+    --primary-dark: #1a1611;
+    --primary-medium: #2d241a;
+    --primary-light: #3e342a;
+    --accent-bright: #ffcc00;
+    --accent-medium: #d4af37;
+    --accent-dark: #b8860b;
+    --danger-dark: #8b0000;
+    --danger-light: #dc143c;
+    --neutral-grey: #4a4a4a;
+    --text-primary: #f4e4bc;
+    --success-dark: #2d4a2b;
+    --font-title: 'Cinzel', serif;
+    --font-body: 'MedievalSharp', serif;
+    --border-style: ridge;
+    --glow-color: rgba(255, 204, 0, 0.5);
+    --glow-color-strong: rgba(255, 204, 0, 0.8);
+    --bg-gradient-1: rgba(139, 0, 0, 0.1);
+    --bg-gradient-2: rgba(212, 175, 55, 0.05);
+    --bg-gradient-3: rgba(45, 74, 43, 0.08);
+}
+
+/* Animations spécifiques aux thèmes */
+[data-theme="neon"] * {
+    transition: all 0.3s ease;
+}
+
+[data-theme="neon"] button:hover,
+[data-theme="neon"] input:focus {
+    box-shadow: 
+        0 0 20px var(--glow-color),
+        inset 0 0 20px rgba(255,255,255,0.1);
+}
+
+[data-theme="neon"] .logo {
+    animation: neon-pulse 2s ease-in-out infinite;
+}
+
+@keyframes neon-pulse {
+    0%, 100% { 
+        filter: drop-shadow(0 0 10px var(--accent-bright)) 
+                drop-shadow(0 0 20px var(--accent-medium)) 
+                drop-shadow(0 0 30px var(--accent-dark));
+    }
+    50% { 
+        filter: drop-shadow(0 0 20px var(--accent-bright)) 
+                drop-shadow(0 0 30px var(--accent-medium)) 
+                drop-shadow(0 0 40px var(--accent-dark));
+    }
+}

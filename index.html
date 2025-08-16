@@ -1167,9 +1167,6 @@
             playSound('themeChange');
         }
         
-        // Initialiser le thème sauvegardé
-        changeTheme(savedTheme);
-        
         // Créer les effets sonores synthétiques
         const sounds = {
             // Son de cor de guerre / fanfare (Warcraft)
@@ -1681,6 +1678,9 @@
                 console.error('Erreur lors de la lecture du son:', e);
             }
         }
+        
+        // Initialiser le thème sauvegardé
+        changeTheme(savedTheme);
         
         // Fonction pour créer la musique d'ambiance
         function createAmbientMusic() {

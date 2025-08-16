@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZogChat - Communication</title>
+    
+    <!-- PeerJS CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.0/peerjs.min.js"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=MedievalSharp&family=Pirata+One&family=Bebas+Neue&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <!-- CSS modulaire -->
+    <link rel="stylesheet" href="css/themes.css">
+    <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+    <!-- Sélecteur de thème -->
+    <div class="theme-selector">
+        <button id="theme-warcraft" class="active">⚔ Warcraft</button>
+        <button id="theme-onepiece">🏴‍☠️ One Piece</button>
+        <button id="theme-neon">💫 Neon</button>
+    </div>
+    
+    <!-- Contrôles audio -->
+    <div class="audio-controls">
+        <button id="soundToggle" title="Activer/Désactiver les sons">🔊</button>
+        <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="50">
+        <button id="musicToggle" title="Musique d'ambiance">🎵</button>
+    </div>
+    
+    <div class="container">
+        <div class="logo-container">
+            <img src="gzOrg-zOg-1024px.png" alt="ZogChat Logo" class="logo" id="logo">
+        </div>
+        <h1 id="mainTitle">⚔ ZogChat ⚔</h1>
+        <p class="subtitle" id="subtitle">Communication Mystique entre Royaumes</p>
+        
+        <div class="section">
+            <h3 id="sectionTitle1">📜 Votre Sceau Mystique</h3>
+            <div class="peer-id" id="myPeerId">Invocation du sceau...</div>
+            <button class="copy-btn" id="copyBtn">📜 Graver le Sceau</button>
+            <div class="status disconnected" id="connectionStatus">
+                🏰 Royaume isolé
+            </div>
+        </div>
+        
+        <div class="section">
+            <h3 id="sectionTitle2">🏰 Établir une Alliance</h3>
+            <input type="text" id="connectPeerId" placeholder="Inscrivez le sceau de votre allié...">
+            <button id="connectBtn">Forger l'Alliance</button>
+        </div>
+        
+        <div class="section">
+            <h3 id="sectionTitle3">⚜ Parchemin des Messages</h3>
+            <div class="chat-container" id="chatContainer">
+                <div style="text-align: center; opacity: 0.6; padding: 20px;">
+                    Forgez une alliance pour échanger des missives
+                </div>
+            </div>
+            <div class="input-group">
+                <input type="text" id="messageInput" placeholder="Rédigez votre missive..." disabled>
+                <div class="file-input-wrapper">
+                    <input type="file" id="fileInput" disabled>
+                    <button class="file-button" id="fileBtn" disabled title="Envoyer un fichier">📎</button>
+                </div>
+                <button id="sendBtn" disabled>Envoyer le Corbeau</button>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h3 id="sectionTitle4">📖 Codex des Alliances</h3>
+            <ol id="instructions">
+                <li>Gravez votre sceau mystique et transmettez-le à votre allié</li>
+                <li>Recueillez le sceau de votre allié dans le champ sacré</li>
+                <li>Forgez l'alliance en activant le rituel</li>
+                <li>Échangez vos missives à travers les royaumes !</li>
+            </ol>
+        </div>
+    </div>
+    
+    <!-- JavaScript modulaire -->
+    <script type="module" src="js/main.js"></script>
+</body>
+</html>
