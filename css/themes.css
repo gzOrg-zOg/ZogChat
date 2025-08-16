@@ -1,25 +1,35 @@
 /* Thèmes */
 :root[data-theme="warcraft"] {
-    /* Style Warcraft */
-    --primary-dark: #1a1611;
-    --primary-medium: #2d241a;
-    --primary-light: #3e342a;
-    --accent-bright: #ffcc00;
-    --accent-medium: #d4af37;
-    --accent-dark: #b8860b;
-    --danger-dark: #8b0000;
-    --danger-light: #dc143c;
-    --neutral-grey: #4a4a4a;
-    --text-primary: #f4e4bc;
-    --success-dark: #2d4a2b;
-    --font-title: 'Cinzel', serif;
-    --font-body: 'MedievalSharp', serif;
-    --border-style: ridge;
-    --glow-color: rgba(255, 204, 0, 0.5);
-    --glow-color-strong: rgba(255, 204, 0, 0.8);
-    --bg-gradient-1: rgba(139, 0, 0, 0.1);
-    --bg-gradient-2: rgba(212, 175, 55, 0.05);
-    --bg-gradient-3: rgba(45, 74, 43, 0.08);
+    /* Style Warcraft authentique inspiré du jeu original */
+    --primary-dark: #0f0f0f;           /* Noir profond des mines et forteresses */
+    --primary-medium: #1a1a1a;         /* Gris foncé des murs de pierre */
+    --primary-light: #2d2d2d;          /* Gris moyen des structures */
+    --accent-bright: #ffd700;          /* Or brillant des trésors et UI */
+    --accent-medium: #daa520;          /* Or royal des boutons et bordures */
+    --accent-dark: #b8860b;            /* Or ancien des éléments décoratifs */
+    --danger-dark: #8b0000;            /* Rouge sang des orcs */
+    --danger-light: #dc143c;           /* Rouge vif des attaques */
+    --neutral-grey: #696969;           /* Gris des métaux et armures */
+    --text-primary: #f5f5dc;           /* Blanc cassé des parchemins */
+    --success-dark: #228b22;           /* Vert forêt des terres alliées */
+    --font-title: 'Cinzel', serif;     /* Police noble et médiévale */
+    --font-body: 'MedievalSharp', serif; /* Police rustique et authentique */
+    --border-style: ridge;             /* Bordure en relief comme dans le jeu */
+    --glow-color: rgba(255, 215, 0, 0.4); /* Lueur dorée subtile */
+    --glow-color-strong: rgba(255, 215, 0, 0.7); /* Lueur dorée intense */
+    --bg-gradient-1: rgba(139, 0, 0, 0.15); /* Rouge sang des terres orcs */
+    --bg-gradient-2: rgba(255, 215, 0, 0.08); /* Or des trésors cachés */
+    --bg-gradient-3: rgba(34, 139, 34, 0.1); /* Vert des forêts mystiques */
+    
+    /* Nouvelles variables spécifiques au thème Warcraft */
+    --orc-red: #8b0000;                /* Rouge caractéristique des orcs */
+    --orc-brown: #654321;              /* Brun des peaux et cuirs */
+    --stone-grey: #808080;             /* Gris des pierres et murs */
+    --forest-green: #228b22;           /* Vert des forêts d'Elwynn */
+    --gold-mine: #daa520;              /* Or des mines et trésors */
+    --wood-brown: #8b4513;             /* Brun du bois des arbres */
+    --shadow-dark: rgba(0, 0, 0, 0.8); /* Ombres profondes */
+    --metal-shine: rgba(192, 192, 192, 0.3); /* Reflet métallique */
 }
 
 :root[data-theme="onepiece"] {
@@ -92,6 +102,23 @@
 }
 
 /* Animations spécifiques aux thèmes */
+[data-theme="warcraft"] body {
+    background-image: 
+        repeating-linear-gradient(45deg, transparent, transparent 35px, rgba(139, 0, 0, 0.1) 35px, rgba(139, 0, 0, 0.1) 70px),
+        repeating-linear-gradient(-45deg, transparent, transparent 35px, rgba(101, 67, 33, 0.15) 35px, rgba(101, 67, 33, 0.15) 70px),
+        radial-gradient(circle at 20% 50%, rgba(139, 0, 0, 0.2) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(218, 165, 32, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 40% 20%, rgba(34, 139, 34, 0.1) 0%, transparent 50%);
+    background-size: 70px 70px, 70px 70px, 100% 100%, 100% 100%, 100% 100%;
+}
+
+[data-theme="warcraft"] body::before {
+    background: 
+        radial-gradient(circle at 20% 50%, rgba(139, 0, 0, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(218, 165, 32, 0.2) 0%, transparent 50%),
+        radial-gradient(circle at 40% 20%, rgba(34, 139, 34, 0.15) 0%, transparent 50%);
+}
+
 [data-theme="neon"] * {
     transition: all 0.3s ease;
 }
