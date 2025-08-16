@@ -17,9 +17,12 @@ export class AudioManager {
         // Démarrer automatiquement la musique d'ambiance
         setTimeout(() => {
             if (this.musicEnabled) {
+                console.log('🎵 Démarrage automatique de la musique d\'ambiance...');
                 this.createAmbientMusic();
+                // Forcer la mise à jour de l'interface
+                this.updateAudioControls();
             }
-        }, 1000); // Délai de 1 seconde pour laisser le thème se charger
+        }, 1500); // Délai de 1.5 seconde pour laisser le thème se charger
     }
 
     createSounds() {
@@ -298,11 +301,26 @@ export class AudioManager {
     toggleMusic() {
         this.musicEnabled = !this.musicEnabled;
         if (this.musicEnabled) {
+            console.log('🎵 Activation de la musique d\'ambiance');
             this.createAmbientMusic();
-        } else if (this.ambientMusic) {
-            this.ambientMusic.stop();
+        } else {
+            console.log('🎵 Désactivation de la musique d\'ambiance');
+            if (this.ambientMusic) {
+                this.ambientMusic.stop();
+            }
         }
         this.updateAudioControls();
+    }
+    
+    // Méthode pour forcer le redémarrage de la musique
+    restartMusic() {
+        console.log('🎵 Redémarrage forcé de la musique d\'ambiance');
+        if (this.ambientMusic) {
+            this.ambientMusic.stop();
+        }
+        if (this.musicEnabled) {
+            this.createAmbientMusic();
+        }
     }
 
     changeVolume(value) {
@@ -358,6 +376,14 @@ export class AudioManager {
         if (this.ambientMusic) {
             this.ambientMusic.stop();
         }
+        
+        // Vérifier que l'audio est activé
+        if (!this.musicEnabled) {
+            console.log('🎵 Musique désactivée, arrêt de la création');
+            return;
+        }
+        
+        console.log('🎵 Création de la musique d\'ambiance pour le thème:', window.themeManager?.getCurrentTheme());
         
         if (window.themeManager?.getCurrentTheme() === 'neon') {
             // Musique électronique pour Neon

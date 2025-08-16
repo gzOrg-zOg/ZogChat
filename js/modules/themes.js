@@ -54,6 +54,10 @@ export class ThemeManager {
         // Jouer un son de changement de thème
         if (window.audioManager) {
             window.audioManager.playSound('themeChange');
+            // Redémarrer la musique d'ambiance pour le nouveau thème
+            setTimeout(() => {
+                window.audioManager.restartMusic();
+            }, 500);
         }
     }
 
