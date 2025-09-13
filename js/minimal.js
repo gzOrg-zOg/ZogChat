@@ -1,6 +1,6 @@
 // Configuration de l'application
 const APP_CONFIG = {
-    version: '2.4.3',
+    version: '2.5.0',
     productionUrl: 'https://gzOrg-zOg.github.io/ZogChat/',
     isDevelopment: () => {
         return window.location.hostname === 'localhost' || 
@@ -993,48 +993,6 @@ class MobileMenuManager {
             }
         }
     }
-}
-
-// Fonction pour initialiser les informations de version
-function initVersionInfo() {
-    const buildDate = document.getElementById('build-date');
-    if (buildDate) {
-        // Date de livraison fixe de cette version
-        buildDate.textContent = '13/09/2025 19:58';
-        
-        // Ajouter des informations supplémentaires au tooltip
-        const versionInfo = document.getElementById('version-info');
-        if (versionInfo) {
-            const userAgent = navigator.userAgent;
-            const browserInfo = getBrowserInfo();
-            
-            versionInfo.title = `ZogChat v${APP_CONFIG.version}
-Livraison: 13/09/2025 19:58
-Navigateur: ${browserInfo}
-P2P: PeerJS 1.4.7
-Framework: Tailwind CSS`;
-
-            // Easter egg: clic sur la version pour afficher les détails
-            versionInfo.addEventListener('click', () => {
-                const details = [
-                    `🚀 ZogChat v${APP_CONFIG.version}`,
-                    '',
-                    '📅 Livraison: 13/09/2025 19:58',
-                    `🌐 Navigateur: ${browserInfo}`,
-                    '🔗 P2P: PeerJS 1.4.7',
-                    '🎨 Framework: Tailwind CSS',
-                    '📱 Responsive: Optimisé mobile',
-                    '🔒 Sécurité: Chiffrement E2E',
-                    '⚡ Fonctionnalités: Partage par liens',
-                    `🌍 URL Production: ${APP_CONFIG.productionUrl}`,
-                    '',
-                    'Développé avec ❤️ pour une communication sécurisée'
-                ].join('\n');
-                
-                alert(details);
-            });
-        }
-    }
 
     // Protection contre le rechargement accidentel du créateur
     setupUnloadProtection() {
@@ -1060,6 +1018,14 @@ Framework: Tailwind CSS`;
             window.removeEventListener('beforeunload', this.unloadHandler);
             console.log('🛡️ Protection F5 désactivée');
         }
+    }
+}
+
+// Fonction pour initialiser les informations de version (simplifiée)
+function initVersionInfo() {
+    const buildDate = document.getElementById('build-date');
+    if (buildDate) {
+        buildDate.textContent = '13/09/2025 19:58';
     }
 }
 
