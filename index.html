@@ -264,6 +264,11 @@
         .dark #chat-container::-webkit-scrollbar-thumb:hover {
             background-color: rgb(148 163 184);
         }
+        
+        /* Force cache refresh v2.2.3 */
+        .message.sent .message-content {
+            text-align: right !important;
+        }
     </style> 
 </head>
 <body class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 font-sans transition-colors duration-300">
@@ -397,8 +402,7 @@
                         <span class="hidden md:inline">Conversation</span>
                         <span class="md:hidden">💬</span>
                     </h2>
-                    <div class="flex items-center justify-between gap-4">
-                        <div class="hidden md:block text-sm text-slate-600 dark:text-slate-400 font-mono" id="connection-info"></div>
+                    <div class="flex items-center justify-end gap-4">
                         <button id="disconnect-btn" class="px-3 py-1 md:px-4 md:py-2 bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-600 rounded-md hover:bg-slate-100 dark:hover:bg-slate-600 transition-colors text-sm">
                             <span class="hidden md:inline">Déconnecter</span>
                             <span class="md:hidden">✕</span>
@@ -461,10 +465,10 @@
     
     <!-- Indicateur de version discret -->
     <div class="fixed bottom-2 left-2 text-xs text-slate-400 dark:text-slate-600 font-mono opacity-50 hover:opacity-100 transition-opacity cursor-help select-none" id="version-info" title="Informations de version">
-        <span id="app-version">v2.2.2</span> • <span id="build-date">Loading...</span>
+        <span id="app-version">v2.2.3</span> • <span id="build-date">Loading...</span>
     </div>
 
     <!-- JavaScript modulaire optimisé -->
-    <script type="module" src="js/minimal.js?v=2.2.2"></script>
+    <script type="module" src="js/minimal.js?v=2.2.3&t=1757786280"></script>
 </body>
 </html>
