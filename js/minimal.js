@@ -1,6 +1,6 @@
 // Configuration de l'application
 const APP_CONFIG = {
-    version: '2.8.0',
+    version: '2.9.0',
     productionUrl: 'https://gzOrg-zOg.github.io/ZogChat/',
     isDevelopment: () => {
         return window.location.hostname === 'localhost' || 
@@ -1140,11 +1140,39 @@ class MobileMenuManager {
 
 }
 
-// Fonction pour initialiser les informations de version (simplifiée)
+// Fonction pour initialiser les informations de version avec easter egg
 function initVersionInfo() {
-    const buildDate = document.getElementById('build-date');
-    if (buildDate) {
-        buildDate.textContent = '13/09/2025 19:58';
+    const appVersion = document.getElementById('app-version');
+    
+    if (appVersion) {
+        appVersion.textContent = `v${APP_CONFIG.version}`;
+        
+        // Easter egg : clic sur la version
+        let clickCount = 0;
+        appVersion.addEventListener('click', () => {
+            clickCount++;
+            window.audioManager?.playSound('click');
+            
+            if (clickCount === 1) {
+                appVersion.textContent = '🎉 ZogChat';
+                setTimeout(() => {
+                    appVersion.textContent = `v${APP_CONFIG.version}`;
+                    clickCount = 0;
+                }, 2000);
+            } else if (clickCount === 5) {
+                // Easter egg spécial après 5 clics
+                appVersion.textContent = '🚀 Développé avec ❤️';
+                appVersion.style.transform = 'scale(1.2)';
+                appVersion.style.color = '#3b82f6';
+                
+                setTimeout(() => {
+                    appVersion.textContent = `v${APP_CONFIG.version}`;
+                    appVersion.style.transform = 'scale(1)';
+                    appVersion.style.color = '';
+                    clickCount = 0;
+                }, 3000);
+            }
+        });
     }
 }
 
