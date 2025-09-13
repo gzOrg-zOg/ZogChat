@@ -1,6 +1,6 @@
 // Configuration de l'application
 const APP_CONFIG = {
-    version: '2.7.0',
+    version: '2.7.1',
     productionUrl: 'https://gzOrg-zOg.github.io/ZogChat/',
     isDevelopment: () => {
         return window.location.hostname === 'localhost' || 
@@ -1004,6 +1004,8 @@ class MobileMenuManager {
 
         // Ajouter le message au container
         chatContainer.appendChild(messageDiv);
+        
+        console.log('💬 Message ajouté:', { content, type, container: !!chatContainer });
 
         // Scroll automatique vers le bas
         this.scrollToBottom();
@@ -1020,13 +1022,17 @@ class MobileMenuManager {
     scrollToBottom() {
         const chatContainer = document.getElementById('chat-container');
         if (chatContainer) {
-            // Utiliser requestAnimationFrame pour un scroll fluide
-            requestAnimationFrame(() => {
-                chatContainer.scrollTo({
-                    top: chatContainer.scrollHeight,
-                    behavior: 'smooth'
+            // Attendre que le DOM soit mis à jour, puis scroller
+            setTimeout(() => {
+                // Utiliser scrollTop pour une meilleure compatibilité
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+                
+                console.log('📜 Scroll vers le bas:', {
+                    scrollTop: chatContainer.scrollTop,
+                    scrollHeight: chatContainer.scrollHeight,
+                    clientHeight: chatContainer.clientHeight
                 });
-            });
+            }, 10);
         }
     }
 
