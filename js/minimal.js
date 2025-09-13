@@ -468,14 +468,7 @@ class MinimalChatManager {
         const messageDiv = document.createElement('div');
         messageDiv.className = `message ${type}`;
         
-        // Ajouter le nom d'utilisateur si fourni et si c'est un message reçu
-        if (username && type === 'received') {
-            const usernameDiv = document.createElement('div');
-            usernameDiv.className = 'message-username';
-            usernameDiv.textContent = username;
-            usernameDiv.style.cssText = 'font-size: 0.75rem; color: #64748b; margin-bottom: 2px; font-weight: 500;';
-            messageDiv.appendChild(usernameDiv);
-        }
+        // Le nom est déjà affiché dans le titre, pas besoin de le répéter à chaque message
         
         const messageContent = document.createElement('div');
         messageContent.className = 'message-content';
