@@ -1155,22 +1155,49 @@ function initVersionInfo() {
             
             if (clickCount === 1) {
                 appVersion.textContent = '🎉 ZogChat';
-                setTimeout(() => {
-                    appVersion.textContent = `v${APP_CONFIG.version}`;
-                    clickCount = 0;
-                }, 2000);
-            } else if (clickCount === 5) {
-                // Easter egg spécial après 5 clics
-                appVersion.textContent = '🚀 Développé avec ❤️';
-                appVersion.style.transform = 'scale(1.2)';
-                appVersion.style.color = '#3b82f6';
-                
+                appVersion.style.transform = 'scale(1.3)';
+                appVersion.style.color = '#f59e0b';
                 setTimeout(() => {
                     appVersion.textContent = `v${APP_CONFIG.version}`;
                     appVersion.style.transform = 'scale(1)';
                     appVersion.style.color = '';
                     clickCount = 0;
-                }, 3000);
+                }, 2000);
+            } else if (clickCount === 3) {
+                // Easter egg intermédiaire après 3 clics
+                appVersion.textContent = '✨ Magique !';
+                appVersion.style.transform = 'scale(1.4) rotate(5deg)';
+                appVersion.style.color = '#8b5cf6';
+                setTimeout(() => {
+                    appVersion.textContent = `v${APP_CONFIG.version}`;
+                    appVersion.style.transform = 'scale(1) rotate(0deg)';
+                    appVersion.style.color = '';
+                    clickCount = 0;
+                }, 2500);
+            } else if (clickCount === 5) {
+                // Easter egg spécial après 5 clics
+                appVersion.textContent = '🚀 Développé avec ❤️';
+                appVersion.style.transform = 'scale(1.5)';
+                appVersion.style.color = '#ef4444';
+                appVersion.style.fontWeight = 'bold';
+                
+                // Animation de pulsation
+                let pulseCount = 0;
+                const pulseInterval = setInterval(() => {
+                    appVersion.style.transform = pulseCount % 2 === 0 ? 'scale(1.6)' : 'scale(1.4)';
+                    pulseCount++;
+                    if (pulseCount >= 6) {
+                        clearInterval(pulseInterval);
+                    }
+                }, 300);
+                
+                setTimeout(() => {
+                    appVersion.textContent = `v${APP_CONFIG.version}`;
+                    appVersion.style.transform = 'scale(1)';
+                    appVersion.style.color = '';
+                    appVersion.style.fontWeight = '';
+                    clickCount = 0;
+                }, 4000);
             }
         });
     }
