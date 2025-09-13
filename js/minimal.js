@@ -1,6 +1,6 @@
 // Configuration de l'application
 const APP_CONFIG = {
-    version: '2.5.3',
+    version: '2.6.0',
     productionUrl: 'https://gzOrg-zOg.github.io/ZogChat/',
     isDevelopment: () => {
         return window.location.hostname === 'localhost' || 
@@ -170,28 +170,15 @@ class MinimalChatManager {
         const sessionId = urlParams.get('session');
         
         if (sessionId) {
-            // Vérifier si on est le créateur (localStorage) ou un invité
-            const isCreator = localStorage.getItem('zogchat_creator_session') === sessionId;
-            
-            if (isCreator) {
-                // Le créateur fait F5 - recréer sa session avec le même ID
-                console.log('🔄 Créateur fait F5 - Restauration de la session:', sessionId);
-                this.isCreator = true;
-                this.showShareStep();
-                this.initializePeerWithId(sessionId);
-            } else {
-                // Invité se connecte via le lien
-                this.isCreator = false;
-                this.autoConnectToSession(sessionId);
-            }
+            // Invité se connecte via le lien
+            this.isCreator = false;
+            this.autoConnectToSession(sessionId);
         } else {
             // Commencer par l'étape de saisie du nom
             this.showUsernameStep();
         }
         
         this.bindEvents();
-        // Protection F5 temporairement désactivée
-        // this.setupUnloadProtection();
     }
 
     showUsernameStep() {
@@ -234,19 +221,8 @@ class MinimalChatManager {
                 this.generateShareLink(id);
                 this.updateStatus('En attente de connexion...', 'waiting');
                 
-                // Marquer comme créateur et sauvegarder
+                // Marquer comme créateur
                 this.isCreator = true;
-                localStorage.setItem('zogchat_creator_session', id);
-                
-                // Ajouter l'ID de session dans l'URL du créateur pour permettre F5
-                if (!window.location.search.includes('session=')) {
-                    const newUrl = `${window.location.origin}${window.location.pathname}?session=${id}`;
-                    window.history.replaceState({}, document.title, newUrl);
-                    console.log('🔗 URL mise à jour pour le créateur:', newUrl);
-                }
-                
-                // Protection F5 temporairement désactivée pour éviter l'erreur
-                // this.enableUnloadProtection();
             });
 
             this.peer.on('connection', (conn) => {
@@ -515,12 +491,8 @@ class MinimalChatManager {
         this.isConnected = false;
         this.shareLink = '';
         
-        // Nettoyer le localStorage du créateur
-        localStorage.removeItem('zogchat_creator_session');
-        
-        // Désactiver la protection contre F5
+        // Réinitialiser le statut de créateur
         this.isCreator = false;
-        // this.disableUnloadProtection();
         
         // Vider le chat
         const chatContainer = document.getElementById('chat-container');
@@ -995,31 +967,6 @@ class MobileMenuManager {
         }
     }
 
-    // Protection contre le rechargement accidentel du créateur
-    setupUnloadProtection() {
-        this.unloadHandler = (e) => {
-            if (this.isCreator && this.isConnected) {
-                const message = '⚠️ Attention ! Recharger cette page coupera la connexion pour tous les participants. Êtes-vous sûr ?';
-                e.preventDefault();
-                e.returnValue = message;
-                return message;
-            }
-        };
-    }
-
-    enableUnloadProtection() {
-        if (this.unloadHandler) {
-            window.addEventListener('beforeunload', this.unloadHandler);
-            console.log('🛡️ Protection F5 activée pour le créateur');
-        }
-    }
-
-    disableUnloadProtection() {
-        if (this.unloadHandler) {
-            window.removeEventListener('beforeunload', this.unloadHandler);
-            console.log('🛡️ Protection F5 désactivée');
-        }
-    }
 }
 
 // Fonction pour initialiser les informations de version (simplifiée)
