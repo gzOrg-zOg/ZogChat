@@ -147,10 +147,20 @@ class MinimalChatManager {
         this.peer = null;
         this.connection = null;
         this.isConnected = false;
+        this.shareLink = '';
     }
 
     init() {
-        this.initializePeer();
+        // Vérifier si on a un ID de session dans l'URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const sessionId = urlParams.get('session');
+        
+        if (sessionId) {
+            this.autoConnectToSession(sessionId);
+        } else {
+            this.initializePeer();
+        }
+        
         this.bindEvents();
     }
 
@@ -159,7 +169,7 @@ class MinimalChatManager {
             this.peer = new Peer();
             
             this.peer.on('open', (id) => {
-                document.getElementById('peer-id').value = id;
+                this.generateShareLink(id);
                 this.updateStatus('En attente de connexion...', 'waiting');
             });
 
@@ -178,6 +188,36 @@ class MinimalChatManager {
         }
     }
 
+    generateShareLink(peerId) {
+        const baseUrl = window.location.origin + window.location.pathname;
+        this.shareLink = `${baseUrl}?session=${peerId}`;
+        document.getElementById('share-link').value = this.shareLink;
+    }
+
+    async autoConnectToSession(sessionId) {
+        try {
+            this.peer = new Peer();
+            
+            this.peer.on('open', () => {
+                console.log('Connexion automatique à:', sessionId);
+                this.connectToPeer(sessionId);
+                this.updateStatus('Connexion automatique en cours...', 'waiting');
+                
+                // Masquer la section de partage puisqu'on se connecte
+                const shareSection = document.querySelector('section:first-child');
+                if (shareSection) shareSection.style.display = 'none';
+            });
+
+            this.peer.on('error', (err) => {
+                console.error('Erreur de connexion automatique:', err);
+                this.updateStatus('Erreur de connexion automatique', 'disconnected');
+            });
+        } catch (error) {
+            console.error('Erreur de connexion automatique:', error);
+            this.updateStatus('Erreur de connexion automatique', 'disconnected');
+        }
+    }
+
     handleConnection(conn) {
         this.connection = conn;
         
@@ -186,6 +226,12 @@ class MinimalChatManager {
             this.updateStatus('Connecté', 'connected');
             this.showChatSection();
             this.enterChatMode();
+            
+            // Nettoyer l'URL après connexion
+            if (window.location.search) {
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+            
             window.audioManager?.playSound('connect');
         });
 
@@ -239,6 +285,13 @@ class MinimalChatManager {
 
     displayMessage(content, type) {
         const chatContainer = document.getElementById('chat-container');
+        const welcomeMessage = document.getElementById('welcome-message');
+        
+        // Masquer le message d'accueil au premier message
+        if (welcomeMessage) {
+            welcomeMessage.style.display = 'none';
+        }
+        
         const messageDiv = document.createElement('div');
         messageDiv.className = `message ${type}`;
         
@@ -257,8 +310,20 @@ class MinimalChatManager {
         messageDiv.appendChild(messageTime);
         chatContainer.appendChild(messageDiv);
         
-        // Scroll vers le bas
-        chatContainer.scrollTop = chatContainer.scrollHeight;
+        // Animation d'apparition
+        messageDiv.style.opacity = '0';
+        messageDiv.style.transform = 'translateY(20px)';
+        requestAnimationFrame(() => {
+            messageDiv.style.transition = 'all 0.3s ease-out';
+            messageDiv.style.opacity = '1';
+            messageDiv.style.transform = 'translateY(0)';
+        });
+        
+        // Scroll vers le bas avec animation fluide
+        chatContainer.scrollTo({
+            top: chatContainer.scrollHeight,
+            behavior: 'smooth'
+        });
     }
 
     updateStatus(message, type) {
@@ -322,20 +387,40 @@ class MinimalChatManager {
     }
 
     bindEvents() {
-        // Copier l'ID
-        document.getElementById('copy-id').addEventListener('click', () => {
-            const peerIdInput = document.getElementById('peer-id');
-            peerIdInput.select();
+        // Copier le lien de partage
+        document.getElementById('copy-link').addEventListener('click', () => {
+            const shareLinkInput = document.getElementById('share-link');
+            shareLinkInput.select();
             document.execCommand('copy');
-            window.audioManager?.playSound('click');
             
             // Feedback visuel
-            const btn = document.getElementById('copy-id');
-            const originalText = btn.textContent;
-            btn.textContent = 'Copié !';
+            const btn = document.getElementById('copy-link');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"></path><circle cx="12" cy="12" r="9"></circle></svg> Copié !';
             setTimeout(() => {
-                btn.textContent = originalText;
-            }, 1000);
+                btn.innerHTML = originalText;
+            }, 2000);
+            
+            window.audioManager?.playSound('click');
+        });
+
+        // Partage WhatsApp
+        document.getElementById('share-whatsapp').addEventListener('click', () => {
+            const message = `Rejoins-moi sur ZogChat pour une conversation sécurisée : ${this.shareLink}`;
+            window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
+        });
+
+        // Partage Email
+        document.getElementById('share-email').addEventListener('click', () => {
+            const subject = 'Invitation ZogChat - Conversation sécurisée';
+            const body = `Salut !\\n\\nJe t'invite à me rejoindre sur ZogChat pour une conversation sécurisée et privée.\\n\\nClique sur ce lien pour te connecter automatiquement :\\n${this.shareLink}\\n\\nÀ bientôt !`;
+            window.open(`mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`, '_blank');
+        });
+
+        // Partage Telegram
+        document.getElementById('share-telegram').addEventListener('click', () => {
+            const message = `Rejoins-moi sur ZogChat pour une conversation sécurisée : ${this.shareLink}`;
+            window.open(`https://t.me/share/url?url=${encodeURIComponent(this.shareLink)}&text=${encodeURIComponent(message)}`, '_blank');
         });
 
         // Se connecter
@@ -434,11 +519,19 @@ class MinimalChatManager {
     }
 
     handleFileReceived(data) {
+        const chatContainer = document.getElementById('chat-container');
+        const welcomeMessage = document.getElementById('welcome-message');
+        
+        // Masquer le message d'accueil
+        if (welcomeMessage) {
+            welcomeMessage.style.display = 'none';
+        }
+        
         const link = document.createElement('a');
         link.href = data.data;
         link.download = data.name;
         link.textContent = `📎 ${data.name}`;
-        link.className = 'text-blue-600 dark:text-blue-400 hover:underline';
+        link.className = 'text-blue-600 dark:text-blue-400 hover:underline font-medium';
         
         const messageDiv = document.createElement('div');
         messageDiv.className = 'message received';
@@ -456,8 +549,23 @@ class MinimalChatManager {
         
         messageDiv.appendChild(messageContent);
         messageDiv.appendChild(messageTime);
+        chatContainer.appendChild(messageDiv);
         
-        document.getElementById('chat-container').appendChild(messageDiv);
+        // Animation d'apparition
+        messageDiv.style.opacity = '0';
+        messageDiv.style.transform = 'translateY(20px)';
+        requestAnimationFrame(() => {
+            messageDiv.style.transition = 'all 0.3s ease-out';
+            messageDiv.style.opacity = '1';
+            messageDiv.style.transform = 'translateY(0)';
+        });
+        
+        // Scroll vers le bas avec animation fluide
+        chatContainer.scrollTo({
+            top: chatContainer.scrollHeight,
+            behavior: 'smooth'
+        });
+        
         window.audioManager?.playSound('notification');
     }
 }
@@ -483,6 +591,30 @@ document.addEventListener('DOMContentLoaded', async () => {
         window.audioManager.toggleMusic();
     });
 
+    // Gestion du bouton fichier
+    document.getElementById('file-btn').addEventListener('click', () => {
+        document.getElementById('file-input').click();
+    });
+    
+    // Amélioration de l'input message
+    const messageInput = document.getElementById('message-input');
+    const sendBtn = document.getElementById('send-btn');
+    
+    // Désactiver le bouton si l'input est vide
+    messageInput.addEventListener('input', () => {
+        if (messageInput.value.trim()) {
+            sendBtn.disabled = false;
+            sendBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        } else {
+            sendBtn.disabled = true;
+            sendBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        }
+    });
+    
+    // État initial du bouton
+    sendBtn.disabled = true;
+    sendBtn.classList.add('opacity-50', 'cursor-not-allowed');
+    
     console.log('ZogChat Minimal initialisé ✨');
 });
 

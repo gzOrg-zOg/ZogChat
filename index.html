@@ -46,18 +46,16 @@
         }
         
         .message {
-            animation: fadeIn 0.3s ease-out;
-        }
-        
-        .message {
             display: flex;
             align-items: flex-end;
             gap: 0.5rem;
-            margin-bottom: 1rem;
+            margin-bottom: 0.75rem;
+            animation: fadeIn 0.4s ease-out;
         }
         
         .message.sent {
             justify-content: flex-end;
+            flex-direction: row-reverse;
         }
         
         .message.received {
@@ -65,52 +63,74 @@
         }
         
         .message-content {
-            max-width: 80%;
-            padding: 0.75rem 1rem;
-            border-radius: 0.5rem;
+            max-width: 75%;
+            padding: 0.875rem 1.125rem;
+            border-radius: 1.125rem;
             word-wrap: break-word;
+            line-height: 1.4;
+            font-size: 0.95rem;
+            position: relative;
         }
         
         @media (min-width: 768px) {
             .message-content {
-                max-width: 85%;
-                padding: 1rem;
+                max-width: 70%;
+                padding: 1rem 1.25rem;
+                font-size: 1rem;
             }
         }
         
         .message.sent .message-content {
-            background-color: rgb(37 99 235);
+            background: linear-gradient(135deg, rgb(59 130 246), rgb(37 99 235));
             color: white;
-            text-align: right;
+            text-align: left;
+            border-bottom-right-radius: 0.375rem;
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
         }
         
         .message.received .message-content {
-            background-color: rgb(226 232 240);
+            background-color: rgb(241 245 249);
             color: rgb(15 23 42);
+            border-bottom-left-radius: 0.375rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
         
         .dark .message.received .message-content {
-            background-color: rgb(51 65 85);
+            background-color: rgb(45 55 72);
             color: rgb(248 250 252);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
         }
         
         .message-time {
-            font-size: 0.7rem;
-            opacity: 0.6;
+            font-size: 0.65rem;
+            opacity: 0.7;
             color: rgb(100 116 139);
             white-space: nowrap;
             align-self: flex-end;
-            margin-bottom: 0.25rem;
+            margin-bottom: 0.375rem;
             font-weight: 500;
+            font-family: 'JetBrains Mono', monospace;
         }
         
         .dark .message-time {
             color: rgb(148 163 184);
         }
         
-        /* Ordre inversé pour les messages envoyés */
-        .message.sent {
-            flex-direction: row-reverse;
+        /* Groupement des messages consécutifs */
+        .message + .message.sent .message-content {
+            border-top-right-radius: 0.375rem;
+        }
+        
+        .message + .message.received .message-content {
+            border-top-left-radius: 0.375rem;
+        }
+        
+        .message:last-child.sent .message-content {
+            border-bottom-right-radius: 1.125rem;
+        }
+        
+        .message:last-child.received .message-content {
+            border-bottom-left-radius: 1.125rem;
         }
         
         /* Header compact en mode chat */
@@ -286,18 +306,46 @@
         <!-- Section connexion (se cache après connexion) -->
         <div class="flex flex-col gap-8 transition-all duration-300" id="connection-section">
             <section class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-8 md:p-6 shadow-sm hover:shadow-md transition-all duration-300">
-                <h2 class="text-lg font-semibold mb-6 text-slate-900 dark:text-slate-100">Votre identifiant</h2>
-                <div class="flex flex-col sm:flex-row gap-2 mb-4">
-                    <input type="text" id="peer-id" class="flex-1 p-3 border border-slate-200 dark:border-slate-600 rounded-md bg-slate-100 dark:bg-slate-700 text-slate-900 dark:text-slate-100 font-mono text-sm min-h-[44px]" readonly>
-                    <button id="copy-id" class="px-4 py-3 bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-600 rounded-md hover:bg-slate-100 dark:hover:bg-slate-600 transition-colors whitespace-nowrap min-h-[44px]">Copier</button>
+                <h2 class="text-lg font-semibold mb-6 text-slate-900 dark:text-slate-100">🔗 Partager votre session</h2>
+                <div class="space-y-4">
+                    <div class="flex flex-col sm:flex-row gap-2">
+                        <input type="text" id="share-link" class="flex-1 p-3 border border-slate-200 dark:border-slate-600 rounded-md bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 text-sm min-h-[44px] font-mono" readonly placeholder="Génération du lien en cours...">
+                        <button id="copy-link" class="px-4 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors whitespace-nowrap min-h-[44px] flex items-center gap-2">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
+                            Copier le lien
+                        </button>
+                    </div>
+                    <div class="flex flex-col sm:flex-row gap-2">
+                        <button id="share-whatsapp" class="flex-1 px-4 py-3 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors min-h-[44px] flex items-center justify-center gap-2">
+                            <span>📱</span> WhatsApp
+                        </button>
+                        <button id="share-email" class="flex-1 px-4 py-3 bg-slate-600 text-white rounded-md hover:bg-slate-700 transition-colors min-h-[44px] flex items-center justify-center gap-2">
+                            <span>📧</span> Email
+                        </button>
+                        <button id="share-telegram" class="flex-1 px-4 py-3 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors min-h-[44px] flex items-center justify-center gap-2">
+                            <span>✈️</span> Telegram
+                        </button>
+                    </div>
                 </div>
-                <p class="text-sm text-slate-600 dark:text-slate-400">Partagez cet identifiant pour recevoir des messages</p>
+                <p class="text-sm text-slate-600 dark:text-slate-400 mt-4">
+                    <span class="inline-flex items-center gap-1">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M9 12l2 2 4-4"></path>
+                            <circle cx="12" cy="12" r="9"></circle>
+                        </svg>
+                        Connexion automatique
+                    </span>
+                    • Partagez ce lien pour que vos contacts se connectent instantanément à votre session
+                </p>
             </section>
             
             <section class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-8 md:p-6 shadow-sm hover:shadow-md transition-all duration-300">
-                <h2 class="text-lg font-semibold mb-6 text-slate-900 dark:text-slate-100">Se connecter</h2>
+                <h2 class="text-lg font-semibold mb-6 text-slate-900 dark:text-slate-100">⚡ Connexion rapide</h2>
                 <div class="flex flex-col sm:flex-row gap-2 mb-4">
-                    <input type="text" id="connect-id" class="flex-1 p-3 border border-slate-200 dark:border-slate-600 rounded-md bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all min-h-[44px]" placeholder="Identifiant du destinataire">
+                    <input type="text" id="connect-id" class="flex-1 p-3 border border-slate-200 dark:border-slate-600 rounded-md bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all min-h-[44px]" placeholder="Ou collez un code de session...">
                     <button id="connect-btn" class="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors whitespace-nowrap min-h-[44px]">Se connecter</button>
                 </div>
                 <div class="px-4 py-2 rounded-md text-sm font-medium text-center bg-yellow-50 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-400 border border-yellow-200 dark:border-yellow-800" id="status">En attente de connexion...</div>
@@ -324,7 +372,24 @@
             </div>
             
             <!-- Zone de messages -->
-            <div class="flex-1 overflow-y-auto p-4 bg-white dark:bg-slate-900 border-l border-r border-slate-200 dark:border-slate-600 min-h-0" id="chat-container"></div>
+            <div class="flex-1 overflow-y-auto p-4 bg-gradient-to-b from-slate-50/50 to-white dark:from-slate-900/50 dark:to-slate-900 border-l border-r border-slate-200 dark:border-slate-600 min-h-0 relative" id="chat-container">
+                <!-- Indicateur de frappe -->
+                <div class="hidden items-center gap-2 mb-4 opacity-75" id="typing-indicator">
+                    <div class="flex gap-1">
+                        <div class="w-2 h-2 bg-slate-400 rounded-full animate-bounce"></div>
+                        <div class="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
+                        <div class="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+                    </div>
+                    <span class="text-sm text-slate-500 dark:text-slate-400">En train d'écrire...</span>
+                </div>
+                
+                <!-- Message d'accueil -->
+                <div class="flex flex-col items-center justify-center h-full text-center" id="welcome-message">
+                    <div class="text-6xl mb-4">💬</div>
+                    <h3 class="text-xl font-semibold text-slate-700 dark:text-slate-300 mb-2">Conversation sécurisée</h3>
+                    <p class="text-slate-500 dark:text-slate-400 max-w-md">Vos messages sont chiffrés de bout en bout. Seuls vous et votre correspondant pouvez les lire.</p>
+                </div>
+            </div>
             
             <!-- Zone de drop de fichiers -->
             <div class="border-2 border-dashed border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 p-4 text-center text-slate-500 dark:text-slate-400 cursor-pointer hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600 dark:hover:text-blue-400 transition-all hidden" id="file-drop">
@@ -333,10 +398,20 @@
             </div>
             
             <!-- Barre de saisie sticky -->
-            <div class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-b-lg p-2 md:p-4 shadow-lg sticky bottom-0 z-10">
-                <div class="flex flex-col sm:flex-row gap-2">
-                    <input type="text" id="message-input" class="flex-1 p-3 border border-slate-200 dark:border-slate-600 rounded-md bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all min-h-[44px]" placeholder="Tapez votre message...">
-                    <button id="send-btn" class="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors whitespace-nowrap min-h-[44px]">Envoyer</button>
+            <div class="bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm border-t border-slate-200 dark:border-slate-700 p-3 md:p-4 sticky bottom-0 z-10">
+                <div class="flex items-end gap-3 max-w-4xl mx-auto">
+                    <div class="flex-1 relative">
+                        <input type="text" id="message-input" class="w-full p-3 pr-12 border border-slate-300 dark:border-slate-600 rounded-2xl bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 text-base focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all min-h-[48px] resize-none" placeholder="Tapez votre message..." rows="1">
+                        <button id="file-btn" class="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-slate-400 hover:text-blue-600 transition-colors" title="Joindre un fichier">
+                            📎
+                        </button>
+                    </div>
+                    <button id="send-btn" class="p-3 bg-blue-600 text-white rounded-2xl hover:bg-blue-700 active:scale-95 transition-all min-h-[48px] min-w-[48px] flex items-center justify-center shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed" title="Envoyer">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="22" y1="2" x2="11" y2="13"></line>
+                            <polygon points="22,2 15,22 11,13 2,9"></polygon>
+                        </svg>
+                    </button>
                 </div>
             </div>
         </section>
