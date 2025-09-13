@@ -1,6 +1,6 @@
 // Configuration de l'application
 const APP_CONFIG = {
-    version: '2.2.7',
+    version: '2.3.0',
     productionUrl: 'https://gzOrg-zOg.github.io/ZogChat/',
     isDevelopment: () => {
         return window.location.hostname === 'localhost' || 
@@ -169,7 +169,18 @@ class MinimalChatManager {
         const sessionId = urlParams.get('session');
         
         if (sessionId) {
-            this.autoConnectToSession(sessionId);
+            // Vérifier si on est le créateur (localStorage) ou un invité
+            const isCreator = localStorage.getItem('zogchat_creator_session') === sessionId;
+            
+            if (isCreator) {
+                // Le créateur fait F5 - recréer sa session avec le même ID
+                console.log('🔄 Créateur fait F5 - Restauration de la session:', sessionId);
+                this.showShareStep();
+                this.initializePeerWithId(sessionId);
+            } else {
+                // Invité se connecte via le lien
+                this.autoConnectToSession(sessionId);
+            }
         } else {
             // Commencer par l'étape de saisie du nom
             this.showUsernameStep();
@@ -217,6 +228,16 @@ class MinimalChatManager {
             this.peer.on('open', (id) => {
                 this.generateShareLink(id);
                 this.updateStatus('En attente de connexion...', 'waiting');
+                
+                // Sauvegarder que cette personne est le créateur de cette session
+                localStorage.setItem('zogchat_creator_session', id);
+                
+                // Ajouter l'ID de session dans l'URL du créateur pour permettre F5
+                if (!window.location.search.includes('session=')) {
+                    const newUrl = `${window.location.origin}${window.location.pathname}?session=${id}`;
+                    window.history.replaceState({}, document.title, newUrl);
+                    console.log('🔗 URL mise à jour pour le créateur:', newUrl);
+                }
             });
 
             this.peer.on('connection', (conn) => {
@@ -231,6 +252,35 @@ class MinimalChatManager {
         } catch (error) {
             console.error('Impossible d\'initialiser PeerJS:', error);
             this.updateStatus('Service indisponible', 'disconnected');
+        }
+    }
+
+    initializePeerWithId(sessionId) {
+        try {
+            // Créer un peer avec l'ID spécifique pour restaurer la session du créateur
+            this.peer = new Peer(sessionId);
+            
+            this.peer.on('open', (id) => {
+                console.log('🔄 Session restaurée pour le créateur:', id);
+                this.generateShareLink(id);
+                this.updateStatus('En attente de connexion...', 'waiting');
+            });
+
+            this.peer.on('connection', (conn) => {
+                this.handleConnection(conn);
+            });
+
+            this.peer.on('error', (error) => {
+                console.error('Erreur lors de la restauration:', error);
+                // Si l'ID est déjà pris, créer une nouvelle session
+                console.log('🔄 ID occupé, création d\'une nouvelle session...');
+                localStorage.removeItem('zogchat_creator_session');
+                this.initializePeer();
+            });
+
+        } catch (error) {
+            console.error('Impossible de restaurer la session:', error);
+            this.updateStatus('Erreur de restauration', 'disconnected');
         }
     }
 
@@ -452,6 +502,9 @@ class MinimalChatManager {
         
         this.isConnected = false;
         this.shareLink = '';
+        
+        // Nettoyer le localStorage du créateur
+        localStorage.removeItem('zogchat_creator_session');
         
         // Vider le chat
         const chatContainer = document.getElementById('chat-container');
