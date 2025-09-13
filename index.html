@@ -297,7 +297,7 @@
                     <span class="text-sm font-medium text-slate-600 dark:text-slate-400">Connecté à :</span>
                     <div class="font-mono text-xs bg-slate-200 dark:bg-slate-700 p-2 rounded break-all text-slate-900 dark:text-slate-100" id="mobile-peer-display"></div>
                 </div>
-            </div>
+    </div>
         </div>
     </header>
     
@@ -329,7 +329,7 @@
                             <span>✈️</span> Telegram
                         </button>
                     </div>
-                </div>
+    </div>
                 <p class="text-sm text-slate-600 dark:text-slate-400 mt-4">
                     <span class="inline-flex items-center gap-1">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -347,7 +347,7 @@
                 <div class="flex flex-col sm:flex-row gap-2 mb-4">
                     <input type="text" id="connect-id" class="flex-1 p-3 border border-slate-200 dark:border-slate-600 rounded-md bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all min-h-[44px]" placeholder="Ou collez un code de session...">
                     <button id="connect-btn" class="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors whitespace-nowrap min-h-[44px]">Se connecter</button>
-                </div>
+        </div>
                 <div class="px-4 py-2 rounded-md text-sm font-medium text-center bg-yellow-50 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-400 border border-yellow-200 dark:border-yellow-800" id="status">En attente de connexion...</div>
             </section>
         </div>
@@ -381,8 +381,8 @@
                         <div class="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
                     </div>
                     <span class="text-sm text-slate-500 dark:text-slate-400">En train d'écrire...</span>
-                </div>
-                
+        </div>
+        
                 <!-- Message d'accueil -->
                 <div class="flex flex-col items-center justify-center h-full text-center" id="welcome-message">
                     <div class="text-6xl mb-4">💬</div>
@@ -395,7 +395,7 @@
             <div class="border-2 border-dashed border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 p-4 text-center text-slate-500 dark:text-slate-400 cursor-pointer hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600 dark:hover:text-blue-400 transition-all hidden" id="file-drop">
                 <p class="text-sm">📎 Glissez un fichier ici ou cliquez pour sélectionner</p>
                 <input type="file" id="file-input" hidden>
-            </div>
+                </div>
             
             <!-- Barre de saisie sticky -->
             <div class="bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm border-t border-slate-200 dark:border-slate-700 p-3 md:p-4 sticky bottom-0 z-10">
@@ -422,8 +422,13 @@
         <button id="sound-toggle" class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 text-lg hover:bg-blue-600 hover:text-white hover:-translate-y-1 transition-all duration-200 shadow-md hover:shadow-lg" title="Sons">🔊</button>
         <button id="music-toggle" class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 text-lg hover:bg-blue-600 hover:text-white hover:-translate-y-1 transition-all duration-200 shadow-md hover:shadow-lg opacity-50" title="Musique">🎵</button>
     </div>
+    
+    <!-- Indicateur de version discret -->
+    <div class="fixed bottom-2 left-2 text-xs text-slate-400 dark:text-slate-600 font-mono opacity-50 hover:opacity-100 transition-opacity cursor-help select-none" id="version-info" title="Informations de version">
+        <span id="app-version">v2.1.0</span> • <span id="build-date">Loading...</span>
+    </div>
 
     <!-- JavaScript modulaire optimisé -->
-    <script type="module" src="js/minimal.js?v=2.0"></script>
+    <script type="module" src="js/minimal.js?v=2.1.0"></script>
 </body>
 </html>

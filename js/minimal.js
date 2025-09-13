@@ -634,7 +634,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     sendBtn.disabled = true;
     sendBtn.classList.add('opacity-50', 'cursor-not-allowed');
     
-    console.log('ZogChat Minimal initialisé ✨ - Version 2.0 avec partage par liens');
+    // Initialiser les informations de version
+    initVersionInfo();
+    
+    console.log('ZogChat Minimal initialisé ✨ - Version 2.1.0 avec partage par liens');
     
     // Debug: vérifier que les éléments existent
     console.log('Éléments trouvés:', {
@@ -762,6 +765,75 @@ class MobileMenuManager {
             }
         }
     }
+}
+
+// Fonction pour initialiser les informations de version
+function initVersionInfo() {
+    const buildDate = document.getElementById('build-date');
+    if (buildDate) {
+        // Date de build (timestamp de chargement de la page)
+        const now = new Date();
+        const buildTimestamp = now.toLocaleDateString('fr-FR', {
+            day: '2-digit',
+            month: '2-digit',
+            year: '2-digit'
+        }) + ' ' + now.toLocaleTimeString('fr-FR', {
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+        
+        buildDate.textContent = buildTimestamp;
+        
+        // Ajouter des informations supplémentaires au tooltip
+        const versionInfo = document.getElementById('version-info');
+        if (versionInfo) {
+            const userAgent = navigator.userAgent;
+            const browserInfo = getBrowserInfo();
+            
+            versionInfo.title = `ZogChat v2.1.0
+Build: ${buildTimestamp}
+Navigateur: ${browserInfo}
+P2P: PeerJS 1.4.7
+Framework: Tailwind CSS`;
+
+            // Easter egg: clic sur la version pour afficher les détails
+            versionInfo.addEventListener('click', () => {
+                const details = `🚀 ZogChat v2.1.0
+                
+📅 Build: ${buildTimestamp}
+🌐 Navigateur: ${browserInfo}
+🔗 P2P: PeerJS 1.4.7
+🎨 Framework: Tailwind CSS
+📱 Responsive: Optimisé mobile
+🔒 Sécurité: Chiffrement E2E
+⚡ Fonctionnalités: Partage par liens
+
+Développé avec ❤️ pour une communication sécurisée`;
+                
+                alert(details);
+            });
+        }
+    }
+}
+
+// Fonction pour détecter le navigateur
+function getBrowserInfo() {
+    const ua = navigator.userAgent;
+    let browser = 'Inconnu';
+    
+    if (ua.includes('Chrome') && !ua.includes('Edg')) {
+        browser = 'Chrome';
+    } else if (ua.includes('Firefox')) {
+        browser = 'Firefox';
+    } else if (ua.includes('Safari') && !ua.includes('Chrome')) {
+        browser = 'Safari';
+    } else if (ua.includes('Edg')) {
+        browser = 'Edge';
+    } else if (ua.includes('Opera')) {
+        browser = 'Opera';
+    }
+    
+    return browser;
 }
 
 // Initialiser le menu mobile
