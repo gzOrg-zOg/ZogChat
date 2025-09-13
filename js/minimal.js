@@ -160,8 +160,11 @@ class MinimalChatManager {
         this.isConnected = false;
         this.shareLink = '';
         this.username = '';
+        this.remoteUsername = '';
         this.currentStep = 'username'; // 'username', 'share', 'chat'
         this.isCreator = false;
+        this.isGuest = false;
+        this.sessionIdToConnect = null;
     }
 
     init() {
@@ -295,12 +298,34 @@ class MinimalChatManager {
     }
 
     async autoConnectToSession(sessionId) {
+        // D'abord demander le nom d'utilisateur pour l'invité
+        this.showUsernameStep();
+        this.sessionIdToConnect = sessionId;
+        this.isGuest = true;
+        
+        // Modifier le texte du bouton pour l'invité
+        const createBtn = document.getElementById('create-session-btn');
+        if (createBtn) {
+            createBtn.textContent = 'Rejoindre la conversation';
+        }
+        
+        // Modifier le titre pour l'invité
+        const usernameSection = document.getElementById('username-section');
+        if (usernameSection) {
+            const title = usernameSection.querySelector('h2');
+            if (title) {
+                title.textContent = 'Rejoindre la conversation';
+            }
+        }
+    }
+    
+    connectAsGuest() {
         try {
             this.peer = new Peer();
             
             this.peer.on('open', () => {
-                console.log('Connexion automatique à:', sessionId);
-                this.connectToPeer(sessionId);
+                console.log('Connexion automatique à:', this.sessionIdToConnect);
+                this.connectToPeer(this.sessionIdToConnect);
                 this.updateStatus('Connexion automatique en cours...', 'waiting');
                 
                 // Masquer la section de partage puisqu'on se connecte
@@ -326,6 +351,18 @@ class MinimalChatManager {
             this.updateStatus('Connecté', 'connected');
             this.showChatStep();
             
+            // Envoyer le nom d'utilisateur au correspondant
+            if (this.username) {
+                conn.send({
+                    type: 'username',
+                    username: this.username
+                });
+                console.log('👤 Nom envoyé au correspondant:', this.username);
+            }
+            
+            // Mettre à jour le titre si on a déjà le nom du correspondant
+            this.updateChatTitle();
+            
             // Garder le paramètre session dans l'URL pour permettre le rechargement
             // (Commenté pour conserver la session lors du rechargement)
             // if (window.location.search) {
@@ -337,10 +374,15 @@ class MinimalChatManager {
 
         conn.on('data', (data) => {
             if (data.type === 'message') {
-                this.displayMessage(data.content, 'received');
+                this.displayMessage(data.content, 'received', data.username);
                 window.audioManager?.playSound('message');
             } else if (data.type === 'file') {
                 this.handleFileReceived(data);
+            } else if (data.type === 'username') {
+                // Recevoir le nom d'utilisateur du correspondant
+                this.remoteUsername = data.username;
+                console.log('👤 Nom du correspondant reçu:', this.remoteUsername);
+                this.updateChatTitle();
             }
         });
 
@@ -376,14 +418,15 @@ class MinimalChatManager {
         this.connection.send({
             type: 'message',
             content: message,
+            username: this.username,
             timestamp: Date.now()
         });
 
-        this.displayMessage(message, 'sent');
+        this.displayMessage(message, 'sent', this.username);
         window.audioManager?.playSound('click');
     }
 
-    displayMessage(content, type) {
+    displayMessage(content, type, username = null) {
         const chatContainer = document.getElementById('chat-container');
         const welcomeMessage = document.getElementById('welcome-message');
         
@@ -397,6 +440,15 @@ class MinimalChatManager {
         
         const messageDiv = document.createElement('div');
         messageDiv.className = `message ${type}`;
+        
+        // Ajouter le nom d'utilisateur si fourni et si c'est un message reçu
+        if (username && type === 'received') {
+            const usernameDiv = document.createElement('div');
+            usernameDiv.className = 'message-username';
+            usernameDiv.textContent = username;
+            usernameDiv.style.cssText = 'font-size: 0.75rem; color: #64748b; margin-bottom: 2px; font-weight: 500;';
+            messageDiv.appendChild(usernameDiv);
+        }
         
         const messageContent = document.createElement('div');
         messageContent.className = 'message-content';
@@ -529,8 +581,16 @@ class MinimalChatManager {
         this.username = usernameInput.value.trim();
         
         if (this.username.length >= 2) {
-            console.log(`👤 Création de session pour: ${this.username}`);
-            this.showShareStep();
+            console.log(`👤 ${this.isGuest ? 'Connexion' : 'Création de session'} pour: ${this.username}`);
+            
+            if (this.isGuest) {
+                // Si c'est un invité, se connecter directement
+                this.connectAsGuest();
+            } else {
+                // Si c'est le créateur, aller à l'étape de partage
+                this.showShareStep();
+            }
+            
             window.audioManager?.playSound('click');
         }
     }
@@ -543,11 +603,8 @@ class MinimalChatManager {
         console.log('🔍 Éléments trouvés:', { usernameInput: !!usernameInput, createSessionBtn: !!createSessionBtn });
         
         if (usernameInput && createSessionBtn) {
-            // Forcer l'état initial du bouton
-            createSessionBtn.disabled = true;
-            createSessionBtn.classList.add('opacity-50', 'cursor-not-allowed');
-            
-            usernameInput.addEventListener('input', () => {
+            // Fonction pour vérifier et mettre à jour l'état du bouton
+            const updateButtonState = () => {
                 const username = usernameInput.value.trim();
                 console.log('👤 Nom saisi:', username, 'Longueur:', username.length);
                 if (username.length >= 2) {
@@ -559,7 +616,13 @@ class MinimalChatManager {
                     createSessionBtn.classList.add('opacity-50', 'cursor-not-allowed');
                     console.log('❌ Bouton désactivé');
                 }
-            });
+            };
+            
+            // Vérifier l'état initial (au cas où le nom serait pré-rempli)
+            updateButtonState();
+            
+            // Écouter les changements
+            usernameInput.addEventListener('input', updateButtonState);
             
             usernameInput.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter' && !createSessionBtn.disabled) {
@@ -783,6 +846,15 @@ class MinimalChatManager {
         }
         
         window.audioManager?.playSound('notification');
+    }
+
+    updateChatTitle() {
+        // Mettre à jour le titre du chat avec le nom du correspondant
+        const chatTitle = document.querySelector('#chat-section h2 span');
+        if (chatTitle && this.remoteUsername) {
+            chatTitle.textContent = `Conversation avec ${this.remoteUsername}`;
+            console.log('📝 Titre mis à jour:', `Conversation avec ${this.remoteUsername}`);
+        }
     }
 }
 
