@@ -1,6 +1,6 @@
 // Configuration de l'application
 const APP_CONFIG = {
-    version: '2.6.0',
+    version: '2.7.0',
     productionUrl: 'https://gzOrg-zOg.github.io/ZogChat/',
     isDevelopment: () => {
         return window.location.hostname === 'localhost' || 
@@ -964,6 +964,93 @@ class MobileMenuManager {
             } else {
                 mobileConnectionInfo.style.display = 'none';
             }
+        }
+    }
+
+    // Afficher un message dans le chat avec scroll automatique
+    displayMessage(content, type = 'received') {
+        const chatContainer = document.getElementById('chat-container');
+        if (!chatContainer) return;
+
+        // Masquer le message de bienvenue s'il existe
+        const welcomeMessage = document.getElementById('welcome-message');
+        if (welcomeMessage) {
+            welcomeMessage.style.display = 'none';
+        }
+
+        // Créer l'élément message
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${type} flex items-end gap-2 mb-3 animate-fadeIn`;
+        
+        // Contenu du message avec heure
+        const now = new Date();
+        const timeStr = now.toLocaleTimeString('fr-FR', { 
+            hour: '2-digit', 
+            minute: '2-digit' 
+        });
+
+        messageDiv.innerHTML = `
+            <div class="message-content max-w-xs lg:max-w-md px-3 py-2 rounded-lg ${
+                type === 'sent' 
+                    ? 'bg-blue-600 text-white ml-auto' 
+                    : 'bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-slate-100'
+            }">
+                ${content}
+            </div>
+            <div class="message-time text-xs text-slate-500 dark:text-slate-400 min-w-fit">
+                ${timeStr}
+            </div>
+        `;
+
+        // Ajouter le message au container
+        chatContainer.appendChild(messageDiv);
+
+        // Scroll automatique vers le bas
+        this.scrollToBottom();
+    }
+
+    // Gérer la réception de fichiers
+    handleFileReceived(data) {
+        console.log('Fichier reçu:', data);
+        // Pour l'instant, afficher comme message texte
+        this.displayMessage(`📎 Fichier reçu: ${data.name || 'fichier'}`, 'received');
+    }
+
+    // Scroll automatique vers le bas du chat
+    scrollToBottom() {
+        const chatContainer = document.getElementById('chat-container');
+        if (chatContainer) {
+            // Utiliser requestAnimationFrame pour un scroll fluide
+            requestAnimationFrame(() => {
+                chatContainer.scrollTo({
+                    top: chatContainer.scrollHeight,
+                    behavior: 'smooth'
+                });
+            });
+        }
+    }
+
+    // Envoyer un message
+    sendMessage(content) {
+        if (!this.connection || !this.isConnected) {
+            console.warn('Pas de connexion active pour envoyer le message');
+            return;
+        }
+
+        try {
+            // Envoyer le message via PeerJS
+            this.connection.send({
+                type: 'message',
+                content: content
+            });
+
+            // Afficher le message localement
+            this.displayMessage(content, 'sent');
+            
+            console.log('Message envoyé:', content);
+            window.audioManager?.playSound('send');
+        } catch (error) {
+            console.error('Erreur lors de l\'envoi du message:', error);
         }
     }
 
