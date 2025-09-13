@@ -715,7 +715,14 @@ class MinimalChatManager {
         if (emailBtn) {
             emailBtn.addEventListener('click', () => {
                 const subject = 'Invitation ZogChat - Conversation sécurisée';
-                const body = `Salut !\\n\\nJe t'invite à me rejoindre sur ZogChat pour une conversation sécurisée et privée.\\n\\nClique sur ce lien pour te connecter automatiquement :\\n${this.shareLink}\\n\\nÀ bientôt !`;
+                const body = `Salut !
+
+Je t'invite à me rejoindre sur ZogChat pour une conversation sécurisée et privée.
+
+Clique sur ce lien pour te connecter automatiquement :
+${this.shareLink}
+
+À bientôt !`;
                 window.open(`mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`, '_blank');
             });
         }
