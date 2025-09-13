@@ -1,6 +1,6 @@
 // Configuration de l'application
 const APP_CONFIG = {
-    version: '2.2.3',
+    version: '2.2.4',
     productionUrl: 'https://gzOrg-zOg.github.io/ZogChat/',
     isDevelopment: () => {
         return window.location.hostname === 'localhost' || 
@@ -921,18 +921,8 @@ class MobileMenuManager {
 function initVersionInfo() {
     const buildDate = document.getElementById('build-date');
     if (buildDate) {
-        // Date de build (timestamp de chargement de la page)
-        const now = new Date();
-        const buildTimestamp = now.toLocaleDateString('fr-FR', {
-            day: '2-digit',
-            month: '2-digit',
-            year: '2-digit'
-        }) + ' ' + now.toLocaleTimeString('fr-FR', {
-            hour: '2-digit',
-            minute: '2-digit'
-        });
-        
-        buildDate.textContent = buildTimestamp;
+        // Date de livraison fixe de cette version
+        buildDate.textContent = '13/09/2025 19:58';
         
         // Ajouter des informations supplémentaires au tooltip
         const versionInfo = document.getElementById('version-info');
@@ -941,7 +931,7 @@ function initVersionInfo() {
             const browserInfo = getBrowserInfo();
             
             versionInfo.title = `ZogChat v${APP_CONFIG.version}
-Build: ${buildTimestamp}
+Livraison: 13/09/2025 19:58
 Navigateur: ${browserInfo}
 P2P: PeerJS 1.4.7
 Framework: Tailwind CSS`;
@@ -950,7 +940,7 @@ Framework: Tailwind CSS`;
             versionInfo.addEventListener('click', () => {
                 const details = `🚀 ZogChat v${APP_CONFIG.version}
                 
-📅 Build: ${buildTimestamp}
+📅 Livraison: 13/09/2025 19:58
 🌐 Navigateur: ${browserInfo}
 🔗 P2P: PeerJS 1.4.7
 🎨 Framework: Tailwind CSS
