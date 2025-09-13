@@ -1,12 +1,6 @@
 // Configuration de l'application
 const APP_CONFIG = {
-    version: '2.9.0',
-    productionUrl: 'https://gzOrg-zOg.github.io/ZogChat/',
-    isDevelopment: () => {
-        return window.location.hostname === 'localhost' || 
-               window.location.hostname === '127.0.0.1' ||
-               window.location.hostname === '0.0.0.0';
-    }
+    version: '2.10.1'
 };
 
 // JavaScript minimal pour ZogChat sobre
@@ -280,18 +274,8 @@ class MinimalChatManager {
     }
 
     generateShareLink(peerId) {
-        // Utiliser l'URL de production pour le partage, même en développement
-        let baseUrl;
-        
-        if (APP_CONFIG.isDevelopment()) {
-            // En développement, utiliser l'URL de production pour le partage
-            baseUrl = APP_CONFIG.productionUrl;
-            console.log('🔧 Mode développement - Utilisation de l\'URL de production pour le partage:', baseUrl);
-        } else {
-            // En production, utiliser l'URL actuelle
-            baseUrl = window.location.origin + window.location.pathname;
-            console.log('🌐 Mode production - Utilisation de l\'URL actuelle:', baseUrl);
-        }
+        // Utiliser systématiquement l'URL de l'host du créateur
+        const baseUrl = window.location.origin + window.location.pathname;
         
         this.shareLink = `${baseUrl}?session=${peerId}&inviter=${encodeURIComponent(this.username)}`;
         
