@@ -1,6 +1,6 @@
 // Configuration de l'application
 const APP_CONFIG = {
-    version: '2.3.1',
+    version: '2.4.0',
     productionUrl: 'https://gzOrg-zOg.github.io/ZogChat/',
     isDevelopment: () => {
         return window.location.hostname === 'localhost' || 
@@ -161,6 +161,7 @@ class MinimalChatManager {
         this.shareLink = '';
         this.username = '';
         this.currentStep = 'username'; // 'username', 'share', 'chat'
+        this.isCreator = false;
     }
 
     init() {
@@ -175,10 +176,12 @@ class MinimalChatManager {
             if (isCreator) {
                 // Le créateur fait F5 - recréer sa session avec le même ID
                 console.log('🔄 Créateur fait F5 - Restauration de la session:', sessionId);
+                this.isCreator = true;
                 this.showShareStep();
                 this.initializePeerWithId(sessionId);
             } else {
                 // Invité se connecte via le lien
+                this.isCreator = false;
                 this.autoConnectToSession(sessionId);
             }
         } else {
@@ -187,6 +190,7 @@ class MinimalChatManager {
         }
         
         this.bindEvents();
+        this.setupUnloadProtection();
     }
 
     showUsernameStep() {
@@ -229,7 +233,8 @@ class MinimalChatManager {
                 this.generateShareLink(id);
                 this.updateStatus('En attente de connexion...', 'waiting');
                 
-                // Sauvegarder que cette personne est le créateur de cette session
+                // Marquer comme créateur et sauvegarder
+                this.isCreator = true;
                 localStorage.setItem('zogchat_creator_session', id);
                 
                 // Ajouter l'ID de session dans l'URL du créateur pour permettre F5
@@ -238,6 +243,9 @@ class MinimalChatManager {
                     window.history.replaceState({}, document.title, newUrl);
                     console.log('🔗 URL mise à jour pour le créateur:', newUrl);
                 }
+                
+                // Activer la protection contre F5 accidentel
+                this.enableUnloadProtection();
             });
 
             this.peer.on('connection', (conn) => {
@@ -264,6 +272,9 @@ class MinimalChatManager {
                 console.log('🔄 Session restaurée pour le créateur:', id);
                 this.generateShareLink(id);
                 this.updateStatus('En attente de connexion...', 'waiting');
+                
+                // Activer la protection contre F5 accidentel
+                this.enableUnloadProtection();
             });
 
             this.peer.on('connection', (conn) => {
@@ -505,6 +516,10 @@ class MinimalChatManager {
         
         // Nettoyer le localStorage du créateur
         localStorage.removeItem('zogchat_creator_session');
+        
+        // Désactiver la protection contre F5
+        this.isCreator = false;
+        this.disableUnloadProtection();
         
         // Vider le chat
         const chatContainer = document.getElementById('chat-container');
@@ -1007,6 +1022,32 @@ Développé avec ❤️ pour une communication sécurisée`;
                 
                 alert(details);
             });
+        }
+    }
+
+    // Protection contre le rechargement accidentel du créateur
+    setupUnloadProtection() {
+        this.unloadHandler = (e) => {
+            if (this.isCreator && this.isConnected) {
+                const message = '⚠️ Attention ! Recharger cette page coupera la connexion pour tous les participants. Êtes-vous sûr ?';
+                e.preventDefault();
+                e.returnValue = message;
+                return message;
+            }
+        };
+    }
+
+    enableUnloadProtection() {
+        if (this.unloadHandler) {
+            window.addEventListener('beforeunload', this.unloadHandler);
+            console.log('🛡️ Protection F5 activée pour le créateur');
+        }
+    }
+
+    disableUnloadProtection() {
+        if (this.unloadHandler) {
+            window.removeEventListener('beforeunload', this.unloadHandler);
+            console.log('🛡️ Protection F5 désactivée');
         }
     }
 }
