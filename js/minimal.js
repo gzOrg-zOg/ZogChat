@@ -387,6 +387,9 @@ class MinimalChatManager {
         const chatContainer = document.getElementById('chat-container');
         const welcomeMessage = document.getElementById('welcome-message');
         
+        // Vérifier si l'utilisateur était en bas avant d'ajouter le message
+        const wasAtBottom = chatContainer.scrollTop + chatContainer.clientHeight >= chatContainer.scrollHeight - 10;
+        
         // Masquer le message d'accueil au premier message
         if (welcomeMessage) {
             welcomeMessage.style.display = 'none';
@@ -419,11 +422,12 @@ class MinimalChatManager {
             messageDiv.style.transform = 'translateY(0)';
         });
         
-        // Scroll vers le bas avec animation fluide
-        chatContainer.scrollTo({
-            top: chatContainer.scrollHeight,
-            behavior: 'smooth'
-        });
+        // Scroll automatique seulement si l'utilisateur était en bas
+        if (wasAtBottom) {
+            setTimeout(() => {
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+            }, 100);
+        }
     }
 
     updateStatus(message, type) {
@@ -730,6 +734,9 @@ class MinimalChatManager {
         const chatContainer = document.getElementById('chat-container');
         const welcomeMessage = document.getElementById('welcome-message');
         
+        // Vérifier si l'utilisateur était en bas avant d'ajouter le message
+        const wasAtBottom = chatContainer.scrollTop + chatContainer.clientHeight >= chatContainer.scrollHeight - 10;
+        
         // Masquer le message d'accueil
         if (welcomeMessage) {
             welcomeMessage.style.display = 'none';
@@ -768,11 +775,12 @@ class MinimalChatManager {
             messageDiv.style.transform = 'translateY(0)';
         });
         
-        // Scroll vers le bas avec animation fluide
-        chatContainer.scrollTo({
-            top: chatContainer.scrollHeight,
-            behavior: 'smooth'
-        });
+        // Scroll automatique seulement si l'utilisateur était en bas
+        if (wasAtBottom) {
+            setTimeout(() => {
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }, 100);
+        }
         
         window.audioManager?.playSound('notification');
     }
