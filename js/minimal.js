@@ -1,6 +1,6 @@
 // Configuration de l'application
 const APP_CONFIG = {
-    version: '2.7.3',
+    version: '2.8.0',
     productionUrl: 'https://gzOrg-zOg.github.io/ZogChat/',
     isDevelopment: () => {
         return window.location.hostname === 'localhost' || 
@@ -273,15 +273,13 @@ class MinimalChatManager {
     }
 
     generateShareLink(peerId) {
-        // Utiliser l'URL de production GitHub Pages au lieu de localhost
-        let baseUrl;
+        // Utiliser l'URL actuelle (localhost en dev, production en prod)
+        let baseUrl = window.location.origin + window.location.pathname;
+        
         if (APP_CONFIG.isDevelopment()) {
-            // En développement local, utiliser l'URL de production
-            baseUrl = APP_CONFIG.productionUrl;
-            console.log('🔧 Mode développement détecté - Utilisation de l\'URL de production');
+            console.log('🔧 Mode développement détecté - Utilisation de l\'URL locale:', baseUrl);
         } else {
-            // En production, utiliser l'URL actuelle
-            baseUrl = window.location.origin + window.location.pathname;
+            console.log('🌐 Mode production - Utilisation de l\'URL actuelle:', baseUrl);
         }
         
         this.shareLink = `${baseUrl}?session=${peerId}`;
