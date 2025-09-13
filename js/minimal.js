@@ -1,6 +1,6 @@
 // Configuration de l'application
 const APP_CONFIG = {
-    version: '2.4.0',
+    version: '2.4.1',
     productionUrl: 'https://gzOrg-zOg.github.io/ZogChat/',
     isDevelopment: () => {
         return window.location.hostname === 'localhost' || 
@@ -565,15 +565,24 @@ class MinimalChatManager {
         const usernameInput = document.getElementById('username-input');
         const createSessionBtn = document.getElementById('create-session-btn');
         
+        console.log('🔍 Éléments trouvés:', { usernameInput: !!usernameInput, createSessionBtn: !!createSessionBtn });
+        
         if (usernameInput && createSessionBtn) {
+            // Forcer l'état initial du bouton
+            createSessionBtn.disabled = true;
+            createSessionBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            
             usernameInput.addEventListener('input', () => {
                 const username = usernameInput.value.trim();
+                console.log('👤 Nom saisi:', username, 'Longueur:', username.length);
                 if (username.length >= 2) {
                     createSessionBtn.disabled = false;
                     createSessionBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                    console.log('✅ Bouton activé');
                 } else {
                     createSessionBtn.disabled = true;
                     createSessionBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                    console.log('❌ Bouton désactivé');
                 }
             });
             
