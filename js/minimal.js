@@ -243,11 +243,15 @@ class MinimalChatManager {
         messageDiv.className = `message ${type}`;
         
         const messageContent = document.createElement('div');
+        messageContent.className = 'message-content';
         messageContent.textContent = content;
         
         const messageTime = document.createElement('div');
         messageTime.className = 'message-time';
-        messageTime.textContent = new Date().toLocaleTimeString();
+        messageTime.textContent = new Date().toLocaleTimeString('fr-FR', { 
+            hour: '2-digit', 
+            minute: '2-digit' 
+        });
         
         messageDiv.appendChild(messageContent);
         messageDiv.appendChild(messageTime);
@@ -434,14 +438,23 @@ class MinimalChatManager {
         link.href = data.data;
         link.download = data.name;
         link.textContent = `📎 ${data.name}`;
+        link.className = 'text-blue-600 dark:text-blue-400 hover:underline';
         
         const messageDiv = document.createElement('div');
         messageDiv.className = 'message received';
-        messageDiv.appendChild(link);
+        
+        const messageContent = document.createElement('div');
+        messageContent.className = 'message-content';
+        messageContent.appendChild(link);
         
         const messageTime = document.createElement('div');
         messageTime.className = 'message-time';
-        messageTime.textContent = new Date().toLocaleTimeString();
+        messageTime.textContent = new Date().toLocaleTimeString('fr-FR', { 
+            hour: '2-digit', 
+            minute: '2-digit' 
+        });
+        
+        messageDiv.appendChild(messageContent);
         messageDiv.appendChild(messageTime);
         
         document.getElementById('chat-container').appendChild(messageDiv);
