@@ -1,3 +1,14 @@
+// Configuration de l'application
+const APP_CONFIG = {
+    version: '2.1.1',
+    productionUrl: 'https://gzOrg-zOg.github.io/ZogChat/',
+    isDevelopment: () => {
+        return window.location.hostname === 'localhost' || 
+               window.location.hostname === '127.0.0.1' ||
+               window.location.hostname === '0.0.0.0';
+    }
+};
+
 // JavaScript minimal pour ZogChat sobre
 class MinimalAudioManager {
     constructor() {
@@ -158,7 +169,7 @@ class MinimalChatManager {
         if (sessionId) {
             this.autoConnectToSession(sessionId);
         } else {
-            this.initializePeer();
+        this.initializePeer();
         }
         
         this.bindEvents();
@@ -189,7 +200,17 @@ class MinimalChatManager {
     }
 
     generateShareLink(peerId) {
-        const baseUrl = window.location.origin + window.location.pathname;
+        // Utiliser l'URL de production GitHub Pages au lieu de localhost
+        let baseUrl;
+        if (APP_CONFIG.isDevelopment()) {
+            // En développement local, utiliser l'URL de production
+            baseUrl = APP_CONFIG.productionUrl;
+            console.log('🔧 Mode développement détecté - Utilisation de l\'URL de production');
+        } else {
+            // En production, utiliser l'URL actuelle
+            baseUrl = window.location.origin + window.location.pathname;
+        }
+        
         this.shareLink = `${baseUrl}?session=${peerId}`;
         
         const shareLinkElement = document.getElementById('share-link');
@@ -198,6 +219,8 @@ class MinimalChatManager {
         } else {
             console.warn('Élément share-link non trouvé');
         }
+        
+        console.log('🔗 Lien de partage généré:', this.shareLink);
     }
 
     async autoConnectToSession(sessionId) {
@@ -400,12 +423,12 @@ class MinimalChatManager {
                 const shareLinkInput = document.getElementById('share-link');
                 if (shareLinkInput) {
                     shareLinkInput.select();
-                    document.execCommand('copy');
-                    
-                    // Feedback visuel
+            document.execCommand('copy');
+            
+            // Feedback visuel
                     const originalText = copyLinkBtn.innerHTML;
                     copyLinkBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"></path><circle cx="12" cy="12" r="9"></circle></svg> Copié !';
-                    setTimeout(() => {
+            setTimeout(() => {
                         copyLinkBtn.innerHTML = originalText;
                     }, 2000);
                     
@@ -637,7 +660,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Initialiser les informations de version
     initVersionInfo();
     
-    console.log('ZogChat Minimal initialisé ✨ - Version 2.1.0 avec partage par liens');
+    console.log(`ZogChat Minimal initialisé ✨ - Version ${APP_CONFIG.version} avec partage par liens`);
     
     // Debug: vérifier que les éléments existent
     console.log('Éléments trouvés:', {
@@ -790,7 +813,7 @@ function initVersionInfo() {
             const userAgent = navigator.userAgent;
             const browserInfo = getBrowserInfo();
             
-            versionInfo.title = `ZogChat v2.1.0
+            versionInfo.title = `ZogChat v${APP_CONFIG.version}
 Build: ${buildTimestamp}
 Navigateur: ${browserInfo}
 P2P: PeerJS 1.4.7
@@ -798,7 +821,7 @@ Framework: Tailwind CSS`;
 
             // Easter egg: clic sur la version pour afficher les détails
             versionInfo.addEventListener('click', () => {
-                const details = `🚀 ZogChat v2.1.0
+                const details = `🚀 ZogChat v${APP_CONFIG.version}
                 
 📅 Build: ${buildTimestamp}
 🌐 Navigateur: ${browserInfo}
@@ -807,6 +830,7 @@ Framework: Tailwind CSS`;
 📱 Responsive: Optimisé mobile
 🔒 Sécurité: Chiffrement E2E
 ⚡ Fonctionnalités: Partage par liens
+🌍 URL Production: ${APP_CONFIG.productionUrl}
 
 Développé avec ❤️ pour une communication sécurisée`;
                 
