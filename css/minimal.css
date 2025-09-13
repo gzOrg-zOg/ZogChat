@@ -65,7 +65,7 @@ body {
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Header */
+/* Header adaptatif */
 .header {
     background-color: var(--bg-secondary);
     border-bottom: 1px solid var(--border-color);
@@ -74,6 +74,24 @@ body {
     top: 0;
     z-index: 100;
     backdrop-filter: blur(8px);
+    transition: all 0.3s ease;
+}
+
+/* Header compact quand connecté */
+.header.compact {
+    padding: var(--space-sm) var(--space-md);
+}
+
+.header.compact .header-content {
+    gap: var(--space-md);
+}
+
+.header.compact .logo {
+    font-size: 1.2rem;
+}
+
+.header.compact .tagline {
+    font-size: 0.8rem;
 }
 
 .header-content {
@@ -82,6 +100,13 @@ body {
     display: flex;
     align-items: center;
     gap: var(--space-lg);
+}
+
+/* Contrôles de thème dans le header */
+.theme-controls {
+    margin-left: auto;
+    display: flex;
+    gap: var(--space-xs);
 }
 
 .logo {
@@ -130,7 +155,7 @@ body {
     border-color: var(--accent-color);
 }
 
-/* Contenu principal */
+/* Contenu principal adaptatif */
 .main {
     max-width: 800px;
     margin: 0 auto;
@@ -138,6 +163,26 @@ body {
     display: flex;
     flex-direction: column;
     gap: var(--space-xl);
+    transition: all 0.3s ease;
+}
+
+/* Mode chat : interface compacte et centrée */
+.main.chat-mode {
+    padding: var(--space-md);
+    gap: var(--space-md);
+    max-width: 1000px;
+}
+
+/* Section de connexion (se cache en mode chat) */
+.connection-section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xl);
+    transition: all 0.3s ease;
+}
+
+.connection-section.hidden {
+    display: none;
 }
 
 /* Cartes */
@@ -262,15 +307,54 @@ body {
     border: 1px solid rgb(239 68 68 / 0.2);
 }
 
-/* Chat */
+/* Chat optimisé */
+.chat-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.chat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-md);
+    flex-shrink: 0;
+}
+
+.chat-controls {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+}
+
+.connection-info {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.btn-sm {
+    padding: var(--space-sm) var(--space-md);
+    font-size: 0.8rem;
+}
+
 .chat-container {
-    max-height: 400px;
+    flex: 1;
     overflow-y: auto;
     padding: var(--space-md);
     background-color: var(--bg-primary);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-md);
     margin-bottom: var(--space-md);
+    min-height: 300px;
+    max-height: 60vh;
+}
+
+/* Mode chat : chat container plus grand */
+.main.chat-mode .chat-container {
+    max-height: 70vh;
+    min-height: 400px;
 }
 
 .message {

@@ -3,93 +3,85 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZogChat - Communication</title>
+    <title>ZogChat - Communication P2P</title>
     
     <!-- PeerJS CDN -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.0/peerjs.min.js"></script>
+    <script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
     
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=MedievalSharp&family=Pirata+One&family=Bebas+Neue&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    <!-- Google Fonts - Plus sobre -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     
-    <!-- CSS modulaire -->
-    <link rel="stylesheet" href="css/themes.css">
-    <link rel="stylesheet" href="css/main.css">
+    <!-- CSS minimal optimisé -->
+    <link rel="stylesheet" href="css/minimal.css">
 </head>
 <body>
-    <!-- Bandeau bleu en haut -->
-    <div class="top-banner">
-        <div class="banner-content">
-            <span class="banner-icon">🌟</span>
-            <span class="banner-text">Bienvenue sur ZogChat - Communication P2P sécurisée</span>
-            <span class="banner-version">v2.0</span>
+    <!-- Header compact qui se réduit après connexion -->
+    <header class="header" id="main-header">
+        <div class="header-content">
+            <h1 class="logo">ZogChat</h1>
+            <span class="tagline">Communication P2P sécurisée</span>
+            <div class="theme-controls">
+                <button id="theme-light" class="theme-btn active" title="Thème clair">☀️</button>
+                <button id="theme-dark" class="theme-btn" title="Thème sombre">🌙</button>
+                <button id="theme-auto" class="theme-btn" title="Thème automatique">🔄</button>
+    </div>
         </div>
-    </div>
+    </header>
     
-    <!-- Sélecteur de thème -->
-    <div class="theme-selector">
-        <button id="theme-warcraft" class="active">⚔ Warcraft</button>
-        <button id="theme-onepiece">🏴‍☠️ One Piece</button>
-        <button id="theme-neon">💫 Neon</button>
+    <!-- Contenu principal avec layout adaptatif -->
+    <main class="main" id="main-content">
+        <!-- Section connexion (se cache après connexion) -->
+        <div class="connection-section" id="connection-section">
+            <section class="card">
+                <h2 class="card-title">Votre identifiant</h2>
+                <div class="peer-info">
+                    <input type="text" id="peer-id" class="peer-input" readonly>
+                    <button id="copy-id" class="btn btn-secondary">Copier</button>
     </div>
+                <p class="help-text">Partagez cet identifiant pour recevoir des messages</p>
+            </section>
+            
+            <section class="card">
+                <h2 class="card-title">Se connecter</h2>
+                <div class="connect-form">
+                    <input type="text" id="connect-id" class="input" placeholder="Identifiant du destinataire">
+                    <button id="connect-btn" class="btn btn-primary">Se connecter</button>
+        </div>
+                <div class="status" id="status">En attente de connexion...</div>
+            </section>
+        </div>
+        
+        <!-- Section chat (prend toute la place après connexion) -->
+        <section class="card chat-section" id="chat-section" style="display: none;">
+            <div class="chat-header">
+                <h2 class="card-title">Conversation</h2>
+                <div class="chat-controls">
+                    <div class="connection-info" id="connection-info"></div>
+                    <button id="disconnect-btn" class="btn btn-secondary btn-sm">Déconnecter</button>
+            </div>
+        </div>
+        
+            <div class="chat-container" id="chat-container"></div>
+            
+            <div class="message-form">
+                <input type="text" id="message-input" class="input" placeholder="Tapez votre message...">
+                <button id="send-btn" class="btn btn-primary">Envoyer</button>
+        </div>
+        
+            <div class="file-drop" id="file-drop">
+                <p>📎 Glissez un fichier ici ou cliquez pour sélectionner</p>
+                <input type="file" id="file-input" hidden>
+                </div>
+        </section>
+    </main>
     
-    <!-- Contrôles audio -->
+    <!-- Contrôles audio minimalistes -->
     <div class="audio-controls">
-        <button id="soundToggle" title="Activer/Désactiver les sons">🔊</button>
-        <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="50">
-        <button id="musicToggle" title="Musique d'ambiance">🎵</button>
+        <button id="sound-toggle" class="audio-btn" title="Sons">🔊</button>
+        <button id="music-toggle" class="audio-btn" title="Musique">🎵</button>
     </div>
-    
-    <div class="container">
-        <div class="logo-container">
-            <img src="gzOrg-zOg-1024px.png" alt="ZogChat Logo" class="logo" id="logo">
-        </div>
-        <h1 id="mainTitle">⚔ ZogChat ⚔</h1>
-        <p class="subtitle" id="subtitle">Communication Mystique entre Royaumes</p>
-        
-        <div class="section">
-            <h3 id="sectionTitle1">📜 Votre Sceau Mystique</h3>
-            <div class="peer-id" id="myPeerId">Invocation du sceau...</div>
-            <button class="copy-btn" id="copyBtn">📜 Graver le Sceau</button>
-            <div class="status disconnected" id="connectionStatus">
-                🏰 Royaume isolé
-            </div>
-        </div>
-        
-        <div class="section">
-            <h3 id="sectionTitle2">🏰 Établir une Alliance</h3>
-            <input type="text" id="connectPeerId" placeholder="Inscrivez le sceau de votre allié...">
-            <button id="connectBtn">Forger l'Alliance</button>
-        </div>
-        
-        <div class="section">
-            <h3 id="sectionTitle3">⚜ Parchemin des Messages</h3>
-            <div class="chat-container" id="chatContainer">
-                <div style="text-align: center; opacity: 0.6; padding: 20px;">
-                    Forgez une alliance pour échanger des missives
-                </div>
-            </div>
-            <div class="input-group">
-                <input type="text" id="messageInput" placeholder="Rédigez votre missive..." disabled>
-                <div class="file-input-wrapper">
-                    <input type="file" id="fileInput" disabled>
-                    <button class="file-button" id="fileBtn" disabled title="Envoyer un fichier">📎</button>
-                </div>
-                <button id="sendBtn" disabled>Envoyer le Corbeau</button>
-            </div>
-        </div>
-        
-        <div class="section">
-            <h3 id="sectionTitle4">📖 Codex des Alliances</h3>
-            <ol id="instructions">
-                <li>Gravez votre sceau mystique et transmettez-le à votre allié</li>
-                <li>Recueillez le sceau de votre allié dans le champ sacré</li>
-                <li>Forgez l'alliance en activant le rituel</li>
-                <li>Échangez vos missives à travers les royaumes !</li>
-            </ol>
-        </div>
-    </div>
-    
-    <!-- JavaScript modulaire -->
-    <script type="module" src="js/main.js"></script>
+
+    <!-- JavaScript modulaire optimisé -->
+    <script type="module" src="js/minimal.js"></script>
 </body>
 </html>

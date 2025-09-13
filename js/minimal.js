@@ -185,6 +185,7 @@ class MinimalChatManager {
             this.isConnected = true;
             this.updateStatus('Connecté', 'connected');
             this.showChatSection();
+            this.enterChatMode();
             window.audioManager?.playSound('connect');
         });
 
@@ -201,6 +202,7 @@ class MinimalChatManager {
             this.isConnected = false;
             this.updateStatus('Connexion fermée', 'disconnected');
             this.hideChatSection();
+            this.exitChatMode();
         });
 
         conn.on('error', (error) => {
@@ -262,12 +264,57 @@ class MinimalChatManager {
     }
 
     showChatSection() {
-        document.getElementById('chat-section').style.display = 'block';
+        document.getElementById('chat-section').style.display = 'flex';
     }
 
     hideChatSection() {
         document.getElementById('chat-section').style.display = 'none';
         document.getElementById('chat-container').innerHTML = '';
+    }
+
+    enterChatMode() {
+        // Compacter le header
+        const header = document.getElementById('main-header');
+        header.classList.add('compact');
+        
+        // Masquer la section de connexion
+        const connectionSection = document.getElementById('connection-section');
+        connectionSection.classList.add('hidden');
+        
+        // Activer le mode chat
+        const mainContent = document.getElementById('main-content');
+        mainContent.classList.add('chat-mode');
+        
+        // Mettre à jour les infos de connexion
+        const connectionInfo = document.getElementById('connection-info');
+        if (connectionInfo && this.connection) {
+            connectionInfo.textContent = `Connecté à ${this.connection.peer}`;
+        }
+    }
+
+    exitChatMode() {
+        // Restaurer le header normal
+        const header = document.getElementById('main-header');
+        header.classList.remove('compact');
+        
+        // Afficher la section de connexion
+        const connectionSection = document.getElementById('connection-section');
+        connectionSection.classList.remove('hidden');
+        
+        // Désactiver le mode chat
+        const mainContent = document.getElementById('main-content');
+        mainContent.classList.remove('chat-mode');
+    }
+
+    disconnect() {
+        if (this.connection) {
+            this.connection.close();
+        }
+        this.isConnected = false;
+        this.connection = null;
+        this.updateStatus('Déconnecté', 'disconnected');
+        this.hideChatSection();
+        this.exitChatMode();
     }
 
     bindEvents() {
@@ -318,6 +365,12 @@ class MinimalChatManager {
             if (e.key === 'Enter') {
                 document.getElementById('connect-btn').click();
             }
+        });
+
+        // Bouton de déconnexion
+        document.getElementById('disconnect-btn').addEventListener('click', () => {
+            this.disconnect();
+            window.audioManager?.playSound('click');
         });
 
         // Gestion des fichiers (simplifié)
