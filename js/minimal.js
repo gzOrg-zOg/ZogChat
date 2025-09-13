@@ -1,6 +1,6 @@
 // Configuration de l'application
 const APP_CONFIG = {
-    version: '2.2.0',
+    version: '2.2.1',
     productionUrl: 'https://gzOrg-zOg.github.io/ZogChat/',
     isDevelopment: () => {
         return window.location.hostname === 'localhost' || 
@@ -200,6 +200,14 @@ class MinimalChatManager {
         document.getElementById('connection-section').classList.add('hidden');
         document.getElementById('chat-section').classList.remove('hidden');
         this.enterChatMode();
+        
+        // Mettre le focus automatiquement dans le champ de saisie
+        setTimeout(() => {
+            const messageInput = document.getElementById('message-input');
+            if (messageInput) {
+                messageInput.focus();
+            }
+        }, 300);
     }
 
     initializePeer() {
@@ -585,6 +593,11 @@ class MinimalChatManager {
             if (message) {
                 this.sendMessage(message);
                 messageInput.value = '';
+                
+                // Remettre le focus dans le champ de saisie
+                setTimeout(() => {
+                    messageInput.focus();
+                }, 50);
             }
         });
 
@@ -746,20 +759,30 @@ document.addEventListener('DOMContentLoaded', async () => {
     const messageInput = document.getElementById('message-input');
     const sendBtn = document.getElementById('send-btn');
     
-    // Désactiver le bouton si l'input est vide
-    messageInput.addEventListener('input', () => {
-        if (messageInput.value.trim()) {
-            sendBtn.disabled = false;
-            sendBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-        } else {
-            sendBtn.disabled = true;
-            sendBtn.classList.add('opacity-50', 'cursor-not-allowed');
+    if (messageInput && sendBtn) {
+        // Désactiver le bouton si l'input est vide
+        messageInput.addEventListener('input', () => {
+            if (messageInput.value.trim()) {
+                sendBtn.disabled = false;
+                sendBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            } else {
+                sendBtn.disabled = true;
+                sendBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            }
+        });
+        
+        // État initial du bouton
+        sendBtn.disabled = true;
+        sendBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        
+        // Focus automatique quand on clique dans la zone de chat
+        const chatContainer = document.getElementById('chat-container');
+        if (chatContainer) {
+            chatContainer.addEventListener('click', () => {
+                messageInput.focus();
+            });
         }
-    });
-    
-    // État initial du bouton
-    sendBtn.disabled = true;
-    sendBtn.classList.add('opacity-50', 'cursor-not-allowed');
+    }
     
     // Initialiser les informations de version
     initVersionInfo();
