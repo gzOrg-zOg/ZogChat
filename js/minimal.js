@@ -1,6 +1,6 @@
 // Configuration de l'application
 const APP_CONFIG = {
-    version: '2.5.1',
+    version: '2.5.2',
     productionUrl: 'https://gzOrg-zOg.github.io/ZogChat/',
     isDevelopment: () => {
         return window.location.hostname === 'localhost' || 
@@ -244,8 +244,8 @@ class MinimalChatManager {
                     console.log('🔗 URL mise à jour pour le créateur:', newUrl);
                 }
                 
-                // Activer la protection contre F5 accidentel
-                this.enableUnloadProtection();
+                // Protection F5 temporairement désactivée pour éviter l'erreur
+                // this.enableUnloadProtection();
             });
 
             this.peer.on('connection', (conn) => {
@@ -273,8 +273,8 @@ class MinimalChatManager {
                 this.generateShareLink(id);
                 this.updateStatus('En attente de connexion...', 'waiting');
                 
-                // Activer la protection contre F5 accidentel
-                this.enableUnloadProtection();
+                // Protection F5 temporairement désactivée pour éviter l'erreur
+                // this.enableUnloadProtection();
             });
 
             this.peer.on('connection', (conn) => {
