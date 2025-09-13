@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZogChat - Communication P2P</title>
+    
+    <!-- PeerJS CDN -->
+    <script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
+    
+    <!-- Google Fonts - Plus sobre -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- CSS minimal -->
+    <link rel="stylesheet" href="css/minimal.css">
+</head>
+<body>
+    <!-- Bandeau simple -->
+    <header class="header">
+        <div class="header-content">
+            <h1 class="logo">ZogChat</h1>
+            <span class="tagline">Communication P2P sécurisée</span>
+        </div>
+    </header>
+    
+    <!-- Sélecteur de thème minimal -->
+    <nav class="theme-nav">
+        <button id="theme-light" class="theme-btn active">Clair</button>
+        <button id="theme-dark" class="theme-btn">Sombre</button>
+        <button id="theme-auto" class="theme-btn">Auto</button>
+    </nav>
+    
+    <!-- Contenu principal -->
+    <main class="main">
+        <!-- Section connexion -->
+        <section class="card">
+            <h2 class="card-title">Votre identifiant</h2>
+            <div class="peer-info">
+                <input type="text" id="peer-id" class="peer-input" readonly>
+                <button id="copy-id" class="btn btn-secondary">Copier</button>
+            </div>
+            <p class="help-text">Partagez cet identifiant pour recevoir des messages</p>
+        </section>
+        
+        <!-- Section connexion à un pair -->
+        <section class="card">
+            <h2 class="card-title">Se connecter</h2>
+            <div class="connect-form">
+                <input type="text" id="connect-id" class="input" placeholder="Identifiant du destinataire">
+                <button id="connect-btn" class="btn btn-primary">Se connecter</button>
+            </div>
+            <div class="status" id="status">En attente de connexion...</div>
+        </section>
+        
+        <!-- Section chat -->
+        <section class="card chat-section" id="chat-section" style="display: none;">
+            <h2 class="card-title">Conversation</h2>
+            <div class="chat-container" id="chat-container"></div>
+            <div class="message-form">
+                <input type="text" id="message-input" class="input" placeholder="Tapez votre message...">
+                <button id="send-btn" class="btn btn-primary">Envoyer</button>
+            </div>
+            <div class="file-drop" id="file-drop">
+                <p>Glissez un fichier ici ou cliquez pour sélectionner</p>
+                <input type="file" id="file-input" hidden>
+            </div>
+        </section>
+    </main>
+    
+    <!-- Contrôles audio minimalistes -->
+    <div class="audio-controls">
+        <button id="sound-toggle" class="audio-btn" title="Sons">🔊</button>
+        <button id="music-toggle" class="audio-btn" title="Musique">🎵</button>
+    </div>
+    
+    <!-- JavaScript modulaire -->
+    <script type="module" src="js/minimal.js"></script>
+</body>
+</html>
