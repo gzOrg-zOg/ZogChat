@@ -265,9 +265,9 @@
             background-color: rgb(148 163 184);
         }
         
-        /* Force cache refresh v2.2.3 */
-        .message.sent .message-content {
-            text-align: right !important;
+        /* Force cache refresh v2.2.4 - Alignement Flexbox */
+        .message.sent {
+            justify-content: flex-end !important;
         }
     </style> 
 </head>
@@ -465,10 +465,10 @@
     
     <!-- Indicateur de version discret -->
     <div class="fixed bottom-2 left-2 text-xs text-slate-400 dark:text-slate-600 font-mono opacity-50 hover:opacity-100 transition-opacity cursor-help select-none" id="version-info" title="Informations de version">
-        <span id="app-version">v2.2.4</span> • <span id="build-date">Loading...</span>
+        <span id="app-version">v2.2.5</span> • <span id="build-date">Loading...</span>
     </div>
 
     <!-- JavaScript modulaire optimisé -->
-    <script type="module" src="js/minimal.js?v=2.2.4&t=1757786280"></script>
+    <script type="module" src="js/minimal.js?v=2.2.5&t=1757786280"></script>
 </body>
 </html>
