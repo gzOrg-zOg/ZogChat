@@ -1,6 +1,6 @@
 // Configuration de l'application
 const APP_CONFIG = {
-    version: '2.4.2',
+    version: '2.4.3',
     productionUrl: 'https://gzOrg-zOg.github.io/ZogChat/',
     isDevelopment: () => {
         return window.location.hostname === 'localhost' || 
@@ -1016,18 +1016,20 @@ Framework: Tailwind CSS`;
 
             // Easter egg: clic sur la version pour afficher les détails
             versionInfo.addEventListener('click', () => {
-                const details = `🚀 ZogChat v${APP_CONFIG.version}
-
-📅 Livraison: 13/09/2025 19:58
-🌐 Navigateur: ${browserInfo}
-🔗 P2P: PeerJS 1.4.7
-🎨 Framework: Tailwind CSS
-📱 Responsive: Optimisé mobile
-🔒 Sécurité: Chiffrement E2E
-⚡ Fonctionnalités: Partage par liens
-🌍 URL Production: ${APP_CONFIG.productionUrl}
-
-Développé avec ❤️ pour une communication sécurisée`;
+                const details = [
+                    `🚀 ZogChat v${APP_CONFIG.version}`,
+                    '',
+                    '📅 Livraison: 13/09/2025 19:58',
+                    `🌐 Navigateur: ${browserInfo}`,
+                    '🔗 P2P: PeerJS 1.4.7',
+                    '🎨 Framework: Tailwind CSS',
+                    '📱 Responsive: Optimisé mobile',
+                    '🔒 Sécurité: Chiffrement E2E',
+                    '⚡ Fonctionnalités: Partage par liens',
+                    `🌍 URL Production: ${APP_CONFIG.productionUrl}`,
+                    '',
+                    'Développé avec ❤️ pour une communication sécurisée'
+                ].join('\n');
                 
                 alert(details);
             });
