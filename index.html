@@ -305,50 +305,86 @@
     <main class="max-w-4xl mx-auto p-8 md:p-4 flex flex-col gap-8 min-h-[calc(100vh-120px)] transition-all duration-300" id="main-content">
         <!-- Section connexion (se cache après connexion) -->
         <div class="flex flex-col gap-8 transition-all duration-300" id="connection-section">
-            <section class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-8 md:p-6 shadow-sm hover:shadow-md transition-all duration-300">
-                <h2 class="text-lg font-semibold mb-6 text-slate-900 dark:text-slate-100">🔗 Partager votre session</h2>
-                <div class="space-y-4">
-                    <div class="flex flex-col sm:flex-row gap-2">
-                        <input type="text" id="share-link" class="flex-1 p-3 border border-slate-200 dark:border-slate-600 rounded-md bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 text-sm min-h-[44px] font-mono" readonly placeholder="Génération du lien en cours...">
-                        <button id="copy-link" class="px-4 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors whitespace-nowrap min-h-[44px] flex items-center gap-2">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <!-- Étape 1: Saisie du nom -->
+            <section class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-8 md:p-6 shadow-sm hover:shadow-md transition-all duration-300" id="username-section">
+                <div class="text-center mb-6">
+                    <div class="text-4xl mb-4">👋</div>
+                    <h2 class="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-2">Bienvenue sur ZogChat</h2>
+                    <p class="text-slate-600 dark:text-slate-400">Commencez par vous présenter</p>
+                </div>
+                
+                <div class="max-w-md mx-auto space-y-4">
+                    <div>
+                        <label for="username-input" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Votre nom</label>
+                        <input type="text" id="username-input" class="w-full p-3 border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 text-base focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all min-h-[48px]" placeholder="Entrez votre nom..." maxlength="30">
+                    </div>
+                    <button id="create-session-btn" class="w-full px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors min-h-[48px] font-medium" disabled>
+                        Créer ma session
+                    </button>
+                </div>
+            </section>
+            
+            <!-- Étape 2: Partage de session (masquée initialement) -->
+            <section class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-8 md:p-6 shadow-sm hover:shadow-md transition-all duration-300 hidden" id="share-section">
+                <div class="text-center mb-6">
+                    <div class="text-4xl mb-4">🔗</div>
+                    <h2 class="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-2">Partagez votre session</h2>
+                    <p class="text-slate-600 dark:text-slate-400">Invitez vos contacts à vous rejoindre</p>
+                </div>
+                
+                <div class="max-w-md mx-auto space-y-4">
+                    <!-- Lien de partage -->
+                    <div class="flex gap-2">
+                        <input type="text" id="share-link" class="flex-1 p-3 border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 text-sm min-h-[48px] font-mono" readonly placeholder="Génération du lien...">
+                        <button id="copy-link" class="px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors min-h-[48px] flex items-center justify-center" title="Copier le lien">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                                 <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
                             </svg>
-                            Copier le lien
                         </button>
                     </div>
-                    <div class="flex flex-col sm:flex-row gap-2">
-                        <button id="share-whatsapp" class="flex-1 px-4 py-3 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors min-h-[44px] flex items-center justify-center gap-2">
-                            <span>📱</span> WhatsApp
+                    
+                    <!-- Boutons de partage avec icônes -->
+                    <div class="flex justify-center gap-3">
+                        <button id="share-whatsapp" class="w-12 h-12 bg-green-600 text-white rounded-full hover:bg-green-700 transition-colors flex items-center justify-center text-xl" title="Partager sur WhatsApp">
+                            📱
                         </button>
-                        <button id="share-email" class="flex-1 px-4 py-3 bg-slate-600 text-white rounded-md hover:bg-slate-700 transition-colors min-h-[44px] flex items-center justify-center gap-2">
-                            <span>📧</span> Email
+                        <button id="share-telegram" class="w-12 h-12 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-colors flex items-center justify-center text-xl" title="Partager sur Telegram">
+                            ✈️
                         </button>
-                        <button id="share-telegram" class="flex-1 px-4 py-3 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors min-h-[44px] flex items-center justify-center gap-2">
-                            <span>✈️</span> Telegram
+                        <button id="share-email" class="w-12 h-12 bg-slate-600 text-white rounded-full hover:bg-slate-700 transition-colors flex items-center justify-center text-xl" title="Partager par Email">
+                            📧
                         </button>
+                        <button id="share-sms" class="w-12 h-12 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition-colors flex items-center justify-center text-xl" title="Partager par SMS">
+                            💬
+                        </button>
+                    </div>
+                    
+                    <div class="text-center">
+                        <p class="text-sm text-slate-600 dark:text-slate-400">
+                            <span class="inline-flex items-center gap-1">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M9 12l2 2 4-4"></path>
+                                    <circle cx="12" cy="12" r="9"></circle>
+                                </svg>
+                                Connexion automatique
+                            </span>
+                        </p>
                     </div>
     </div>
-                <p class="text-sm text-slate-600 dark:text-slate-400 mt-4">
-                    <span class="inline-flex items-center gap-1">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M9 12l2 2 4-4"></path>
-                            <circle cx="12" cy="12" r="9"></circle>
-                        </svg>
-                        Connexion automatique
-                    </span>
-                    • Partagez ce lien pour que vos contacts se connectent instantanément à votre session
-                </p>
+                
+                <div class="px-4 py-2 rounded-md text-sm font-medium text-center bg-yellow-50 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-400 border border-yellow-200 dark:border-yellow-800 mt-6" id="status">En attente de connexion...</div>
             </section>
             
-            <section class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-8 md:p-6 shadow-sm hover:shadow-md transition-all duration-300">
-                <h2 class="text-lg font-semibold mb-6 text-slate-900 dark:text-slate-100">⚡ Connexion rapide</h2>
-                <div class="flex flex-col sm:flex-row gap-2 mb-4">
-                    <input type="text" id="connect-id" class="flex-1 p-3 border border-slate-200 dark:border-slate-600 rounded-md bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all min-h-[44px]" placeholder="Ou collez un code de session...">
-                    <button id="connect-btn" class="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors whitespace-nowrap min-h-[44px]">Se connecter</button>
+            <!-- Section connexion rapide (toujours visible) -->
+            <section class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-6 md:p-4 shadow-sm">
+                <div class="text-center mb-4">
+                    <h3 class="text-sm font-medium text-slate-700 dark:text-slate-300">Ou rejoindre une session existante</h3>
+                </div>
+                <div class="flex flex-col sm:flex-row gap-2 max-w-md mx-auto">
+                    <input type="text" id="connect-id" class="flex-1 p-3 border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all min-h-[44px]" placeholder="Code de session...">
+                    <button id="connect-btn" class="px-6 py-3 bg-slate-600 text-white rounded-lg hover:bg-slate-700 transition-colors whitespace-nowrap min-h-[44px]">Rejoindre</button>
         </div>
-                <div class="px-4 py-2 rounded-md text-sm font-medium text-center bg-yellow-50 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-400 border border-yellow-200 dark:border-yellow-800" id="status">En attente de connexion...</div>
             </section>
         </div>
         
@@ -425,10 +461,10 @@
     
     <!-- Indicateur de version discret -->
     <div class="fixed bottom-2 left-2 text-xs text-slate-400 dark:text-slate-600 font-mono opacity-50 hover:opacity-100 transition-opacity cursor-help select-none" id="version-info" title="Informations de version">
-        <span id="app-version">v2.1.1</span> • <span id="build-date">Loading...</span>
+        <span id="app-version">v2.2.0</span> • <span id="build-date">Loading...</span>
     </div>
 
     <!-- JavaScript modulaire optimisé -->
-    <script type="module" src="js/minimal.js?v=2.1.1"></script>
+    <script type="module" src="js/minimal.js?v=2.2.0"></script>
 </body>
 </html>
