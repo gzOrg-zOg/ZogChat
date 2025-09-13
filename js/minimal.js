@@ -280,12 +280,16 @@ class MinimalChatManager {
     }
 
     generateShareLink(peerId) {
-        // Utiliser l'URL actuelle (localhost en dev, production en prod)
-        let baseUrl = window.location.origin + window.location.pathname;
+        // Utiliser l'URL de production pour le partage, même en développement
+        let baseUrl;
         
         if (APP_CONFIG.isDevelopment()) {
-            console.log('🔧 Mode développement détecté - Utilisation de l\'URL locale:', baseUrl);
+            // En développement, utiliser l'URL de production pour le partage
+            baseUrl = APP_CONFIG.productionUrl;
+            console.log('🔧 Mode développement - Utilisation de l\'URL de production pour le partage:', baseUrl);
         } else {
+            // En production, utiliser l'URL actuelle
+            baseUrl = window.location.origin + window.location.pathname;
             console.log('🌐 Mode production - Utilisation de l\'URL actuelle:', baseUrl);
         }
         
