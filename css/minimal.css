@@ -63,6 +63,9 @@ body {
     color: var(--text-primary);
     line-height: 1.6;
     transition: background-color 0.3s ease, color 0.3s ease;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    touch-action: manipulation;
 }
 
 /* Header adaptatif */
@@ -164,6 +167,7 @@ body {
     flex-direction: column;
     gap: var(--space-xl);
     transition: all 0.3s ease;
+    min-height: calc(100vh - 120px);
 }
 
 /* Mode chat : interface compacte et centrée */
@@ -313,6 +317,7 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 0;
+    height: 100%;
 }
 
 .chat-header {
@@ -443,32 +448,161 @@ body {
 
 /* Responsive */
 @media (max-width: 768px) {
+    html {
+        font-size: 14px;
+    }
+    
+    .header {
+        padding: var(--space-md) var(--space-sm);
+    }
+    
     .header-content {
         flex-direction: column;
         gap: var(--space-sm);
         text-align: center;
     }
     
+    .theme-controls {
+        margin-left: 0;
+        justify-content: center;
+    }
+    
     .main {
-        padding: var(--space-lg) var(--space-md);
-        gap: var(--space-lg);
+        padding: var(--space-md) var(--space-sm);
+        gap: var(--space-md);
+    }
+    
+    .main.chat-mode {
+        padding: var(--space-sm);
+        gap: var(--space-sm);
     }
     
     .card {
-        padding: var(--space-lg);
+        padding: var(--space-md);
+        border-radius: var(--radius-md);
     }
     
     .peer-info, .connect-form, .message-form {
         flex-direction: column;
+        gap: var(--space-sm);
     }
     
-    .audio-controls {
-        bottom: var(--space-md);
-        right: var(--space-md);
+    .chat-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: var(--space-sm);
+    }
+    
+    .chat-controls {
+        justify-content: space-between;
+        flex-wrap: wrap;
+    }
+    
+    .connection-info {
+        font-size: 0.75rem;
+        word-break: break-all;
+        max-width: 200px;
+    }
+    
+    .chat-container {
+        min-height: 250px;
+        max-height: 50vh;
+        margin-bottom: var(--space-sm);
+    }
+    
+    .main.chat-mode .chat-container {
+        max-height: 60vh;
+        min-height: 300px;
     }
     
     .message {
-        max-width: 90%;
+        max-width: 95%;
+        padding: var(--space-sm) var(--space-md);
+        font-size: 0.875rem;
+    }
+    
+    .message-time {
+        font-size: 0.7rem;
+    }
+    
+    .audio-controls {
+        bottom: var(--space-sm);
+        right: var(--space-sm);
+        gap: var(--space-xs);
+    }
+    
+    .audio-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+    
+    .btn {
+        padding: var(--space-sm) var(--space-md);
+        font-size: 0.8rem;
+    }
+    
+    .btn-sm {
+        padding: var(--space-xs) var(--space-sm);
+        font-size: 0.75rem;
+    }
+    
+    .input, .peer-input {
+        padding: var(--space-sm);
+        font-size: 0.8rem;
+    }
+    
+    .file-drop {
+        padding: var(--space-md);
+        font-size: 0.8rem;
+    }
+}
+
+/* Responsive pour très petits écrans */
+@media (max-width: 480px) {
+    html {
+        font-size: 13px;
+    }
+    
+    .header {
+        padding: var(--space-sm);
+    }
+    
+    .logo {
+        font-size: 1.3rem;
+    }
+    
+    .tagline {
+        font-size: 0.8rem;
+    }
+    
+    .main {
+        padding: var(--space-sm);
+    }
+    
+    .card {
+        padding: var(--space-sm) var(--space-md);
+    }
+    
+    .card-title {
+        font-size: 1rem;
+        margin-bottom: var(--space-md);
+    }
+    
+    .chat-container {
+        padding: var(--space-sm);
+        min-height: 200px;
+        max-height: 45vh;
+    }
+    
+    .connection-info {
+        font-size: 0.7rem;
+        max-width: 150px;
+    }
+    
+    .theme-btn {
+        padding: var(--space-xs) var(--space-sm);
+        font-size: 0.8rem;
     }
 }
 
@@ -499,4 +633,31 @@ body {
 
 .chat-container::-webkit-scrollbar-thumb:hover {
     background: var(--text-muted);
+}
+
+/* Améliorations tactiles pour mobile */
+@media (hover: none) and (pointer: coarse) {
+    .btn, .theme-btn, .audio-btn {
+        min-height: 44px;
+        min-width: 44px;
+    }
+    
+    .input, .peer-input {
+        min-height: 44px;
+    }
+    
+    .chat-container::-webkit-scrollbar {
+        width: 8px;
+    }
+    
+    .message {
+        padding: var(--space-md);
+    }
+}
+
+/* Éviter le zoom sur les inputs iOS */
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+    .input, .peer-input {
+        font-size: 16px;
+    }
 }

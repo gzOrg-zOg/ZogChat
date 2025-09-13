@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
     <title>ZogChat - Communication P2P</title>
     
     <!-- PeerJS CDN -->
@@ -24,7 +24,7 @@
                 <button id="theme-light" class="theme-btn active" title="Thème clair">☀️</button>
                 <button id="theme-dark" class="theme-btn" title="Thème sombre">🌙</button>
                 <button id="theme-auto" class="theme-btn" title="Thème automatique">🔄</button>
-    </div>
+            </div>
         </div>
     </header>
     
@@ -37,7 +37,7 @@
                 <div class="peer-info">
                     <input type="text" id="peer-id" class="peer-input" readonly>
                     <button id="copy-id" class="btn btn-secondary">Copier</button>
-    </div>
+                </div>
                 <p class="help-text">Partagez cet identifiant pour recevoir des messages</p>
             </section>
             
@@ -46,7 +46,7 @@
                 <div class="connect-form">
                     <input type="text" id="connect-id" class="input" placeholder="Identifiant du destinataire">
                     <button id="connect-btn" class="btn btn-primary">Se connecter</button>
-        </div>
+                </div>
                 <div class="status" id="status">En attente de connexion...</div>
             </section>
         </div>
@@ -58,15 +58,15 @@
                 <div class="chat-controls">
                     <div class="connection-info" id="connection-info"></div>
                     <button id="disconnect-btn" class="btn btn-secondary btn-sm">Déconnecter</button>
+                </div>
             </div>
-        </div>
         
             <div class="chat-container" id="chat-container"></div>
             
             <div class="message-form">
                 <input type="text" id="message-input" class="input" placeholder="Tapez votre message...">
                 <button id="send-btn" class="btn btn-primary">Envoyer</button>
-        </div>
+            </div>
         
             <div class="file-drop" id="file-drop">
                 <p>📎 Glissez un fichier ici ou cliquez pour sélectionner</p>
