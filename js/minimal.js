@@ -1,6 +1,6 @@
 // Configuration de l'application
 const APP_CONFIG = {
-    version: '2.5.2',
+    version: '2.5.3',
     productionUrl: 'https://gzOrg-zOg.github.io/ZogChat/',
     isDevelopment: () => {
         return window.location.hostname === 'localhost' || 
@@ -190,7 +190,8 @@ class MinimalChatManager {
         }
         
         this.bindEvents();
-        this.setupUnloadProtection();
+        // Protection F5 temporairement désactivée
+        // this.setupUnloadProtection();
     }
 
     showUsernameStep() {
@@ -519,7 +520,7 @@ class MinimalChatManager {
         
         // Désactiver la protection contre F5
         this.isCreator = false;
-        this.disableUnloadProtection();
+        // this.disableUnloadProtection();
         
         // Vider le chat
         const chatContainer = document.getElementById('chat-container');
