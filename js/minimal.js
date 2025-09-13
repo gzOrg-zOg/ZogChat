@@ -191,7 +191,13 @@ class MinimalChatManager {
     generateShareLink(peerId) {
         const baseUrl = window.location.origin + window.location.pathname;
         this.shareLink = `${baseUrl}?session=${peerId}`;
-        document.getElementById('share-link').value = this.shareLink;
+        
+        const shareLinkElement = document.getElementById('share-link');
+        if (shareLinkElement) {
+            shareLinkElement.value = this.shareLink;
+        } else {
+            console.warn('Élément share-link non trouvé');
+        }
     }
 
     async autoConnectToSession(sessionId) {
@@ -388,40 +394,53 @@ class MinimalChatManager {
 
     bindEvents() {
         // Copier le lien de partage
-        document.getElementById('copy-link').addEventListener('click', () => {
-            const shareLinkInput = document.getElementById('share-link');
-            shareLinkInput.select();
-            document.execCommand('copy');
-            
-            // Feedback visuel
-            const btn = document.getElementById('copy-link');
-            const originalText = btn.innerHTML;
-            btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"></path><circle cx="12" cy="12" r="9"></circle></svg> Copié !';
-            setTimeout(() => {
-                btn.innerHTML = originalText;
-            }, 2000);
-            
-            window.audioManager?.playSound('click');
-        });
+        const copyLinkBtn = document.getElementById('copy-link');
+        if (copyLinkBtn) {
+            copyLinkBtn.addEventListener('click', () => {
+                const shareLinkInput = document.getElementById('share-link');
+                if (shareLinkInput) {
+                    shareLinkInput.select();
+                    document.execCommand('copy');
+                    
+                    // Feedback visuel
+                    const originalText = copyLinkBtn.innerHTML;
+                    copyLinkBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"></path><circle cx="12" cy="12" r="9"></circle></svg> Copié !';
+                    setTimeout(() => {
+                        copyLinkBtn.innerHTML = originalText;
+                    }, 2000);
+                    
+                    window.audioManager?.playSound('click');
+                }
+            });
+        }
 
         // Partage WhatsApp
-        document.getElementById('share-whatsapp').addEventListener('click', () => {
-            const message = `Rejoins-moi sur ZogChat pour une conversation sécurisée : ${this.shareLink}`;
-            window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
-        });
+        const whatsappBtn = document.getElementById('share-whatsapp');
+        if (whatsappBtn) {
+            whatsappBtn.addEventListener('click', () => {
+                const message = `Rejoins-moi sur ZogChat pour une conversation sécurisée : ${this.shareLink}`;
+                window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
+            });
+        }
 
         // Partage Email
-        document.getElementById('share-email').addEventListener('click', () => {
-            const subject = 'Invitation ZogChat - Conversation sécurisée';
-            const body = `Salut !\\n\\nJe t'invite à me rejoindre sur ZogChat pour une conversation sécurisée et privée.\\n\\nClique sur ce lien pour te connecter automatiquement :\\n${this.shareLink}\\n\\nÀ bientôt !`;
-            window.open(`mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`, '_blank');
-        });
+        const emailBtn = document.getElementById('share-email');
+        if (emailBtn) {
+            emailBtn.addEventListener('click', () => {
+                const subject = 'Invitation ZogChat - Conversation sécurisée';
+                const body = `Salut !\\n\\nJe t'invite à me rejoindre sur ZogChat pour une conversation sécurisée et privée.\\n\\nClique sur ce lien pour te connecter automatiquement :\\n${this.shareLink}\\n\\nÀ bientôt !`;
+                window.open(`mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`, '_blank');
+            });
+        }
 
         // Partage Telegram
-        document.getElementById('share-telegram').addEventListener('click', () => {
-            const message = `Rejoins-moi sur ZogChat pour une conversation sécurisée : ${this.shareLink}`;
-            window.open(`https://t.me/share/url?url=${encodeURIComponent(this.shareLink)}&text=${encodeURIComponent(message)}`, '_blank');
-        });
+        const telegramBtn = document.getElementById('share-telegram');
+        if (telegramBtn) {
+            telegramBtn.addEventListener('click', () => {
+                const message = `Rejoins-moi sur ZogChat pour une conversation sécurisée : ${this.shareLink}`;
+                window.open(`https://t.me/share/url?url=${encodeURIComponent(this.shareLink)}&text=${encodeURIComponent(message)}`, '_blank');
+            });
+        }
 
         // Se connecter
         document.getElementById('connect-btn').addEventListener('click', () => {
@@ -615,7 +634,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     sendBtn.disabled = true;
     sendBtn.classList.add('opacity-50', 'cursor-not-allowed');
     
-    console.log('ZogChat Minimal initialisé ✨');
+    console.log('ZogChat Minimal initialisé ✨ - Version 2.0 avec partage par liens');
+    
+    // Debug: vérifier que les éléments existent
+    console.log('Éléments trouvés:', {
+        shareLink: !!document.getElementById('share-link'),
+        copyLink: !!document.getElementById('copy-link'),
+        whatsapp: !!document.getElementById('share-whatsapp'),
+        email: !!document.getElementById('share-email'),
+        telegram: !!document.getElementById('share-telegram')
+    });
 });
 
 // Gestionnaire de menu mobile
