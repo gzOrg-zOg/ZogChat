@@ -162,6 +162,7 @@ class MinimalChatManager {
         this.username = '';
         this.remoteUsername = '';
         this.inviterName = '';
+        this.expectedRecipient = '';
         this.currentStep = 'username'; // 'username', 'share', 'chat'
         this.isCreator = false;
         this.isGuest = false;
@@ -404,6 +405,22 @@ class MinimalChatManager {
                 // Recevoir le nom d'utilisateur du correspondant
                 this.remoteUsername = data.username;
                 console.log('👤 Nom du correspondant reçu:', this.remoteUsername);
+                
+                // Vérifier la sécurité si un destinataire est attendu
+                if (this.expectedRecipient && this.isCreator) {
+                    const normalizedExpected = this.expectedRecipient.toLowerCase().replace(/\s+/g, '');
+                    const normalizedReceived = this.remoteUsername.toLowerCase().replace(/\s+/g, '');
+                    
+                    if (normalizedExpected !== normalizedReceived) {
+                        console.warn('🚫 Connexion refusée - nom incorrect:', this.remoteUsername);
+                        this.updateStatus('Connexion refusée - nom incorrect', 'disconnected');
+                        conn.close();
+                        return;
+                    } else {
+                        console.log('✅ Connexion autorisée - nom vérifié:', this.remoteUsername);
+                    }
+                }
+                
                 this.updateChatTitle();
             }
         });
@@ -609,7 +626,16 @@ class MinimalChatManager {
                 // Si c'est un invité, se connecter directement
                 this.connectAsGuest();
             } else {
-                // Si c'est le créateur, aller à l'étape de partage
+                // Si c'est le créateur, récupérer le nom du destinataire
+                const recipientInput = document.getElementById('recipient-input');
+                if (recipientInput) {
+                    this.expectedRecipient = recipientInput.value.trim();
+                    if (this.expectedRecipient) {
+                        console.log(`🔒 Destinataire attendu: ${this.expectedRecipient}`);
+                    }
+                }
+                
+                // Aller à l'étape de partage
                 this.showShareStep();
             }
             
@@ -632,10 +658,26 @@ class MinimalChatManager {
                 if (username.length >= 2) {
                     createSessionBtn.disabled = false;
                     createSessionBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                    
+                    // Afficher le champ destinataire pour les créateurs
+                    if (!this.isGuest) {
+                        const recipientField = document.getElementById('recipient-field');
+                        if (recipientField) {
+                            recipientField.classList.remove('hidden');
+                        }
+                    }
+                    
                     console.log('✅ Bouton activé');
                 } else {
                     createSessionBtn.disabled = true;
                     createSessionBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                    
+                    // Masquer le champ destinataire
+                    const recipientField = document.getElementById('recipient-field');
+                    if (recipientField) {
+                        recipientField.classList.add('hidden');
+                    }
+                    
                     console.log('❌ Bouton désactivé');
                 }
             };
