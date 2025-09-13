@@ -1,6 +1,6 @@
 // Configuration de l'application
 const APP_CONFIG = {
-    version: '2.7.2',
+    version: '2.7.3',
     productionUrl: 'https://gzOrg-zOg.github.io/ZogChat/',
     isDevelopment: () => {
         return window.location.hostname === 'localhost' || 
@@ -1090,11 +1090,14 @@ function getBrowserInfo() {
     return browser;
 }
 
-// Initialiser l'application
+// Initialiser le menu mobile
 document.addEventListener('DOMContentLoaded', () => {
     window.mobileMenu = new MobileMenuManager();
-    window.chatManager = new MinimalChatManager();
-    window.chatManager.init();
     
-    console.log('✅ ZogChat initialisé');
+    // Initialiser le chat manager seulement si pas déjà fait
+    if (!window.chatManager) {
+        window.chatManager = new MinimalChatManager();
+        window.chatManager.init();
+        console.log('✅ ZogChat initialisé');
+    }
 });
