@@ -1,6 +1,6 @@
 // Configuration de l'application
 const APP_CONFIG = {
-    version: '2.2.6',
+    version: '2.2.7',
     productionUrl: 'https://gzOrg-zOg.github.io/ZogChat/',
     isDevelopment: () => {
         return window.location.hostname === 'localhost' || 
@@ -290,10 +290,11 @@ class MinimalChatManager {
             this.updateStatus('Connecté', 'connected');
             this.showChatStep();
             
-            // Nettoyer l'URL après connexion
-            if (window.location.search) {
-                window.history.replaceState({}, document.title, window.location.pathname);
-            }
+            // Garder le paramètre session dans l'URL pour permettre le rechargement
+            // (Commenté pour conserver la session lors du rechargement)
+            // if (window.location.search) {
+            //     window.history.replaceState({}, document.title, window.location.pathname);
+            // }
             
             window.audioManager?.playSound('connect');
         });
