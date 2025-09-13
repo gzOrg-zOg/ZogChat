@@ -161,6 +161,7 @@ class MinimalChatManager {
         this.shareLink = '';
         this.username = '';
         this.remoteUsername = '';
+        this.inviterName = '';
         this.currentStep = 'username'; // 'username', 'share', 'chat'
         this.isCreator = false;
         this.isGuest = false;
@@ -171,10 +172,12 @@ class MinimalChatManager {
         // Vérifier si on a un ID de session dans l'URL
         const urlParams = new URLSearchParams(window.location.search);
         const sessionId = urlParams.get('session');
+        const inviterName = urlParams.get('inviter');
         
         if (sessionId) {
             // Invité se connecte via le lien
             this.isCreator = false;
+            this.inviterName = inviterName ? decodeURIComponent(inviterName) : null;
             this.autoConnectToSession(sessionId);
         } else {
             // Commencer par l'étape de saisie du nom
@@ -285,7 +288,7 @@ class MinimalChatManager {
             console.log('🌐 Mode production - Utilisation de l\'URL actuelle:', baseUrl);
         }
         
-        this.shareLink = `${baseUrl}?session=${peerId}`;
+        this.shareLink = `${baseUrl}?session=${peerId}&inviter=${encodeURIComponent(this.username)}`;
         
         const shareLinkElement = document.getElementById('share-link');
         if (shareLinkElement) {
@@ -303,19 +306,38 @@ class MinimalChatManager {
         this.sessionIdToConnect = sessionId;
         this.isGuest = true;
         
-        // Modifier le texte du bouton pour l'invité
+        // Personnaliser l'interface pour l'invité
+        this.personalizeGuestInterface();
+    }
+    
+    personalizeGuestInterface() {
+        const usernameSection = document.getElementById('username-section');
+        if (!usernameSection) return;
+        
+        // Modifier le titre
+        const title = usernameSection.querySelector('h2');
+        if (title) {
+            title.textContent = 'Rejoindre la conversation';
+        }
+        
+        // Modifier la description
+        const description = usernameSection.querySelector('p');
+        if (description && this.inviterName) {
+            description.innerHTML = `<strong>${this.inviterName}</strong> vous invite à rejoindre la conversation sécurisée.<br>Confirmez votre nom :`;
+        } else if (description) {
+            description.textContent = 'Vous êtes invité à rejoindre une conversation sécurisée. Confirmez votre nom :';
+        }
+        
+        // Modifier le texte du bouton
         const createBtn = document.getElementById('create-session-btn');
         if (createBtn) {
             createBtn.textContent = 'Rejoindre la conversation';
         }
         
-        // Modifier le titre pour l'invité
-        const usernameSection = document.getElementById('username-section');
-        if (usernameSection) {
-            const title = usernameSection.querySelector('h2');
-            if (title) {
-                title.textContent = 'Rejoindre la conversation';
-            }
+        // Modifier le label du champ
+        const label = usernameSection.querySelector('label[for="username-input"]');
+        if (label) {
+            label.textContent = 'Votre nom';
         }
     }
     
