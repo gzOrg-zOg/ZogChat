@@ -472,3 +472,126 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     console.log('ZogChat Minimal initialisé ✨');
 });
+
+// Gestionnaire de menu mobile
+class MobileMenuManager {
+    constructor() {
+        this.menuBtn = document.getElementById('mobile-menu-btn');
+        this.menu = document.getElementById('mobile-menu');
+        this.isOpen = false;
+        this.init();
+    }
+
+    init() {
+        if (!this.menuBtn || !this.menu) return;
+
+        // Toggle menu
+        this.menuBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.toggle();
+        });
+
+        // Fermer le menu en cliquant ailleurs
+        document.addEventListener('click', (e) => {
+            if (this.isOpen && !this.menu.contains(e.target)) {
+                this.close();
+            }
+        });
+
+        // Synchroniser les boutons de thème mobile avec les principaux
+        this.syncThemeButtons();
+    }
+
+    toggle() {
+        if (this.isOpen) {
+            this.close();
+        } else {
+            this.open();
+        }
+    }
+
+    open() {
+        this.menu.classList.remove('hidden');
+        this.menu.classList.add('block');
+        this.menuBtn.innerHTML = '✕';
+        this.isOpen = true;
+    }
+
+    close() {
+        this.menu.classList.remove('block');
+        this.menu.classList.add('hidden');
+        this.menuBtn.innerHTML = '☰';
+        this.isOpen = false;
+    }
+
+    syncThemeButtons() {
+        // Synchroniser les boutons de thème mobile
+        const mobileThemeButtons = {
+            light: document.getElementById('mobile-theme-light'),
+            dark: document.getElementById('mobile-theme-dark'),
+            auto: document.getElementById('mobile-theme-auto')
+        };
+
+        const desktopThemeButtons = {
+            light: document.getElementById('theme-light'),
+            dark: document.getElementById('theme-dark'),
+            auto: document.getElementById('theme-auto')
+        };
+
+        // Écouter les clics sur les boutons mobiles
+        Object.keys(mobileThemeButtons).forEach(theme => {
+            const mobileBtn = mobileThemeButtons[theme];
+            const desktopBtn = desktopThemeButtons[theme];
+            
+            if (mobileBtn && desktopBtn) {
+                mobileBtn.addEventListener('click', () => {
+                    desktopBtn.click();
+                    this.close();
+                });
+            }
+        });
+
+        // Observer les changements sur les boutons desktop pour synchroniser mobile
+        const observer = new MutationObserver(() => {
+            Object.keys(desktopThemeButtons).forEach(theme => {
+                const desktopBtn = desktopThemeButtons[theme];
+                const mobileBtn = mobileThemeButtons[theme];
+                
+                if (desktopBtn && mobileBtn) {
+                    if (desktopBtn.classList.contains('bg-blue-600')) {
+                        mobileBtn.classList.add('bg-blue-600', 'text-white');
+                        mobileBtn.classList.remove('hover:bg-slate-100', 'dark:hover:bg-slate-700');
+                    } else {
+                        mobileBtn.classList.remove('bg-blue-600', 'text-white');
+                        mobileBtn.classList.add('hover:bg-slate-100', 'dark:hover:bg-slate-700');
+                    }
+                }
+            });
+        });
+
+        Object.values(desktopThemeButtons).forEach(btn => {
+            if (btn) {
+                observer.observe(btn, { attributes: true, attributeFilter: ['class'] });
+            }
+        });
+    }
+
+    updateConnectionInfo(peerId) {
+        const mobileConnectionInfo = document.getElementById('mobile-connection-info');
+        const mobilePeerDisplay = document.getElementById('mobile-peer-display');
+        
+        if (mobileConnectionInfo && mobilePeerDisplay) {
+            if (peerId) {
+                mobileConnectionInfo.style.display = 'flex';
+                mobilePeerDisplay.textContent = peerId;
+            } else {
+                mobileConnectionInfo.style.display = 'none';
+            }
+        }
+    }
+}
+
+// Initialiser le menu mobile
+document.addEventListener('DOMContentLoaded', () => {
+    window.mobileMenu = new MobileMenuManager();
+});

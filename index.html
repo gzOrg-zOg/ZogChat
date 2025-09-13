@@ -8,77 +8,306 @@
     <!-- PeerJS CDN -->
     <script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
     
-    <!-- Google Fonts - Plus sobre -->
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     
-    <!-- CSS minimal optimisé -->
-    <link rel="stylesheet" href="css/minimal.css">
+    <!-- Configuration Tailwind personnalisée -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['Inter', 'system-ui', 'sans-serif'],
+                        'mono': ['JetBrains Mono', 'monospace']
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.3s ease-out',
+                        'slide-down': 'slideDown 0.2s ease-out'
+                    }
+                }
+            },
+            darkMode: 'class'
+        }
+    </script>
+    
+    <!-- Styles personnalisés pour les messages -->
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .message {
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        .message.sent {
+            background-color: rgb(37 99 235);
+            color: white;
+            margin-left: auto;
+            text-align: right;
+            max-width: 80%;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            word-wrap: break-word;
+        }
+        
+        @media (min-width: 768px) {
+            .message.sent {
+                max-width: 95%;
+                padding: 1rem;
+            }
+        }
+        
+        .message.received {
+            background-color: rgb(226 232 240);
+            color: rgb(15 23 42);
+            max-width: 80%;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            word-wrap: break-word;
+        }
+        
+        @media (min-width: 768px) {
+            .message.received {
+                max-width: 95%;
+                padding: 1rem;
+            }
+        }
+        
+        .dark .message.received {
+            background-color: rgb(51 65 85);
+            color: rgb(248 250 252);
+        }
+        
+        .message-time {
+            font-size: 0.75rem;
+            opacity: 0.7;
+            margin-top: 0.25rem;
+        }
+        
+        /* Header compact en mode chat */
+        .header.compact {
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+        }
+        
+        @media (min-width: 768px) {
+            .header.compact {
+                padding-top: 0.25rem;
+                padding-bottom: 0.25rem;
+            }
+        }
+        
+        .header.compact .logo {
+            font-size: 1rem;
+        }
+        
+        @media (min-width: 768px) {
+            .header.compact .logo {
+                font-size: 1.125rem;
+            }
+        }
+        
+        .header.compact .tagline {
+            display: none;
+        }
+        
+        /* Chat mode */
+        .main.chat-mode {
+            padding: 0.25rem;
+            gap: 0.25rem;
+            max-width: 80rem;
+        }
+        
+        @media (min-width: 768px) {
+            .main.chat-mode {
+                padding: 0.5rem;
+                gap: 0.5rem;
+            }
+        }
+        
+        .main.chat-mode .chat-section {
+            padding: 0.25rem;
+        }
+        
+        @media (min-width: 768px) {
+            .main.chat-mode .chat-section {
+                padding: 0.5rem;
+            }
+        }
+        
+        /* Status styles */
+        .status.waiting {
+            background-color: rgb(254 252 232);
+            color: rgb(161 98 7);
+            border-color: rgb(254 240 138);
+        }
+        
+        .dark .status.waiting {
+            background-color: rgb(120 53 15 / 0.2);
+            color: rgb(251 191 36);
+            border-color: rgb(120 53 15);
+        }
+        
+        .status.connected {
+            background-color: rgb(236 253 245);
+            color: rgb(21 128 61);
+            border-color: rgb(167 243 208);
+        }
+        
+        .dark .status.connected {
+            background-color: rgb(6 78 59 / 0.2);
+            color: rgb(52 211 153);
+            border-color: rgb(6 78 59);
+        }
+        
+        .status.disconnected {
+            background-color: rgb(254 242 242);
+            color: rgb(185 28 28);
+            border-color: rgb(254 202 202);
+        }
+        
+        .dark .status.disconnected {
+            background-color: rgb(127 29 29 / 0.2);
+            color: rgb(248 113 113);
+            border-color: rgb(127 29 29);
+        }
+        
+        /* Scrollbar personnalisée */
+        #chat-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        #chat-container::-webkit-scrollbar-track {
+            background-color: rgb(226 232 240);
+            border-radius: 0.25rem;
+        }
+        
+        .dark #chat-container::-webkit-scrollbar-track {
+            background-color: rgb(51 65 85);
+        }
+        
+        #chat-container::-webkit-scrollbar-thumb {
+            background-color: rgb(148 163 184);
+            border-radius: 0.25rem;
+        }
+        
+        .dark #chat-container::-webkit-scrollbar-thumb {
+            background-color: rgb(100 116 139);
+        }
+        
+        #chat-container::-webkit-scrollbar-thumb:hover {
+            background-color: rgb(100 116 139);
+        }
+        
+        .dark #chat-container::-webkit-scrollbar-thumb:hover {
+            background-color: rgb(148 163 184);
+        }
+    </style>
 </head>
-<body>
+<body class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 font-sans transition-colors duration-300">
     <!-- Header compact qui se réduit après connexion -->
-    <header class="header" id="main-header">
-        <div class="header-content">
-            <h1 class="logo">ZogChat</h1>
-            <span class="tagline">Communication P2P sécurisée</span>
-            <div class="theme-controls">
-                <button id="theme-light" class="theme-btn active" title="Thème clair">☀️</button>
-                <button id="theme-dark" class="theme-btn" title="Thème sombre">🌙</button>
-                <button id="theme-auto" class="theme-btn" title="Thème automatique">🔄</button>
+    <header class="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-50 backdrop-blur-sm transition-all duration-300" id="main-header">
+        <div class="max-w-4xl mx-auto px-4 py-6 flex items-center gap-6">
+            <h1 class="text-2xl font-semibold text-blue-600 dark:text-blue-400">ZogChat</h1>
+            <span class="text-sm text-slate-600 dark:text-slate-400 hidden sm:inline">Communication P2P sécurisée</span>
+            <div class="ml-auto flex items-center gap-2">
+                <div class="hidden md:flex gap-1">
+                    <button id="theme-light" class="px-3 py-2 text-sm border border-slate-200 dark:border-slate-600 rounded-md hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors bg-blue-600 text-white" title="Thème clair">☀️</button>
+                    <button id="theme-dark" class="px-3 py-2 text-sm border border-slate-200 dark:border-slate-600 rounded-md hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors" title="Thème sombre">🌙</button>
+                    <button id="theme-auto" class="px-3 py-2 text-sm border border-slate-200 dark:border-slate-600 rounded-md hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors" title="Thème automatique">🔄</button>
+                </div>
+                <button class="md:hidden p-2 border border-slate-200 dark:border-slate-600 rounded-md hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors min-w-[40px] min-h-[40px] flex items-center justify-center" id="mobile-menu-btn" title="Menu">☰</button>
+            </div>
+        </div>
+        
+        <!-- Menu mobile -->
+        <div class="hidden absolute top-full left-0 right-0 bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 shadow-lg z-40" id="mobile-menu">
+            <div class="p-4 flex flex-col gap-4">
+                <div class="flex flex-col gap-2">
+                    <span class="text-sm font-medium text-slate-600 dark:text-slate-400">Thème :</span>
+                    <div class="flex gap-2">
+                        <button id="mobile-theme-light" class="p-2 border border-slate-200 dark:border-slate-600 rounded-md hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors min-w-[40px] min-h-[40px] bg-blue-600 text-white">☀️</button>
+                        <button id="mobile-theme-dark" class="p-2 border border-slate-200 dark:border-slate-600 rounded-md hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors min-w-[40px] min-h-[40px]">🌙</button>
+                        <button id="mobile-theme-auto" class="p-2 border border-slate-200 dark:border-slate-600 rounded-md hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors min-w-[40px] min-h-[40px]">🔄</button>
+                    </div>
+                </div>
+                <div class="hidden flex-col gap-2" id="mobile-connection-info">
+                    <span class="text-sm font-medium text-slate-600 dark:text-slate-400">Connecté à :</span>
+                    <div class="font-mono text-xs bg-slate-200 dark:bg-slate-700 p-2 rounded break-all text-slate-900 dark:text-slate-100" id="mobile-peer-display"></div>
+                </div>
             </div>
         </div>
     </header>
     
     <!-- Contenu principal avec layout adaptatif -->
-    <main class="main" id="main-content">
+    <main class="max-w-4xl mx-auto p-8 md:p-4 flex flex-col gap-8 min-h-[calc(100vh-120px)] transition-all duration-300" id="main-content">
         <!-- Section connexion (se cache après connexion) -->
-        <div class="connection-section" id="connection-section">
-            <section class="card">
-                <h2 class="card-title">Votre identifiant</h2>
-                <div class="peer-info">
-                    <input type="text" id="peer-id" class="peer-input" readonly>
-                    <button id="copy-id" class="btn btn-secondary">Copier</button>
+        <div class="flex flex-col gap-8 transition-all duration-300" id="connection-section">
+            <section class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-8 md:p-6 shadow-sm hover:shadow-md transition-all duration-300">
+                <h2 class="text-lg font-semibold mb-6 text-slate-900 dark:text-slate-100">Votre identifiant</h2>
+                <div class="flex flex-col sm:flex-row gap-2 mb-4">
+                    <input type="text" id="peer-id" class="flex-1 p-3 border border-slate-200 dark:border-slate-600 rounded-md bg-slate-100 dark:bg-slate-700 text-slate-900 dark:text-slate-100 font-mono text-sm min-h-[44px]" readonly>
+                    <button id="copy-id" class="px-4 py-3 bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-600 rounded-md hover:bg-slate-100 dark:hover:bg-slate-600 transition-colors whitespace-nowrap min-h-[44px]">Copier</button>
                 </div>
-                <p class="help-text">Partagez cet identifiant pour recevoir des messages</p>
+                <p class="text-sm text-slate-600 dark:text-slate-400">Partagez cet identifiant pour recevoir des messages</p>
             </section>
             
-            <section class="card">
-                <h2 class="card-title">Se connecter</h2>
-                <div class="connect-form">
-                    <input type="text" id="connect-id" class="input" placeholder="Identifiant du destinataire">
-                    <button id="connect-btn" class="btn btn-primary">Se connecter</button>
+            <section class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-8 md:p-6 shadow-sm hover:shadow-md transition-all duration-300">
+                <h2 class="text-lg font-semibold mb-6 text-slate-900 dark:text-slate-100">Se connecter</h2>
+                <div class="flex flex-col sm:flex-row gap-2 mb-4">
+                    <input type="text" id="connect-id" class="flex-1 p-3 border border-slate-200 dark:border-slate-600 rounded-md bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all min-h-[44px]" placeholder="Identifiant du destinataire">
+                    <button id="connect-btn" class="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors whitespace-nowrap min-h-[44px]">Se connecter</button>
                 </div>
-                <div class="status" id="status">En attente de connexion...</div>
+                <div class="px-4 py-2 rounded-md text-sm font-medium text-center bg-yellow-50 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-400 border border-yellow-200 dark:border-yellow-800" id="status">En attente de connexion...</div>
             </section>
         </div>
         
         <!-- Section chat (prend toute la place après connexion) -->
-        <section class="card chat-section" id="chat-section" style="display: none;">
-            <div class="chat-header">
-                <h2 class="card-title">Conversation</h2>
-                <div class="chat-controls">
-                    <div class="connection-info" id="connection-info"></div>
-                    <button id="disconnect-btn" class="btn btn-secondary btn-sm">Déconnecter</button>
+        <section class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-2 md:p-6 shadow-sm flex flex-col flex-1 min-h-0 hidden" id="chat-section">
+            <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-2 mb-4 md:mb-6">
+                <h2 class="text-lg font-semibold text-slate-900 dark:text-slate-100">
+                    <span class="hidden md:inline">Conversation</span>
+                    <span class="md:hidden">💬</span>
+                </h2>
+                <div class="flex items-center justify-between gap-4">
+                    <div class="hidden md:block text-sm text-slate-600 dark:text-slate-400 font-mono" id="connection-info"></div>
+                    <button id="disconnect-btn" class="px-3 py-1 md:px-4 md:py-2 bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-600 rounded-md hover:bg-slate-100 dark:hover:bg-slate-600 transition-colors text-sm">
+                        <span class="hidden md:inline">Déconnecter</span>
+                        <span class="md:hidden">✕</span>
+                    </button>
                 </div>
             </div>
         
-            <div class="chat-container" id="chat-container"></div>
+            <div class="flex-1 overflow-y-auto p-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-600 rounded-md mb-4 min-h-[250px] md:min-h-[300px] max-h-[50vh] md:max-h-[60vh]" id="chat-container"></div>
             
-            <div class="message-form">
-                <input type="text" id="message-input" class="input" placeholder="Tapez votre message...">
-                <button id="send-btn" class="btn btn-primary">Envoyer</button>
+            <div class="flex flex-col sm:flex-row gap-2">
+                <input type="text" id="message-input" class="flex-1 p-3 border border-slate-200 dark:border-slate-600 rounded-md bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all min-h-[44px]" placeholder="Tapez votre message...">
+                <button id="send-btn" class="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors whitespace-nowrap min-h-[44px]">Envoyer</button>
             </div>
         
-            <div class="file-drop" id="file-drop">
-                <p>📎 Glissez un fichier ici ou cliquez pour sélectionner</p>
+            <div class="border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-md p-8 md:p-6 text-center text-slate-500 dark:text-slate-400 cursor-pointer hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600 dark:hover:text-blue-400 transition-all mt-4" id="file-drop">
+                <p class="text-sm">📎 Glissez un fichier ici ou cliquez pour sélectionner</p>
                 <input type="file" id="file-input" hidden>
-                </div>
+            </div>
         </section>
     </main>
     
     <!-- Contrôles audio minimalistes -->
-    <div class="audio-controls">
-        <button id="sound-toggle" class="audio-btn" title="Sons">🔊</button>
-        <button id="music-toggle" class="audio-btn" title="Musique">🎵</button>
+    <div class="fixed bottom-4 md:bottom-6 right-4 md:right-6 flex gap-2">
+        <button id="sound-toggle" class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 text-lg hover:bg-blue-600 hover:text-white hover:-translate-y-1 transition-all duration-200 shadow-md hover:shadow-lg" title="Sons">🔊</button>
+        <button id="music-toggle" class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 text-lg hover:bg-blue-600 hover:text-white hover:-translate-y-1 transition-all duration-200 shadow-md hover:shadow-lg opacity-50" title="Musique">🎵</button>
     </div>
 
     <!-- JavaScript modulaire optimisé -->
