@@ -3,7 +3,7 @@ const APP_CONFIG = {
     version: '2.10.1'
 };
 
-// JavaScript minimal pour QuantumChat sobre
+// JavaScript minimal pour QChat sobre
 class MinimalAudioManager {
     constructor() {
         this.audioContext = null;
@@ -724,10 +724,10 @@ class MinimalChatManager {
         const emailBtn = document.getElementById('share-email');
         if (emailBtn) {
             emailBtn.addEventListener('click', () => {
-                const subject = 'Invitation QuantumChat - Conversation sécurisée';
+                const subject = 'Invitation QChat - Conversation sécurisée';
                 const body = `Salut !
 
-Je t'invite à me rejoindre sur QuantumChat pour une conversation sécurisée et privée.
+Je t'invite à me rejoindre sur QChat pour une conversation sécurisée et privée.
 
 Clique sur ce lien pour te connecter automatiquement :
 ${this.shareLink || 'Lien non disponible'}
@@ -948,7 +948,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Initialiser les informations de version
     initVersionInfo();
     
-    console.log(`QuantumChat Minimal initialisé ✨ - Version ${APP_CONFIG.version} avec partage par liens`);
+    console.log(`QChat Minimal initialisé ✨ - Version ${APP_CONFIG.version} avec partage par liens`);
     
     // Debug: vérifier que les éléments existent
     console.log('Éléments trouvés:', {
@@ -1150,7 +1150,7 @@ function initVersionInfo() {
             window.audioManager?.playSound('click');
             
             if (clickCount === 1) {
-                appVersion.textContent = '🎉 QuantumChat';
+                appVersion.textContent = '🎉 QChat';
                 appVersion.style.transform = 'scale(1.3)';
                 appVersion.style.color = '#f59e0b';
                 setTimeout(() => {
@@ -1227,6 +1227,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!window.chatManager) {
         window.chatManager = new MinimalChatManager();
         window.chatManager.init();
-        console.log('✅ QuantumChat initialisé');
+        console.log('✅ QChat initialisé');
     }
 });
