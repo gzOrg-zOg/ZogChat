@@ -302,15 +302,20 @@
         }
         
         .dark #chat-section {
-            background: rgb(15 23 42) !important;
+            background: #1e293b !important;
+        }
+        
+        /* Background général en mode sombre */
+        .dark body {
+            background: #0f172a !important;
         }
         
         /* Force cache refresh v2.2.5 - Retrait justify-content conflictuel */
     </style> 
 </head>
-<body class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 font-sans transition-colors duration-300" style="background-image: url('quarks-wave.png'); background-repeat: no-repeat; background-position: left center; background-attachment: fixed; background-size: auto 100vh;">
+<body class="bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans transition-colors duration-300" style="background-image: url('quarks-wave.png'); background-repeat: no-repeat; background-position: left center; background-attachment: fixed; background-size: auto 100vh;">
     <!-- Header compact qui se réduit après connexion -->
-    <header class="bg-slate-50/90 dark:bg-slate-800/90 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-50 backdrop-blur-sm transition-all duration-300" id="main-header">
+    <header class="bg-slate-50/90 dark:bg-slate-900/95 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-50 backdrop-blur-sm transition-all duration-300" id="main-header">
         <div class="max-w-4xl mx-auto px-4 py-6 flex items-center gap-6">
             <h1 class="text-2xl font-semibold text-primary-800 dark:text-primary-400">QChat</h1>
             <span class="text-sm text-slate-600 dark:text-slate-400 hidden sm:inline">Communication P2P sécurisée</span>
@@ -322,7 +327,7 @@
         </div>
         
         <!-- Menu mobile -->
-        <div class="hidden absolute top-full left-0 right-0 bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 shadow-lg z-40" id="mobile-menu">
+        <div class="hidden absolute top-full left-0 right-0 bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 shadow-lg z-40" id="mobile-menu">
             <div class="p-4 flex flex-col gap-4">
                 <div class="flex flex-col gap-2">
                     <span class="text-sm font-medium text-slate-600 dark:text-slate-400">Thème :</span>
