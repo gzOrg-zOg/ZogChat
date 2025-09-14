@@ -516,7 +516,7 @@ class MinimalChatManager {
         }
         
         messageContent.className = roundingClass;
-        messageContent.textContent = content;
+        messageContent.innerHTML = content;
         
         
         const messageTime = document.createElement('div');
