@@ -89,13 +89,13 @@ class MinimalAudioManager {
 
 class MinimalThemeManager {
     constructor() {
-        // Récupérer le thème sauvegardé ou utiliser le thème système
+        // Récupérer le thème sauvegardé ou utiliser le mode clair par défaut
         const savedTheme = localStorage.getItem('qchat-theme');
         if (savedTheme) {
             this.isDark = savedTheme === 'dark';
         } else {
-            // Détecter la préférence système
-            this.isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            // Mode clair par défaut
+            this.isDark = false;
         }
     }
 
@@ -330,7 +330,7 @@ class MinimalChatManager {
         if (description && this.inviterName) {
             description.innerHTML = `<strong>${this.inviterName}</strong> vous invite à rejoindre la conversation sécurisée.<br>Confirmez votre nom :`;
         } else if (description) {
-            description.textContent = 'Vous êtes invité à rejoindre une conversation sécurisée. Confirmez votre nom :';
+            description.textContent = 'Vous êtes invité à rejoindre une conversation sécurisée.';
         }
         
         // Modifier le texte du bouton
