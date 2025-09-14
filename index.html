@@ -296,6 +296,15 @@
             box-shadow: 0 2px 8px rgba(33, 45, 67, 0.3);
         }
         
+        /* Forcer l'opacité complète du chat */
+        #chat-section {
+            background: white !important;
+        }
+        
+        .dark #chat-section {
+            background: rgb(15 23 42) !important;
+        }
+        
         /* Force cache refresh v2.2.5 - Retrait justify-content conflictuel */
     </style> 
 </head>
@@ -400,7 +409,7 @@
         </div>
         
         <!-- Section chat (prend toute la place après connexion) -->
-        <section class="flex flex-col flex-1 min-h-0 hidden" id="chat-section">
+        <section class="flex flex-col flex-1 min-h-0 hidden bg-white dark:bg-slate-900" id="chat-section">
             <!-- Header du chat -->
             <div class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-t-lg p-2 md:p-4 shadow-sm">
                 <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-2">
