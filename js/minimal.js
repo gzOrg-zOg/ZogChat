@@ -89,18 +89,75 @@ class MinimalAudioManager {
 
 class MinimalThemeManager {
     constructor() {
-        // Toujours utiliser le thème clair par défaut
-        this.isDark = false;
+        // Récupérer le thème sauvegardé ou utiliser le thème système
+        const savedTheme = localStorage.getItem('qchat-theme');
+        if (savedTheme) {
+            this.isDark = savedTheme === 'dark';
+        } else {
+            // Détecter la préférence système
+            this.isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        }
     }
 
     init() {
         this.applyTheme();
+        this.updateIcons();
+        this.bindEvents();
     }
 
     applyTheme() {
         const body = document.body;
-        // Forcer le thème clair
-        body.setAttribute('data-theme', 'light');
+        
+        if (this.isDark) {
+            body.classList.add('dark');
+        } else {
+            body.classList.remove('dark');
+        }
+        
+        // Sauvegarder la préférence
+        localStorage.setItem('qchat-theme', this.isDark ? 'dark' : 'light');
+        
+        this.updateIcons();
+    }
+
+    toggleTheme() {
+        this.isDark = !this.isDark;
+        this.applyTheme();
+        window.audioManager?.playSound('click');
+    }
+
+    updateIcons() {
+        const themeToggle = document.getElementById('theme-toggle');
+        const mobileThemeToggle = document.getElementById('mobile-theme-toggle');
+        
+        const icon = this.isDark ? '☀️' : '🌙';
+        const title = this.isDark ? 'Passer au thème clair' : 'Passer au thème sombre';
+        
+        if (themeToggle) {
+            themeToggle.textContent = icon;
+            themeToggle.title = title;
+        }
+        
+        if (mobileThemeToggle) {
+            mobileThemeToggle.textContent = icon;
+        }
+    }
+
+    bindEvents() {
+        const themeToggle = document.getElementById('theme-toggle');
+        const mobileThemeToggle = document.getElementById('mobile-theme-toggle');
+        
+        if (themeToggle) {
+            themeToggle.addEventListener('click', () => {
+                this.toggleTheme();
+            });
+        }
+        
+        if (mobileThemeToggle) {
+            mobileThemeToggle.addEventListener('click', () => {
+                this.toggleTheme();
+            });
+        }
     }
 }
 
