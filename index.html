@@ -315,6 +315,7 @@
             <h1 class="text-2xl font-semibold text-primary-800 dark:text-primary-400">QChat</h1>
             <span class="text-sm text-slate-600 dark:text-slate-400 hidden sm:inline">Communication P2P sécurisée</span>
             <div class="ml-auto flex items-center gap-2">
+                <button id="sound-toggle" class="hidden md:flex p-2 border border-slate-200 dark:border-slate-600 rounded-md hover:bg-primary-800 hover:text-white transition-colors min-w-[40px] min-h-[40px] items-center justify-center" title="Sons">🔊</button>
                 <button class="md:hidden p-2 border border-slate-200 dark:border-slate-600 rounded-md hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors min-w-[40px] min-h-[40px] flex items-center justify-center" id="mobile-menu-btn" title="Menu">☰</button>
             </div>
         </div>
@@ -322,6 +323,12 @@
         <!-- Menu mobile -->
         <div class="hidden absolute top-full left-0 right-0 bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 shadow-lg z-40" id="mobile-menu">
             <div class="p-4 flex flex-col gap-4">
+                <div class="flex flex-col gap-2">
+                    <span class="text-sm font-medium text-slate-600 dark:text-slate-400">Audio :</span>
+                    <button id="mobile-sound-toggle" class="p-2 border border-slate-200 dark:border-slate-600 rounded-md hover:bg-primary-800 hover:text-white transition-colors min-w-[40px] min-h-[40px] flex items-center justify-center">
+                        🔊
+                    </button>
+                </div>
                 <div class="hidden flex-col gap-2" id="mobile-connection-info">
                     <span class="text-sm font-medium text-slate-600 dark:text-slate-400">Connecté à :</span>
                     <div class="font-mono text-xs bg-slate-200 dark:bg-slate-700 p-2 rounded break-all text-slate-900 dark:text-slate-100" id="mobile-peer-display"></div>
@@ -472,11 +479,6 @@
         </section>
     </main>
     
-    <!-- Contrôles audio minimalistes -->
-    <div class="fixed bottom-4 md:bottom-6 right-4 md:right-6 flex gap-2">
-        <button id="sound-toggle" class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 text-lg hover:bg-primary-800 hover:text-white hover:-translate-y-1 transition-all duration-200 shadow-md hover:shadow-lg" title="Sons">🔊</button>
-        <button id="music-toggle" class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 text-lg hover:bg-primary-800 hover:text-white hover:-translate-y-1 transition-all duration-200 shadow-md hover:shadow-lg opacity-50" title="Musique">🎵</button>
-    </div>
     
     <!-- Indicateur de version -->
     <div class="fixed bottom-4 left-4 text-sm text-slate-500 dark:text-slate-400 font-mono opacity-70 hover:opacity-100 hover:scale-110 transition-all duration-200 cursor-pointer select-none bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm px-2 py-1 rounded-lg border border-slate-200/50 dark:border-slate-600/50 shadow-sm" id="version-info" title="Cliquez pour une surprise ! 🎉">

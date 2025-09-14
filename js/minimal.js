@@ -73,16 +73,16 @@ class MinimalAudioManager {
 
     updateAudioControls() {
         const soundBtn = document.getElementById('sound-toggle');
-        const musicBtn = document.getElementById('music-toggle');
+        const mobileSoundBtn = document.getElementById('mobile-sound-toggle');
 
         if (soundBtn) {
             soundBtn.textContent = this.soundEnabled ? '🔊' : '🔇';
             soundBtn.classList.toggle('disabled', !this.soundEnabled);
         }
 
-        if (musicBtn) {
-            musicBtn.textContent = this.musicEnabled ? '🎵' : '🎶';
-            musicBtn.classList.toggle('disabled', !this.musicEnabled);
+        if (mobileSoundBtn) {
+            mobileSoundBtn.textContent = this.soundEnabled ? '🔊' : '🔇';
+            mobileSoundBtn.classList.toggle('disabled', !this.soundEnabled);
         }
     }
 }
@@ -908,9 +908,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         window.audioManager.toggleSound();
     });
 
-    document.getElementById('music-toggle').addEventListener('click', () => {
-        window.audioManager.toggleMusic();
-    });
+    // Bouton son mobile
+    const mobileSoundBtn = document.getElementById('mobile-sound-toggle');
+    if (mobileSoundBtn) {
+        mobileSoundBtn.addEventListener('click', () => {
+            window.audioManager.toggleSound();
+        });
+    }
 
     // Gestion du bouton fichier
     document.getElementById('file-btn').addEventListener('click', () => {
