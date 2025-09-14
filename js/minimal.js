@@ -531,7 +531,7 @@ class MinimalChatManager {
         
         // Seulement vider le chat si demandé (pas lors des tentatives de reconnexion)
         if (clearMessages) {
-        document.getElementById('chat-container').innerHTML = '';
+            document.getElementById('chat-container').innerHTML = '';
         }
     }
 
@@ -713,10 +713,10 @@ class MinimalChatManager {
             setTimeout(() => {
                         copyLinkBtn.innerHTML = originalText;
                     }, 2000);
-                    
-                    window.audioManager?.playSound('click');
-                }
-            });
+
+                window.audioManager?.playSound('click');
+            }
+        });
         }
 
 
