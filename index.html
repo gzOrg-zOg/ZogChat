@@ -284,9 +284,9 @@
             <span class="text-sm text-slate-600 dark:text-slate-400 hidden sm:inline">Communication P2P sécurisée</span>
             <div class="ml-auto flex items-center gap-2">
                 <div class="hidden md:flex gap-1">
-                    <button id="theme-light" class="theme-btn px-3 py-2 text-sm border border-slate-200 dark:border-slate-600 rounded-md hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors bg-blue-600 text-white" title="Thème clair">☀️</button>
-                    <button id="theme-dark" class="theme-btn px-3 py-2 text-sm border border-slate-200 dark:border-slate-600 rounded-md hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors" title="Thème sombre">🌙</button>
-                    <button id="theme-auto" class="theme-btn px-3 py-2 text-sm border border-slate-200 dark:border-slate-600 rounded-md hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors" title="Thème automatique">🔄</button>
+                    <button id="theme-toggle" class="px-3 py-2 text-sm border border-slate-200 dark:border-slate-600 rounded-md hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors" title="Basculer le thème">
+                        <span id="theme-icon">🌙</span>
+                    </button>
                 </div>
                 <button class="md:hidden p-2 border border-slate-200 dark:border-slate-600 rounded-md hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors min-w-[40px] min-h-[40px] flex items-center justify-center" id="mobile-menu-btn" title="Menu">☰</button>
             </div>
@@ -297,11 +297,9 @@
             <div class="p-4 flex flex-col gap-4">
                 <div class="flex flex-col gap-2">
                     <span class="text-sm font-medium text-slate-600 dark:text-slate-400">Thème :</span>
-                    <div class="flex gap-2">
-                        <button id="mobile-theme-light" class="p-2 border border-slate-200 dark:border-slate-600 rounded-md hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors min-w-[40px] min-h-[40px] bg-blue-600 text-white">☀️</button>
-                        <button id="mobile-theme-dark" class="p-2 border border-slate-200 dark:border-slate-600 rounded-md hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors min-w-[40px] min-h-[40px]">🌙</button>
-                        <button id="mobile-theme-auto" class="p-2 border border-slate-200 dark:border-slate-600 rounded-md hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors min-w-[40px] min-h-[40px]">🔄</button>
-                    </div>
+                    <button id="mobile-theme-toggle" class="p-2 border border-slate-200 dark:border-slate-600 rounded-md hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors min-w-[40px] min-h-[40px] flex items-center justify-center">
+                        <span id="mobile-theme-icon">🌙</span>
+                    </button>
                 </div>
                 <div class="hidden flex-col gap-2" id="mobile-connection-info">
                     <span class="text-sm font-medium text-slate-600 dark:text-slate-400">Connecté à :</span>
@@ -364,19 +362,10 @@
                         </button>
                     </div>
                     
-                    <!-- Boutons de partage avec icônes -->
-                    <div class="flex justify-center gap-3">
-                        <button id="share-whatsapp" class="w-12 h-12 bg-green-600 text-white rounded-full hover:bg-green-700 transition-colors flex items-center justify-center text-xl" title="Partager sur WhatsApp">
-                            📱
-                        </button>
-                        <button id="share-telegram" class="w-12 h-12 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-colors flex items-center justify-center text-xl" title="Partager sur Telegram">
-                            ✈️
-                        </button>
-                        <button id="share-email" class="w-12 h-12 bg-slate-600 text-white rounded-full hover:bg-slate-700 transition-colors flex items-center justify-center text-xl" title="Partager par Email">
-                            📧
-                        </button>
-                        <button id="share-sms" class="w-12 h-12 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition-colors flex items-center justify-center text-xl" title="Partager par SMS">
-                            💬
+                    <!-- Bouton de partage par email -->
+                    <div class="flex justify-center">
+                        <button id="share-email" class="px-4 py-2 bg-slate-600 text-white rounded-lg hover:bg-slate-700 transition-colors flex items-center gap-2" title="Partager par Email">
+                            📧 Partager par email
                         </button>
                     </div>
                     

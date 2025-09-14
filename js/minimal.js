@@ -89,61 +89,64 @@ class MinimalAudioManager {
 
 class MinimalThemeManager {
     constructor() {
-        this.currentTheme = localStorage.getItem('zogchat-theme') || 'light';
-        this.systemPreference = window.matchMedia('(prefers-color-scheme: dark)');
+        this.isDark = localStorage.getItem('zogchat-dark-mode') === 'true';
     }
 
     init() {
-        this.applyTheme(this.currentTheme);
+        this.applyTheme();
         this.bindEvents();
-        
-        // Écouter les changements de préférence système
-        this.systemPreference.addEventListener('change', (e) => {
-            if (this.currentTheme === 'auto') {
-                this.applyTheme('auto');
-            }
-        });
+        this.updateIcons();
     }
 
-    applyTheme(theme) {
+    applyTheme() {
         const body = document.body;
         
-        // Nettoyer les anciens thèmes
-        body.removeAttribute('data-theme');
-        
-        if (theme === 'auto') {
-            const prefersDark = this.systemPreference.matches;
-            body.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+        if (this.isDark) {
+            body.setAttribute('data-theme', 'dark');
         } else {
-            body.setAttribute('data-theme', theme);
+            body.setAttribute('data-theme', 'light');
         }
         
-        this.currentTheme = theme;
-        localStorage.setItem('zogchat-theme', theme);
+        // Sauvegarder l'état
+        localStorage.setItem('zogchat-dark-mode', this.isDark.toString());
         
-        // Mettre à jour les boutons
-        this.updateThemeButtons();
+        this.updateIcons();
     }
 
-    updateThemeButtons() {
-        document.querySelectorAll('.theme-btn').forEach(btn => {
-            btn.classList.remove('active');
-        });
+    toggleTheme() {
+        this.isDark = !this.isDark;
+        this.applyTheme();
+        window.audioManager?.playSound('click');
+    }
+
+    updateIcons() {
+        const themeIcon = document.getElementById('theme-icon');
+        const mobileThemeIcon = document.getElementById('mobile-theme-icon');
         
-        const activeBtn = document.getElementById(`theme-${this.currentTheme}`);
-        if (activeBtn) {
-            activeBtn.classList.add('active');
+        const icon = this.isDark ? '☀️' : '🌙';
+        const title = this.isDark ? 'Passer au thème clair' : 'Passer au thème sombre';
+        
+        if (themeIcon) {
+            themeIcon.textContent = icon;
+            themeIcon.parentElement.title = title;
+        }
+        
+        if (mobileThemeIcon) {
+            mobileThemeIcon.textContent = icon;
         }
     }
 
     bindEvents() {
-        document.querySelectorAll('.theme-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const theme = btn.id.replace('theme-', '');
-                this.applyTheme(theme);
-                window.audioManager?.playSound('click');
-            });
-        });
+        const themeToggle = document.getElementById('theme-toggle');
+        const mobileThemeToggle = document.getElementById('mobile-theme-toggle');
+        
+        if (themeToggle) {
+            themeToggle.addEventListener('click', () => this.toggleTheme());
+        }
+        
+        if (mobileThemeToggle) {
+            mobileThemeToggle.addEventListener('click', () => this.toggleTheme());
+        }
     }
 }
 
@@ -701,14 +704,6 @@ class MinimalChatManager {
             });
         }
 
-        // Partage WhatsApp
-        const whatsappBtn = document.getElementById('share-whatsapp');
-        if (whatsappBtn) {
-            whatsappBtn.addEventListener('click', () => {
-                const message = `Rejoins-moi sur ZogChat pour une conversation sécurisée : ${this.shareLink}`;
-                window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
-            });
-        }
 
         // Partage Email
         const emailBtn = document.getElementById('share-email');
@@ -728,23 +723,6 @@ ${this.shareLink || 'Lien non disponible'}
             });
         }
 
-        // Partage Telegram
-        const telegramBtn = document.getElementById('share-telegram');
-        if (telegramBtn) {
-            telegramBtn.addEventListener('click', () => {
-                const message = `Rejoins-moi sur ZogChat pour une conversation sécurisée : ${this.shareLink}`;
-                window.open(`https://t.me/share/url?url=${encodeURIComponent(this.shareLink)}&text=${encodeURIComponent(message)}`, '_blank');
-            });
-        }
-
-        // Partage SMS
-        const smsBtn = document.getElementById('share-sms');
-        if (smsBtn) {
-            smsBtn.addEventListener('click', () => {
-                const message = `Salut ! Rejoins-moi sur ZogChat pour discuter en sécurité : ${this.shareLink}`;
-                window.open(`sms:?body=${encodeURIComponent(message)}`, '_blank');
-            });
-        }
 
         // Se connecter
         document.getElementById('connect-btn').addEventListener('click', () => {
@@ -1033,55 +1011,7 @@ class MobileMenuManager {
     }
 
     syncThemeButtons() {
-        // Synchroniser les boutons de thème mobile
-        const mobileThemeButtons = {
-            light: document.getElementById('mobile-theme-light'),
-            dark: document.getElementById('mobile-theme-dark'),
-            auto: document.getElementById('mobile-theme-auto')
-        };
-
-        const desktopThemeButtons = {
-            light: document.getElementById('theme-light'),
-            dark: document.getElementById('theme-dark'),
-            auto: document.getElementById('theme-auto')
-        };
-
-        // Écouter les clics sur les boutons mobiles
-        Object.keys(mobileThemeButtons).forEach(theme => {
-            const mobileBtn = mobileThemeButtons[theme];
-            const desktopBtn = desktopThemeButtons[theme];
-            
-            if (mobileBtn && desktopBtn) {
-                mobileBtn.addEventListener('click', () => {
-                    desktopBtn.click();
-                    this.close();
-                });
-            }
-        });
-
-        // Observer les changements sur les boutons desktop pour synchroniser mobile
-        const observer = new MutationObserver(() => {
-            Object.keys(desktopThemeButtons).forEach(theme => {
-                const desktopBtn = desktopThemeButtons[theme];
-                const mobileBtn = mobileThemeButtons[theme];
-                
-                if (desktopBtn && mobileBtn) {
-                    if (desktopBtn.classList.contains('bg-blue-600')) {
-                        mobileBtn.classList.add('bg-blue-600', 'text-white');
-                        mobileBtn.classList.remove('hover:bg-slate-100', 'dark:hover:bg-slate-700');
-                    } else {
-                        mobileBtn.classList.remove('bg-blue-600', 'text-white');
-                        mobileBtn.classList.add('hover:bg-slate-100', 'dark:hover:bg-slate-700');
-                    }
-                }
-            });
-        });
-
-        Object.values(desktopThemeButtons).forEach(btn => {
-            if (btn) {
-                observer.observe(btn, { attributes: true, attributeFilter: ['class'] });
-            }
-        });
+        // Plus besoin de synchronisation complexe avec le nouveau système simplifié
     }
 
     updateConnectionInfo(peerId) {
