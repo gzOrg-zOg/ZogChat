@@ -1052,7 +1052,6 @@ class MobileMenuManager {
         });
 
         // Déterminer les arrondis selon la position dans la conversation
-        const chatContainer = document.getElementById('chat-container');
         const messages = chatContainer.querySelectorAll('.message');
         const lastMessage = messages[messages.length - 1];
         const isConsecutive = lastMessage && lastMessage.classList.contains(type);
