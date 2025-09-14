@@ -464,8 +464,8 @@ class MinimalChatManager {
         let roundingClass = 'message-content px-4 py-2 max-w-xs break-words';
         if (type === 'sent') {
             roundingClass += isConsecutive 
-                ? ' bg-blue-600 text-white rounded-2xl rounded-br-md ml-auto' 
-                : ' bg-blue-600 text-white rounded-2xl ml-auto';
+                ? ' text-white rounded-2xl rounded-br-md ml-auto' 
+                : ' text-white rounded-2xl ml-auto';
         } else {
             roundingClass += isConsecutive 
                 ? ' bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-slate-100 rounded-2xl rounded-bl-md' 
@@ -474,6 +474,11 @@ class MinimalChatManager {
         
         messageContent.className = roundingClass;
         messageContent.textContent = content;
+        
+        // Appliquer la couleur primaire pour les messages envoyés
+        if (type === 'sent') {
+            messageContent.style.backgroundColor = '#212d43';
+        }
         
         const messageTime = document.createElement('div');
         messageTime.className = 'message-time text-xs text-slate-500 dark:text-slate-400 mt-1';
@@ -1066,7 +1071,7 @@ class MobileMenuManager {
         messageDiv.innerHTML = `
             <div class="message-content max-w-xs lg:max-w-md px-3 py-2 ${roundingClass} ${
                 type === 'sent' 
-                    ? 'bg-blue-600 text-white ml-auto' 
+                    ? 'text-white ml-auto' 
                     : 'bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-slate-100'
             }">
                 ${content}
@@ -1078,6 +1083,14 @@ class MobileMenuManager {
 
         // Ajouter le message au container
         chatContainer.appendChild(messageDiv);
+        
+        // Appliquer la couleur primaire pour les messages envoyés
+        if (type === 'sent') {
+            const messageContent = messageDiv.querySelector('.message-content');
+            if (messageContent) {
+                messageContent.style.backgroundColor = '#212d43';
+            }
+        }
         
         console.log('💬 Message ajouté:', { content, type, container: !!chatContainer });
 
