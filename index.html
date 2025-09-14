@@ -290,9 +290,9 @@
         /* Force cache refresh v2.2.5 - Retrait justify-content conflictuel */
     </style> 
 </head>
-<body class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 font-sans transition-colors duration-300">
+<body class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 font-sans transition-colors duration-300" style="background-image: url('quarks-wave.png'); background-repeat: no-repeat; background-position: left center; background-attachment: fixed; background-size: auto 100vh;">
     <!-- Header compact qui se réduit après connexion -->
-    <header class="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-50 backdrop-blur-sm transition-all duration-300" id="main-header">
+    <header class="bg-slate-50/90 dark:bg-slate-800/90 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-50 backdrop-blur-sm transition-all duration-300" id="main-header">
         <div class="max-w-4xl mx-auto px-4 py-6 flex items-center gap-6">
             <h1 class="text-2xl font-semibold text-primary-800 dark:text-primary-400">QChat</h1>
             <span class="text-sm text-slate-600 dark:text-slate-400 hidden sm:inline">Communication P2P sécurisée</span>
@@ -317,7 +317,7 @@
         <!-- Section connexion (se cache après connexion) -->
         <div class="flex flex-col gap-8 transition-all duration-300" id="connection-section">
             <!-- Étape 1: Saisie du nom -->
-            <section class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-8 md:p-6 shadow-sm hover:shadow-md transition-all duration-300" id="username-section">
+            <section class="bg-slate-50/95 dark:bg-slate-800/95 border border-slate-200 dark:border-slate-700 rounded-lg p-8 md:p-6 shadow-sm hover:shadow-md transition-all duration-300 backdrop-blur-sm" id="username-section">
                 <div class="text-center mb-6">
                     <div class="text-4xl mb-4">👋</div>
                     <h2 class="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-2">Bienvenue sur QChat</h2>
@@ -346,7 +346,7 @@
             </section>
             
             <!-- Étape 2: Partage de session (masquée initialement) -->
-            <section class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-8 md:p-6 shadow-sm hover:shadow-md transition-all duration-300 hidden" id="share-section">
+            <section class="bg-slate-50/95 dark:bg-slate-800/95 border border-slate-200 dark:border-slate-700 rounded-lg p-8 md:p-6 shadow-sm hover:shadow-md transition-all duration-300 backdrop-blur-sm hidden" id="share-section">
                 <div class="text-center mb-6">
                     <div class="text-4xl mb-4">🔗</div>
                     <h2 class="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-2">Partagez votre session</h2>
@@ -393,7 +393,7 @@
         <!-- Section chat (prend toute la place après connexion) -->
         <section class="flex flex-col flex-1 min-h-0 hidden" id="chat-section">
             <!-- Header du chat -->
-            <div class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-t-lg p-2 md:p-4 shadow-sm">
+            <div class="bg-slate-50/95 dark:bg-slate-800/95 border border-slate-200 dark:border-slate-700 rounded-t-lg p-2 md:p-4 shadow-sm backdrop-blur-sm">
                 <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-2">
                     <h2 class="text-lg font-semibold text-slate-900 dark:text-slate-100">
                         <span class="hidden md:inline">Conversation</span>

@@ -477,7 +477,7 @@ class MinimalChatManager {
         
         // Appliquer la couleur primaire pour les messages envoyés
         if (type === 'sent') {
-            messageContent.style.backgroundColor = '#212d43';
+            messageContent.style.setProperty('background-color', '#212d43', 'important');
         }
         
         const messageTime = document.createElement('div');
@@ -1088,7 +1088,7 @@ class MobileMenuManager {
         if (type === 'sent') {
             const messageContent = messageDiv.querySelector('.message-content');
             if (messageContent) {
-                messageContent.style.backgroundColor = '#212d43';
+                messageContent.style.setProperty('background-color', '#212d43', 'important');
             }
         }
         
