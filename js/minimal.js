@@ -509,17 +509,35 @@ class MinimalChatManager {
             welcomeMessage.style.display = 'none';
         }
         
+        // Vérifier si le message précédent est du même type pour les arrondis
+        const messages = chatContainer.querySelectorAll('.message');
+        const lastMessage = messages[messages.length - 1];
+        const isConsecutive = lastMessage && lastMessage.classList.contains(type);
+        
         const messageDiv = document.createElement('div');
         messageDiv.className = `message ${type}`;
         
         // Le nom est déjà affiché dans le titre, pas besoin de le répéter à chaque message
         
         const messageContent = document.createElement('div');
-        messageContent.className = 'message-content';
+        
+        // Appliquer les arrondis adaptatifs
+        let roundingClass = 'message-content px-4 py-2 max-w-xs break-words';
+        if (type === 'sent') {
+            roundingClass += isConsecutive 
+                ? ' bg-blue-600 text-white rounded-2xl rounded-br-md ml-auto' 
+                : ' bg-blue-600 text-white rounded-2xl ml-auto';
+        } else {
+            roundingClass += isConsecutive 
+                ? ' bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-slate-100 rounded-2xl rounded-bl-md' 
+                : ' bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-slate-100 rounded-2xl';
+        }
+        
+        messageContent.className = roundingClass;
         messageContent.textContent = content;
         
         const messageTime = document.createElement('div');
-        messageTime.className = 'message-time';
+        messageTime.className = 'message-time text-xs text-slate-500 dark:text-slate-400 mt-1';
         messageTime.textContent = new Date().toLocaleTimeString('fr-FR', { 
             hour: '2-digit', 
             minute: '2-digit' 
@@ -527,6 +545,19 @@ class MinimalChatManager {
         
         messageDiv.appendChild(messageContent);
         messageDiv.appendChild(messageTime);
+        
+        // Mettre à jour l'arrondi du message précédent s'il est du même type
+        if (isConsecutive && lastMessage) {
+            const lastMessageContent = lastMessage.querySelector('.message-content');
+            if (lastMessageContent && type === 'sent') {
+                // Le message précédent devient "milieu de conversation" (pas d'arrondi en bas à droite)
+                lastMessageContent.className = lastMessageContent.className.replace('rounded-2xl', 'rounded-2xl rounded-br-md');
+            } else if (lastMessageContent && type === 'received') {
+                // Le message précédent devient "milieu de conversation" (pas d'arrondi en bas à gauche)
+                lastMessageContent.className = lastMessageContent.className.replace('rounded-2xl', 'rounded-2xl rounded-bl-md');
+            }
+        }
+        
         chatContainer.appendChild(messageDiv);
         
         // Animation d'apparition
@@ -1095,8 +1126,21 @@ class MobileMenuManager {
             minute: '2-digit' 
         });
 
+        // Déterminer les arrondis selon la position dans la conversation
+        const chatContainer = document.getElementById('chat-container');
+        const messages = chatContainer.querySelectorAll('.message');
+        const lastMessage = messages[messages.length - 1];
+        const isConsecutive = lastMessage && lastMessage.classList.contains(type);
+        
+        let roundingClass = 'rounded-lg';
+        if (type === 'sent') {
+            roundingClass = isConsecutive ? 'rounded-lg rounded-br-md' : 'rounded-lg';
+        } else {
+            roundingClass = isConsecutive ? 'rounded-lg rounded-bl-md' : 'rounded-lg';
+        }
+
         messageDiv.innerHTML = `
-            <div class="message-content max-w-xs lg:max-w-md px-3 py-2 rounded-lg ${
+            <div class="message-content max-w-xs lg:max-w-md px-3 py-2 ${roundingClass} ${
                 type === 'sent' 
                     ? 'bg-blue-600 text-white ml-auto' 
                     : 'bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-slate-100'
