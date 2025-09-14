@@ -73,16 +73,10 @@ class MinimalAudioManager {
 
     updateAudioControls() {
         const soundBtn = document.getElementById('sound-toggle');
-        const mobileSoundBtn = document.getElementById('mobile-sound-toggle');
 
         if (soundBtn) {
             soundBtn.textContent = this.soundEnabled ? '🔊' : '🔇';
             soundBtn.classList.toggle('disabled', !this.soundEnabled);
-        }
-
-        if (mobileSoundBtn) {
-            mobileSoundBtn.textContent = this.soundEnabled ? '🔊' : '🔇';
-            mobileSoundBtn.classList.toggle('disabled', !this.soundEnabled);
         }
     }
 }
@@ -132,7 +126,6 @@ class MinimalThemeManager {
 
     updateIcons() {
         const themeToggle = document.getElementById('theme-toggle');
-        const mobileThemeToggle = document.getElementById('mobile-theme-toggle');
         
         const icon = this.isDark ? '☀️' : '🌙';
         const title = this.isDark ? 'Passer au thème clair' : 'Passer au thème sombre';
@@ -141,24 +134,13 @@ class MinimalThemeManager {
             themeToggle.textContent = icon;
             themeToggle.title = title;
         }
-        
-        if (mobileThemeToggle) {
-            mobileThemeToggle.textContent = icon;
-        }
     }
 
     bindEvents() {
         const themeToggle = document.getElementById('theme-toggle');
-        const mobileThemeToggle = document.getElementById('mobile-theme-toggle');
         
         if (themeToggle) {
             themeToggle.addEventListener('click', () => {
-                this.toggleTheme();
-            });
-        }
-        
-        if (mobileThemeToggle) {
-            mobileThemeToggle.addEventListener('click', () => {
                 this.toggleTheme();
             });
         }
@@ -969,13 +951,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         window.audioManager.toggleSound();
     });
 
-    // Bouton son mobile
-    const mobileSoundBtn = document.getElementById('mobile-sound-toggle');
-    if (mobileSoundBtn) {
-        mobileSoundBtn.addEventListener('click', () => {
-            window.audioManager.toggleSound();
-        });
-    }
 
     // Gestion du bouton fichier
     document.getElementById('file-btn').addEventListener('click', () => {
