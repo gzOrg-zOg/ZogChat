@@ -475,10 +475,6 @@ class MinimalChatManager {
         messageContent.className = roundingClass;
         messageContent.textContent = content;
         
-        // Appliquer la couleur primaire pour les messages envoyés
-        if (type === 'sent') {
-            messageContent.style.setProperty('background-color', '#212d43', 'important');
-        }
         
         const messageTime = document.createElement('div');
         messageTime.className = 'message-time text-xs text-slate-500 dark:text-slate-400 mt-1';
@@ -536,7 +532,7 @@ class MinimalChatManager {
         
         // Seulement vider le chat si demandé (pas lors des tentatives de reconnexion)
         if (clearMessages) {
-            document.getElementById('chat-container').innerHTML = '';
+        document.getElementById('chat-container').innerHTML = '';
         }
     }
 
@@ -1084,13 +1080,6 @@ class MobileMenuManager {
         // Ajouter le message au container
         chatContainer.appendChild(messageDiv);
         
-        // Appliquer la couleur primaire pour les messages envoyés
-        if (type === 'sent') {
-            const messageContent = messageDiv.querySelector('.message-content');
-            if (messageContent) {
-                messageContent.style.setProperty('background-color', '#212d43', 'important');
-            }
-        }
         
         console.log('💬 Message ajouté:', { content, type, container: !!chatContainer });
 
