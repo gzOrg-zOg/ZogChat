@@ -464,8 +464,8 @@ class MinimalChatManager {
         let roundingClass = 'message-content px-4 py-2 max-w-xs break-words';
         if (type === 'sent') {
             roundingClass += isConsecutive 
-                ? ' text-white rounded-2xl rounded-br-md ml-auto' 
-                : ' text-white rounded-2xl ml-auto';
+                ? ' rounded-br-md ml-auto' 
+                : ' ml-auto';
         } else {
             roundingClass += isConsecutive 
                 ? ' bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-slate-100 rounded-2xl rounded-bl-md' 
