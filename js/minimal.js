@@ -114,7 +114,9 @@ class MinimalThemeManager {
     }
 
     toggleTheme() {
+        console.log('🎨 Toggle thème appelé - Avant:', this.isDark);
         this.isDark = !this.isDark;
+        console.log('🎨 Toggle thème - Après:', this.isDark);
         this.applyTheme();
         window.audioManager?.playSound('click');
     }
@@ -140,12 +142,25 @@ class MinimalThemeManager {
         const themeToggle = document.getElementById('theme-toggle');
         const mobileThemeToggle = document.getElementById('mobile-theme-toggle');
         
+        console.log('🎨 Boutons de thème trouvés:', { 
+            themeToggle: !!themeToggle, 
+            mobileThemeToggle: !!mobileThemeToggle 
+        });
+        
         if (themeToggle) {
-            themeToggle.addEventListener('click', () => this.toggleTheme());
+            themeToggle.addEventListener('click', (e) => {
+                e.preventDefault();
+                console.log('🌙 Clic sur bouton thème desktop');
+                this.toggleTheme();
+            });
         }
         
         if (mobileThemeToggle) {
-            mobileThemeToggle.addEventListener('click', () => this.toggleTheme());
+            mobileThemeToggle.addEventListener('click', (e) => {
+                e.preventDefault();
+                console.log('🌙 Clic sur bouton thème mobile');
+                this.toggleTheme();
+            });
         }
     }
 }
