@@ -720,9 +720,10 @@ class MinimalChatManager {
 Je t'invite à me rejoindre sur ZogChat pour une conversation sécurisée et privée.
 
 Clique sur ce lien pour te connecter automatiquement :
-${this.shareLink}
+${this.shareLink || 'Lien non disponible'}
 
 À bientôt !`;
+                console.log('📧 Email avec lien:', this.shareLink);
                 window.open(`mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`, '_blank');
             });
         }
