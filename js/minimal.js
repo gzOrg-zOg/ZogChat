@@ -110,8 +110,12 @@ class MinimalThemeManager {
         
         if (this.isDark) {
             body.classList.add('dark');
+            // Forcer le background noir en mode sombre
+            body.style.setProperty('background-color', 'black', 'important');
         } else {
             body.classList.remove('dark');
+            // Remettre le background blanc en mode clair
+            body.style.setProperty('background-color', 'white', 'important');
         }
         
         // Sauvegarder la préférence
