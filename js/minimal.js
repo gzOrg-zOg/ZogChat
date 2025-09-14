@@ -862,7 +862,7 @@ ${this.shareLink || 'Lien non disponible'}
                     data: e.target.result,
                     size: file.size
                 });
-                this.displayMessage(`📎 Fichier envoyé: ${file.name}`, 'sent');
+                this.displayMessage(`<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 32 32" class="inline mr-1"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v15c0 4 3 6 6 6s6-2 6-6V6c0-3-2-4-4-4s-4 1-4 4v17c0 1 1 2 2 2s2-1 2-2V9"/></svg>Fichier envoyé: ${file.name}`, 'sent');
                 window.audioManager?.playSound('notification');
             }
         };
@@ -884,7 +884,7 @@ ${this.shareLink || 'Lien non disponible'}
         const link = document.createElement('a');
         link.href = data.data;
         link.download = data.name;
-        link.textContent = `📎 ${data.name}`;
+        link.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 32 32" class="inline mr-1"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v15c0 4 3 6 6 6s6-2 6-6V6c0-3-2-4-4-4s-4 1-4 4v17c0 1 1 2 2 2s2-1 2-2V9"/></svg>${data.name}`;
         link.className = 'text-blue-600 dark:text-blue-400 hover:underline font-medium';
         
         const messageDiv = document.createElement('div');
@@ -1131,7 +1131,7 @@ class MobileMenuManager {
     handleFileReceived(data) {
         console.log('Fichier reçu:', data);
         // Pour l'instant, afficher comme message texte
-        this.displayMessage(`📎 Fichier reçu: ${data.name || 'fichier'}`, 'received');
+        this.displayMessage(`<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 32 32" class="inline mr-1"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v15c0 4 3 6 6 6s6-2 6-6V6c0-3-2-4-4-4s-4 1-4 4v17c0 1 1 2 2 2s2-1 2-2V9"/></svg>Fichier reçu: ${data.name || 'fichier'}`, 'received');
     }
 
     // Scroll automatique vers le bas du chat

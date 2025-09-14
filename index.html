@@ -333,7 +333,7 @@
             <div class="ml-auto flex items-center gap-2">
                 <button id="sound-toggle" class="p-2 border border-slate-200 dark:border-slate-600 rounded-md hover:bg-primary-800 hover:text-white transition-colors min-w-[40px] min-h-[40px] flex items-center justify-center" title="Sons">🔊</button>
                 <button id="theme-toggle" class="p-2 border border-slate-200 dark:border-slate-600 rounded-md hover:bg-primary-800 hover:text-white transition-colors min-w-[40px] min-h-[40px] flex items-center justify-center" title="Basculer le thème">🌙</button>
-            </div>
+    </div>
         </div>
     </header>
     
@@ -455,7 +455,7 @@
             
             <!-- Zone de drop de fichiers -->
             <div class="border-2 border-dashed border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 p-4 text-center text-slate-500 dark:text-slate-400 cursor-pointer hover:border-primary-500 hover:bg-primary-50 dark:hover:bg-primary-900/20 hover:text-primary-600 dark:hover:text-primary-400 transition-all hidden" id="file-drop">
-                <p class="text-sm">📎 Glissez un fichier ici ou cliquez pour sélectionner</p>
+                <p class="text-sm"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 32 32" class="inline mr-1"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v15c0 4 3 6 6 6s6-2 6-6V6c0-3-2-4-4-4s-4 1-4 4v17c0 1 1 2 2 2s2-1 2-2V9"/></svg>Glissez un fichier ici ou cliquez pour sélectionner</p>
                 <input type="file" id="file-input" hidden>
                 </div>
             
@@ -465,7 +465,7 @@
                     <div class="flex-1 relative">
                         <input type="text" id="message-input" class="w-full p-3 pr-12 border border-slate-300 dark:border-slate-600 rounded-2xl bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 text-base focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all min-h-[48px] resize-none" placeholder="Tapez votre message..." rows="1">
                         <button id="file-btn" class="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-slate-400 hover:text-primary-600 transition-colors" title="Joindre un fichier">
-                            📎
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 32 32"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v15c0 4 3 6 6 6s6-2 6-6V6c0-3-2-4-4-4s-4 1-4 4v17c0 1 1 2 2 2s2-1 2-2V9"/></svg>
                         </button>
                     </div>
                     <button id="send-btn" class="p-3 bg-primary-800 text-white rounded-2xl hover:bg-primary-900 active:scale-95 transition-all min-h-[48px] min-w-[48px] flex items-center justify-center shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed" title="Envoyer">
