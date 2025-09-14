@@ -164,6 +164,8 @@ class MinimalChatManager {
         this.isCreator = false;
         this.isGuest = false;
         this.sessionIdToConnect = null;
+        this.failedAttempts = 0;
+        this.maxAttempts = 3;
     }
 
     init() {
@@ -403,12 +405,27 @@ class MinimalChatManager {
                     const normalizedReceived = this.remoteUsername.toLowerCase().replace(/\s+/g, '');
                     
                     if (normalizedExpected !== normalizedReceived) {
-                        console.warn('🚫 Connexion refusée - nom incorrect:', this.remoteUsername);
-                        this.updateStatus('Connexion refusée - nom incorrect', 'disconnected');
-                        conn.close();
-                        return;
+                        this.failedAttempts++;
+                        console.warn(`🚫 Connexion refusée - nom incorrect (${this.failedAttempts}/${this.maxAttempts}):`, this.remoteUsername);
+                        
+                        if (this.failedAttempts >= this.maxAttempts) {
+                            this.updateStatus(`Connexion fermée - ${this.maxAttempts} tentatives échouées`, 'disconnected');
+                            conn.close();
+                            // Fermer définitivement la session
+                            if (this.peer) {
+                                this.peer.destroy();
+                                this.peer = null;
+                            }
+                            return;
+                        } else {
+                            const remaining = this.maxAttempts - this.failedAttempts;
+                            this.updateStatus(`Nom incorrect - ${remaining} tentative(s) restante(s)`, 'waiting');
+                            conn.close();
+                            return;
+                        }
                     } else {
                         console.log('✅ Connexion autorisée - nom vérifié:', this.remoteUsername);
+                        this.failedAttempts = 0; // Réinitialiser les tentatives en cas de succès
                     }
                 }
                 
@@ -418,9 +435,18 @@ class MinimalChatManager {
 
         conn.on('close', () => {
             this.isConnected = false;
+            
+            // Si c'est une fermeture due à un nom incorrect et qu'il reste des tentatives
+            if (this.failedAttempts > 0 && this.failedAttempts < this.maxAttempts) {
+                // Ne pas sortir du mode chat, juste attendre une nouvelle connexion
+                console.log('🔄 Attente d\'une nouvelle tentative de connexion...');
+                // Garder le chat visible avec les messages existants
+            } else {
+                // Fermeture normale ou définitive
             this.updateStatus('Connexion fermée', 'disconnected');
-            this.hideChatSection();
+                this.hideChatSection(true); // Vider les messages lors d'une fermeture définitive
             this.exitChatMode();
+            }
         });
 
         conn.on('error', (error) => {
@@ -515,9 +541,13 @@ class MinimalChatManager {
         document.getElementById('chat-section').style.display = 'flex';
     }
 
-    hideChatSection() {
+    hideChatSection(clearMessages = true) {
         document.getElementById('chat-section').style.display = 'none';
+        
+        // Seulement vider le chat si demandé (pas lors des tentatives de reconnexion)
+        if (clearMessages) {
         document.getElementById('chat-container').innerHTML = '';
+        }
     }
 
     enterChatMode() {
