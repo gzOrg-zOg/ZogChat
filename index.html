@@ -283,11 +283,6 @@
             <h1 class="text-2xl font-semibold text-blue-600 dark:text-blue-400">ZogChat</h1>
             <span class="text-sm text-slate-600 dark:text-slate-400 hidden sm:inline">Communication P2P sécurisée</span>
             <div class="ml-auto flex items-center gap-2">
-                <div class="hidden md:flex gap-1">
-                    <button id="theme-toggle" class="px-3 py-2 text-sm border border-slate-200 dark:border-slate-600 rounded-md hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors" title="Basculer le thème">
-                        <span id="theme-icon">🌙</span>
-                    </button>
-                </div>
                 <button class="md:hidden p-2 border border-slate-200 dark:border-slate-600 rounded-md hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors min-w-[40px] min-h-[40px] flex items-center justify-center" id="mobile-menu-btn" title="Menu">☰</button>
             </div>
         </div>
@@ -295,12 +290,6 @@
         <!-- Menu mobile -->
         <div class="hidden absolute top-full left-0 right-0 bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 shadow-lg z-40" id="mobile-menu">
             <div class="p-4 flex flex-col gap-4">
-                <div class="flex flex-col gap-2">
-                    <span class="text-sm font-medium text-slate-600 dark:text-slate-400">Thème :</span>
-                    <button id="mobile-theme-toggle" class="p-2 border border-slate-200 dark:border-slate-600 rounded-md hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors min-w-[40px] min-h-[40px] flex items-center justify-center">
-                        <span id="mobile-theme-icon">🌙</span>
-                    </button>
-                </div>
                 <div class="hidden flex-col gap-2" id="mobile-connection-info">
                     <span class="text-sm font-medium text-slate-600 dark:text-slate-400">Connecté à :</span>
                     <div class="font-mono text-xs bg-slate-200 dark:bg-slate-700 p-2 rounded break-all text-slate-900 dark:text-slate-100" id="mobile-peer-display"></div>
@@ -339,7 +328,7 @@
                     <button id="create-session-btn" class="w-full px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors min-h-[48px] font-medium" disabled>
                         Créer ma session
                     </button>
-                </div>
+    </div>
             </section>
             
             <!-- Étape 2: Partage de session (masquée initialement) -->
@@ -380,21 +369,11 @@
                             </span>
                         </p>
                     </div>
-    </div>
+        </div>
                 
                 <div class="px-4 py-2 rounded-md text-sm font-medium text-center bg-yellow-50 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-400 border border-yellow-200 dark:border-yellow-800 mt-6" id="status">En attente de connexion...</div>
             </section>
             
-            <!-- Section connexion rapide (toujours visible) -->
-            <section class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-6 md:p-4 shadow-sm">
-                <div class="text-center mb-4">
-                    <h3 class="text-sm font-medium text-slate-700 dark:text-slate-300">Ou rejoindre une session existante</h3>
-                </div>
-                <div class="flex flex-col sm:flex-row gap-2 max-w-md mx-auto">
-                    <input type="text" id="connect-id" class="flex-1 p-3 border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all min-h-[44px]" placeholder="Code de session...">
-                    <button id="connect-btn" class="px-6 py-3 bg-slate-600 text-white rounded-lg hover:bg-slate-700 transition-colors whitespace-nowrap min-h-[44px]">Rejoindre</button>
-        </div>
-            </section>
         </div>
         
         <!-- Section chat (prend toute la place après connexion) -->

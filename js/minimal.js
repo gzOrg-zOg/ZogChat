@@ -89,79 +89,18 @@ class MinimalAudioManager {
 
 class MinimalThemeManager {
     constructor() {
-        this.isDark = localStorage.getItem('zogchat-dark-mode') === 'true';
+        // Toujours utiliser le thème clair par défaut
+        this.isDark = false;
     }
 
     init() {
         this.applyTheme();
-        this.bindEvents();
-        this.updateIcons();
     }
 
     applyTheme() {
         const body = document.body;
-        
-        if (this.isDark) {
-            body.setAttribute('data-theme', 'dark');
-        } else {
-            body.setAttribute('data-theme', 'light');
-        }
-        
-        // Sauvegarder l'état
-        localStorage.setItem('zogchat-dark-mode', this.isDark.toString());
-        
-        this.updateIcons();
-    }
-
-    toggleTheme() {
-        console.log('🎨 Toggle thème appelé - Avant:', this.isDark);
-        this.isDark = !this.isDark;
-        console.log('🎨 Toggle thème - Après:', this.isDark);
-        this.applyTheme();
-        window.audioManager?.playSound('click');
-    }
-
-    updateIcons() {
-        const themeIcon = document.getElementById('theme-icon');
-        const mobileThemeIcon = document.getElementById('mobile-theme-icon');
-        
-        const icon = this.isDark ? '☀️' : '🌙';
-        const title = this.isDark ? 'Passer au thème clair' : 'Passer au thème sombre';
-        
-        if (themeIcon) {
-            themeIcon.textContent = icon;
-            themeIcon.parentElement.title = title;
-        }
-        
-        if (mobileThemeIcon) {
-            mobileThemeIcon.textContent = icon;
-        }
-    }
-
-    bindEvents() {
-        const themeToggle = document.getElementById('theme-toggle');
-        const mobileThemeToggle = document.getElementById('mobile-theme-toggle');
-        
-        console.log('🎨 Boutons de thème trouvés:', { 
-            themeToggle: !!themeToggle, 
-            mobileThemeToggle: !!mobileThemeToggle 
-        });
-        
-        if (themeToggle) {
-            themeToggle.addEventListener('click', (e) => {
-                e.preventDefault();
-                console.log('🌙 Clic sur bouton thème desktop');
-                this.toggleTheme();
-            });
-        }
-        
-        if (mobileThemeToggle) {
-            mobileThemeToggle.addEventListener('click', (e) => {
-                e.preventDefault();
-                console.log('🌙 Clic sur bouton thème mobile');
-                this.toggleTheme();
-            });
-        }
+        // Forcer le thème clair
+        body.setAttribute('data-theme', 'light');
     }
 }
 
@@ -800,14 +739,6 @@ ${this.shareLink || 'Lien non disponible'}
         }
 
 
-        // Se connecter
-        document.getElementById('connect-btn').addEventListener('click', () => {
-            const peerId = document.getElementById('connect-id').value.trim();
-            if (peerId) {
-                this.connectToPeer(peerId);
-                window.audioManager?.playSound('click');
-            }
-        });
 
         // Envoyer un message
         document.getElementById('send-btn').addEventListener('click', () => {
@@ -831,12 +762,6 @@ ${this.shareLink || 'Lien non disponible'}
             }
         });
 
-        // Connexion avec Entrée
-        document.getElementById('connect-id').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                document.getElementById('connect-btn').click();
-            }
-        });
 
         // Bouton de déconnexion
         document.getElementById('disconnect-btn').addEventListener('click', () => {
