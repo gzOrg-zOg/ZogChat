@@ -396,51 +396,12 @@ class MinimalChatManager {
         if (this.connection && this.isConnected) {
             console.log('🚫 Connexion refusée - lien déjà utilisé');
             
-            // Envoyer un message de refus à la nouvelle connexion
+            // Fermer immédiatement la nouvelle connexion
             try {
-                console.log('📤 Envoi du message de refus');
-                
-                // Attendre que la connexion soit ouverte avant d'envoyer
-                conn.on('open', () => {
-                    console.log('🔗 Connexion ouverte, envoi du refus');
-                    try {
-                        conn.send({
-                            type: 'connection_refused',
-                            message: 'Désolé, ce lien a déjà été utilisé par un autre utilisateur. Veuillez demander un nouveau lien à votre interlocuteur.'
-                        });
-                        
-                        // Fermer après un petit délai pour s'assurer que le message est reçu
-                        setTimeout(() => {
-                            conn.close();
-                            console.log('🔒 Connexion refusée fermée après envoi du message');
-                        }, 500);
-                        
-                    } catch (error) {
-                        console.log('❌ Erreur lors de l\'envoi du refus:', error);
-                        conn.close();
-                    }
-                });
-                
-                // Si la connexion est déjà ouverte
-                if (conn.open) {
-                    conn.send({
-                        type: 'connection_refused',
-                        message: 'Désolé, ce lien a déjà été utilisé par un autre utilisateur. Veuillez demander un nouveau lien à votre interlocuteur.'
-                    });
-                    
-                    setTimeout(() => {
-                        conn.close();
-                        console.log('🔒 Connexion refusée fermée (connexion déjà ouverte)');
-                    }, 500);
-                }
-                
+                console.log('🔒 Fermeture immédiate de la connexion refusée');
+                conn.close();
             } catch (error) {
-                console.log('❌ Erreur lors de l\'envoi du refus:', error);
-                try {
-                    conn.close();
-                } catch (closeError) {
-                    console.log('❌ Erreur lors de la fermeture de la connexion refusée:', closeError);
-                }
+                console.log('❌ Erreur lors de la fermeture de la connexion refusée:', error);
             }
             
             // Afficher un message système au maître pour l'informer
@@ -493,9 +454,6 @@ class MinimalChatManager {
             } else if (data.type === 'replaced') {
                 // L'utilisateur a été remplacé par un autre
                 this.handleReplacedConnection(data.message);
-            } else if (data.type === 'connection_refused') {
-                // La connexion a été refusée car le lien est déjà utilisé
-                this.handleConnectionRefused(data.message);
             } else if (data.type === 'username') {
                 // Recevoir le nom d'utilisateur du correspondant
                 this.remoteUsername = data.username;
@@ -1238,23 +1196,6 @@ Merci pour votre collaboration,`;
         }
     }
 
-    handleConnectionRefused(message) {
-        console.log('🚫 Connexion refusée:', message);
-        
-        try {
-            // Fermer la connexion
-            this.isConnected = false;
-            if (this.connection) {
-                this.connection = null;
-            }
-            
-            // Afficher le message d'erreur sur la page de connexion
-            this.showConnectionError('Tentative de connexion refusée - ce lien a déjà été utilisé');
-            
-        } catch (error) {
-            console.error('❌ Erreur lors du traitement du refus:', error);
-        }
-    }
 
     showConnectionError(errorMessage) {
         console.log('🚨 Affichage erreur de connexion dans le header:', errorMessage);
