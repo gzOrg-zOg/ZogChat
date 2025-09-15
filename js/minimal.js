@@ -965,8 +965,8 @@ Merci pour votre collaboration,`;
         // Bouton de déconnexion
         document.getElementById('disconnect-btn').addEventListener('click', () => {
             window.audioManager?.playSound('click');
-            // Redirect vers la racine pour un reset complet
-            window.location.href = '/';
+            // Redirect vers l'accueil pour un reset complet
+            window.location.href = window.location.origin + window.location.pathname;
         });
 
         // Gestion des fichiers (simplifié)
@@ -1413,7 +1413,7 @@ Merci pour votre collaboration,`;
         // Rediriger vers l'accueil après 5 secondes
         setTimeout(() => {
             console.log('🔄 Redirection vers l\'accueil après refus de connexion');
-            window.location.href = '/';
+            window.location.href = window.location.origin + window.location.pathname;
         }, 5000);
     }
 }
