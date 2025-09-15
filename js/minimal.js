@@ -75,7 +75,14 @@ class MinimalAudioManager {
         const soundBtn = document.getElementById('sound-toggle');
 
         if (soundBtn) {
-            soundBtn.textContent = this.soundEnabled ? '🔊' : '🔇';
+            // Utiliser les icônes SVG au lieu des emojis
+            soundBtn.innerHTML = this.soundEnabled ? 
+                `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                    <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 8a5 5 0 0 1 0 8m2.7-11a9 9 0 0 1 0 14M6 15H4a1 1 0 0 1-1-1v-4a1 1 0 0 1 1-1h2l3.5-4.5A.8.8 0 0 1 11 5v14a.8.8 0 0 1-1.5.5z"/>
+                </svg>` :
+                `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                    <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 15H4a1 1 0 0 1-1-1v-4a1 1 0 0 1 1-1h2l3.5-4.5A.8.8 0 0 1 11 5v14a.8.8 0 0 1-1.5.5zm10-5l4 4m0-4l-4 4"/>
+                </svg>`;
             soundBtn.classList.toggle('disabled', !this.soundEnabled);
         }
     }
