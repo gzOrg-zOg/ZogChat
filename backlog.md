@@ -91,7 +91,19 @@
 - [ ] **Adaptation taille police** selon l'écran
 - [ ] **Mode une main** (interface compacte)
 
+## 🐛 Bugs identifiés (Priorité haute)
+- [ ] **Diffusion des messages** - Un seul invité reçoit les messages du maître
+- [ ] **Statut de connexion maître** - Le maître n'affiche pas son statut de connexion
+- [ ] **Réception messages multiples** - Le maître reçoit les messages des deux invités (normal?)
+- [ ] **Affichage identité utilisateur** - Le nom et type d'utilisateur (maître/invité) n'apparaissent pas à l'écran
+
+## 🔧 Corrections techniques nécessaires
+- [ ] **Système de broadcast** - Implémenter diffusion vers toutes les connexions actives
+- [ ] **Gestion multi-connexions** - Support de plusieurs invités simultanés
+- [ ] **Interface utilisateur** - Affichage du rôle et nom dans l'en-tête
+- [ ] **Synchronisation statuts** - Statut visible pour tous les types d'utilisateurs
+
 ---
 
 *Backlog créé le : $(date)*
-*Version QChat : v2.26.0*
+*Version QChat : v2.27.0*

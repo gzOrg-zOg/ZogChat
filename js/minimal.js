@@ -227,6 +227,14 @@ class MinimalChatManager {
         document.getElementById('chat-section').classList.remove('hidden');
         this.enterChatMode();
         
+        // Mettre à jour les informations utilisateur
+        this.updateUserInfo();
+        
+        // S'assurer que le statut est affiché même pour le maître
+        if (this.isCreator && this.isConnected) {
+            this.updateConnectionStatus('connected', true);
+        }
+        
         // Mettre le focus automatiquement dans le champ de saisie
         setTimeout(() => {
             const messageInput = document.getElementById('message-input');
@@ -243,10 +251,13 @@ class MinimalChatManager {
             this.peer.on('open', (id) => {
                 this.generateShareLink(id);
                 this.updateStatus('En attente de connexion...', 'waiting');
-                this.updateConnectionStatus('waiting');
                 
                 // Marquer comme créateur
                 this.isCreator = true;
+                
+                // Mettre à jour les informations utilisateur et statut
+                this.updateUserInfo();
+                this.updateConnectionStatus('waiting');
             });
 
             this.peer.on('connection', (conn) => {
@@ -1058,6 +1069,22 @@ Merci pour votre collaboration,`;
         }
 
         console.log('🔄 Statut de connexion mis à jour:', status);
+    }
+
+    updateUserInfo() {
+        const userRole = document.getElementById('user-role');
+        const userName = document.getElementById('user-name');
+        
+        if (userRole && userName) {
+            // Déterminer le rôle
+            const role = this.isCreator ? 'Maître' : 'Invité';
+            userRole.textContent = role;
+            
+            // Afficher le nom d'utilisateur
+            userName.textContent = this.username || 'Non défini';
+            
+            console.log('👤 Informations utilisateur mises à jour:', { role, username: this.username });
+        }
     }
 }
 
