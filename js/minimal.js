@@ -586,11 +586,15 @@ class MinimalChatManager {
             this.updateStatus('Connexion en cours...', 'waiting');
             
             // Timeout pour détecter si la connexion est refusée
+            console.log('⏰ Démarrage du timeout de 2 secondes');
             this.connectionTimeout = setTimeout(() => {
+                console.log('⏰ Timeout déclenché, isConnected:', this.isConnected);
                 if (!this.isConnected) {
-                    console.log('⏰ Timeout de connexion - possible refus');
+                    console.log('⏰ Timeout de connexion - affichage message d\'erreur');
                     this.showConnectionError('Connexion refusée - lien déjà utilisé');
                     this.connectionTimeout = null;
+                } else {
+                    console.log('⏰ Timeout ignoré car connecté');
                 }
             }, 2000); // 2 secondes
             
@@ -1263,11 +1267,12 @@ Merci pour votre collaboration,`;
 
 
     showConnectionError(errorMessage) {
-        console.log('🚨 Affichage erreur de connexion dans le header:', errorMessage);
+        console.log('🚨 showConnectionError appelée avec:', errorMessage);
         
         // S'assurer qu'on a un message
         if (!errorMessage || errorMessage.trim() === '') {
             errorMessage = 'Connexion refusée - lien déjà utilisé';
+            console.log('🚨 Message par défaut utilisé:', errorMessage);
         }
         
         // Afficher le message d'erreur dans le header au lieu des infos utilisateur
