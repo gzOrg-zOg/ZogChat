@@ -197,8 +197,28 @@ class MinimalChatManager {
         document.getElementById('share-section').classList.remove('hidden');
         document.getElementById('chat-section').classList.add('hidden');
         
+        // Personnaliser les messages de partage
+        this.updateShareMessages();
+        
         // Initialiser PeerJS maintenant qu'on a le nom
         this.initializePeer();
+    }
+
+    updateShareMessages() {
+        const shareTitle = document.getElementById('share-title');
+        const shareSubtitle = document.getElementById('share-subtitle');
+        
+        if (shareTitle && shareSubtitle) {
+            // Message personnalisé avec le nom de l'utilisateur
+            shareTitle.textContent = `Bonjour ${this.username} !`;
+            
+            // Message selon qu'on a un destinataire spécifique ou non
+            if (this.expectedRecipient && this.expectedRecipient.trim()) {
+                shareSubtitle.textContent = `Vous pouvez maintenant transmettre ce lien de communication sécurisée à ${this.expectedRecipient} :`;
+            } else {
+                shareSubtitle.textContent = `Vous pouvez maintenant transmettre ce lien de communication sécurisée à votre destinataire :`;
+            }
+        }
     }
 
     showChatStep() {
