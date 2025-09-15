@@ -503,6 +503,9 @@ class MinimalChatManager {
                 this.remoteUsername = data.username;
                 console.log('👤 Nom du correspondant reçu:', this.remoteUsername);
                 
+                // Afficher un message système de connexion réussie
+                this.displaySystemMessage(`${this.remoteUsername} s'est connecté`);
+                
                 // Vérifier la sécurité si un destinataire est attendu
                 if (this.expectedRecipient && this.isCreator) {
                     const normalizedExpected = this.expectedRecipient.toLowerCase().replace(/\s+/g, '');
