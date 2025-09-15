@@ -936,8 +936,9 @@ Merci pour votre collaboration,`;
 
         // Bouton de déconnexion
         document.getElementById('disconnect-btn').addEventListener('click', () => {
-            this.disconnect();
             window.audioManager?.playSound('click');
+            // Redirect vers la racine pour un reset complet
+            window.location.href = '/';
         });
 
         // Gestion des fichiers (simplifié)
