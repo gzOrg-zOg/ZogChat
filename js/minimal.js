@@ -166,6 +166,9 @@ class MinimalChatManager {
     }
 
     init() {
+        // Définir le titre initial
+        document.title = 'QChat';
+        
         // Vérifier si on a un ID de session dans l'URL
         const urlParams = new URLSearchParams(window.location.search);
         const sessionId = urlParams.get('session');
@@ -818,6 +821,9 @@ class MinimalChatManager {
         if (this.username.length >= 2) {
             console.log(`👤 ${this.isGuest ? 'Connexion' : 'Création de session'} pour: ${this.username}`);
             
+            // Mettre à jour le titre de l'onglet avec le nom du participant
+            this.updateTabStatus('🔴', 'QChat - Déconnecté');
+            
             if (this.isGuest) {
                 // Si c'est un invité, se connecter directement
                 this.connectAsGuest();
@@ -1226,8 +1232,14 @@ Merci pour votre collaboration,`;
     }
 
     updateTabStatus(emoji, title) {
+        // Construire le titre avec le nom du participant
+        let fullTitle = title;
+        if (this.username) {
+            fullTitle = `${this.username} - ${title}`;
+        }
+        
         // Mettre à jour le titre de l'onglet
-        document.title = title;
+        document.title = fullTitle;
         
         // Créer un favicon dynamique avec l'emoji de statut
         this.createFaviconWithStatus(emoji);
