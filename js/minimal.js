@@ -417,10 +417,10 @@ class MinimalChatManager {
             
             // Afficher un message système au maître pour l'informer
             try {
-                this.displaySystemMessage(`Tentative de connexion refusée - le lien est déjà utilisé`);
-                console.log('📢 Message de refus affiché au maître');
+                this.displaySystemMessage(`Alice a tenté un accès à la conversation en cours`);
+                console.log('📢 Message de tentative affiché au maître');
             } catch (error) {
-                console.error('❌ Erreur affichage message de refus:', error);
+                console.error('❌ Erreur affichage message de tentative:', error);
             }
             
             return; // Sortir sans traiter cette connexion
@@ -1195,46 +1195,72 @@ Merci pour votre collaboration,`;
         console.log('🚫 Connexion refusée:', message);
         
         try {
-            // Afficher le message de refus
-            this.displaySystemMessage(message);
-            
-            // Mettre à jour le statut
-            this.updateConnectionStatus('disconnected');
-            
             // Fermer la connexion
             this.isConnected = false;
             if (this.connection) {
                 this.connection = null;
             }
             
-            // Désactiver l'interface de chat et afficher un message d'erreur
-            const messageInput = document.getElementById('message-input');
-            const sendBtn = document.getElementById('send-btn');
-            
-            if (messageInput) {
-                messageInput.disabled = true;
-                messageInput.placeholder = 'Connexion refusée - lien déjà utilisé';
-                messageInput.style.backgroundColor = '#fee2e2';
-                messageInput.style.opacity = '0.7';
-            }
-            
-            if (sendBtn) {
-                sendBtn.disabled = true;
-                sendBtn.style.backgroundColor = '#ef4444';
-                sendBtn.style.opacity = '0.7';
-                sendBtn.textContent = 'Refusé';
-            }
-            
-            // Optionnel : rediriger vers la page d'accueil après quelques secondes
-            setTimeout(() => {
-                if (confirm('Ce lien a déjà été utilisé. Voulez-vous retourner à l\'accueil pour créer une nouvelle session ?')) {
-                    this.showUsernameStep();
-                }
-            }, 3000);
+            // Afficher le message d'erreur sur la page de connexion
+            this.showConnectionError('Tentative de connexion refusée - ce lien a déjà été utilisé');
             
         } catch (error) {
             console.error('❌ Erreur lors du traitement du refus:', error);
         }
+    }
+
+    showConnectionError(errorMessage) {
+        console.log('🚨 Affichage erreur de connexion:', errorMessage);
+        
+        // Retourner à l'étape de connexion avec un message d'erreur
+        this.showConnectStep();
+        
+        // Trouver ou créer une zone d'erreur
+        let errorDiv = document.getElementById('connection-error');
+        if (!errorDiv) {
+            errorDiv = document.createElement('div');
+            errorDiv.id = 'connection-error';
+            errorDiv.className = 'mt-4 p-4 bg-red-100 dark:bg-red-900 border border-red-300 dark:border-red-700 rounded-lg';
+            
+            // Insérer après le bouton de connexion
+            const connectBtn = document.getElementById('connect-btn');
+            if (connectBtn && connectBtn.parentNode) {
+                connectBtn.parentNode.insertBefore(errorDiv, connectBtn.nextSibling);
+            }
+        }
+        
+        errorDiv.innerHTML = `
+            <div class="flex items-center gap-3">
+                <span class="text-2xl">🚫</span>
+                <div>
+                    <h3 class="font-semibold text-red-800 dark:text-red-200">Connexion refusée</h3>
+                    <p class="text-red-700 dark:text-red-300">${errorMessage}</p>
+                    <p class="text-sm text-red-600 dark:text-red-400 mt-2">
+                        Veuillez demander un nouveau lien à votre interlocuteur.
+                    </p>
+                </div>
+            </div>
+        `;
+        
+        // Désactiver temporairement le bouton de connexion
+        const connectBtn = document.getElementById('connect-btn');
+        if (connectBtn) {
+            connectBtn.disabled = true;
+            connectBtn.textContent = 'Lien déjà utilisé';
+            connectBtn.className = connectBtn.className.replace('bg-primary-600', 'bg-red-600');
+        }
+        
+        // Réactiver après 5 secondes
+        setTimeout(() => {
+            if (connectBtn) {
+                connectBtn.disabled = false;
+                connectBtn.textContent = 'Se connecter';
+                connectBtn.className = connectBtn.className.replace('bg-red-600', 'bg-primary-600');
+            }
+            if (errorDiv) {
+                errorDiv.remove();
+            }
+        }, 5000);
     }
 }
 
