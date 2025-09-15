@@ -787,7 +787,6 @@ class MinimalChatManager {
                 
                 <!-- Message d'accueil -->
                 <div class="flex flex-col items-center justify-center h-full text-center" id="welcome-message">
-                    <div class="text-6xl mb-4">💬</div>
                     <h3 class="text-xl font-semibold text-slate-700 dark:text-slate-300 mb-2">Conversation sécurisée</h3>
                     <p class="text-slate-500 dark:text-slate-400 max-w-md">Vos messages sont chiffrés de bout en bout. Seuls vous et votre correspondant pouvez les lire.</p>
                 </div>
