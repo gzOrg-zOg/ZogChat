@@ -390,29 +390,44 @@ class MinimalChatManager {
     }
 
     handleConnection(conn) {
+        console.log('🔗 Nouvelle connexion reçue:', conn.peer);
+        
         // Gérer le remplacement de connexion
         if (this.connection && this.isConnected) {
+            console.log('⚠️ Remplacement de connexion détecté');
             const oldConnection = this.connection;
             const oldUsername = this.remoteUsername || 'Un utilisateur';
             
             // Notifier l'ancienne connexion qu'elle est remplacée
             try {
+                console.log('📤 Envoi notification de remplacement à:', oldUsername);
                 oldConnection.send({
                     type: 'replaced',
                     message: 'Vous avez été déconnecté par un autre destinataire du lien. Votre interlocuteur a été averti.'
                 });
             } catch (error) {
-                console.log('Impossible de notifier l\'ancienne connexion:', error);
+                console.log('❌ Impossible de notifier l\'ancienne connexion:', error);
             }
             
             // Fermer l'ancienne connexion
-            oldConnection.close();
+            try {
+                oldConnection.close();
+                console.log('🔒 Ancienne connexion fermée');
+            } catch (error) {
+                console.log('❌ Erreur lors de la fermeture:', error);
+            }
             
             // Afficher un message système au maître
-            this.displaySystemMessage(`${oldUsername} a été déconnecté, car un nouvel utilisateur l'a remplacé`);
+            try {
+                this.displaySystemMessage(`${oldUsername} a été déconnecté, car un nouvel utilisateur l'a remplacé`);
+                console.log('📢 Message système affiché au maître');
+            } catch (error) {
+                console.error('❌ Erreur affichage message système:', error);
+            }
         }
         
         this.connection = conn;
+        console.log('✅ Nouvelle connexion assignée');
         
         conn.on('open', () => {
             this.isConnected = true;
@@ -1135,34 +1150,42 @@ Merci pour votre collaboration,`;
     }
 
     handleReplacedConnection(message) {
-        // Afficher le message de remplacement
-        this.displaySystemMessage(message);
+        console.log('🔄 Gestion du remplacement de connexion:', message);
         
-        // Mettre à jour le statut
-        this.updateStatus('Connexion fermée', 'disconnected');
-        this.updateConnectionStatus('disconnected');
-        
-        // Fermer la connexion
-        this.isConnected = false;
-        if (this.connection) {
-            this.connection = null;
+        try {
+            // Afficher le message de remplacement
+            this.displaySystemMessage(message);
+            
+            // Mettre à jour le statut de connexion seulement
+            this.updateConnectionStatus('disconnected');
+            
+            // Fermer la connexion
+            this.isConnected = false;
+            if (this.connection) {
+                this.connection = null;
+            }
+            
+            // Désactiver l'interface de chat
+            const messageInput = document.getElementById('message-input');
+            const sendBtn = document.getElementById('send-btn');
+            
+            if (messageInput) {
+                messageInput.disabled = true;
+                messageInput.placeholder = 'Connexion fermée - Vous avez été remplacé';
+                messageInput.style.backgroundColor = '#fee2e2'; // Rouge clair
+                messageInput.style.color = '#991b1b'; // Rouge foncé
+            }
+            
+            if (sendBtn) {
+                sendBtn.disabled = true;
+                sendBtn.style.opacity = '0.5';
+            }
+            
+            console.log('✅ Connexion remplacée, interface désactivée proprement');
+            window.audioManager?.playSound('disconnect');
+        } catch (error) {
+            console.error('❌ Erreur lors du traitement du remplacement:', error);
         }
-        
-        // Désactiver l'interface de chat
-        const messageInput = document.getElementById('message-input');
-        const sendBtn = document.getElementById('send-btn');
-        
-        if (messageInput) {
-            messageInput.disabled = true;
-            messageInput.placeholder = 'Connexion fermée - Vous avez été remplacé';
-        }
-        
-        if (sendBtn) {
-            sendBtn.disabled = true;
-        }
-        
-        console.log('🔄 Connexion remplacée, interface désactivée');
-        window.audioManager?.playSound('disconnect');
     }
 }
 
