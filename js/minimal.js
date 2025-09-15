@@ -560,6 +560,12 @@ class MinimalChatManager {
                     // Le maître reste en attente d'une nouvelle connexion
                     console.log('🔄 Maître en attente de reconnexion...');
                     this.updateStatus('En attente de reconnexion...', 'waiting');
+                    
+                    // Afficher un message de déconnexion si on avait un nom d'utilisateur
+                    if (this.remoteUsername) {
+                        this.displaySystemMessage(`${this.remoteUsername} s'est déconnecté`);
+                    }
+                    
                     // Garder le chat visible mais inactif
                 } else {
                     // L'invité retourne à l'accueil
@@ -1215,7 +1221,20 @@ Merci pour votre collaboration,`;
         
         const messageContent = document.createElement('div');
         messageContent.className = 'bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-200 px-3 py-2 rounded-lg text-sm border border-amber-200 dark:border-amber-700';
-        messageContent.textContent = message;
+        
+        // Ajouter l'horodatage
+        const now = new Date();
+        const timeString = now.toLocaleTimeString('fr-FR', { 
+            hour: '2-digit', 
+            minute: '2-digit' 
+        });
+        
+        messageContent.innerHTML = `
+            <div class="flex items-center gap-2">
+                <span>${message}</span>
+                <span class="text-xs opacity-60">${timeString}</span>
+            </div>
+        `;
         
         messageDiv.appendChild(messageContent);
         chatContainer.appendChild(messageDiv);
