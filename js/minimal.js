@@ -788,15 +788,16 @@ class MinimalChatManager {
         const emailBtn = document.getElementById('share-email');
         if (emailBtn) {
             emailBtn.addEventListener('click', () => {
-                const subject = 'Invitation QChat - Conversation sécurisée';
-                const body = `Salut !
+                const subject = 'Invitation QChat - Communication sécurisée';
+                const body = `Bonjour,
 
-Je t'invite à me rejoindre sur QChat pour une conversation sécurisée et privée.
+Veuillez trouver ci-dessous le lien de communication QChat pour une conversation sécurisée et privée.
 
-Clique sur ce lien pour te connecter automatiquement :
+Cliquez sur ce lien ou copiez-le dans un navigateur pour que nous puissions échanger en toute confidentialité :
+
 ${this.shareLink || 'Lien non disponible'}
 
-À bientôt !`;
+Merci pour votre collaboration,`;
                 console.log('📧 Email avec lien:', this.shareLink);
                 window.open(`mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`, '_blank');
             });
