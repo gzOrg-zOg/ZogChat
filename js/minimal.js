@@ -1288,10 +1288,10 @@ Merci pour votre collaboration,`;
     }
 
     updateUserInfo() {
-        // Utiliser les nouveaux IDs dans le header
-        const headerUserRole = document.getElementById('header-user-role');
-        const headerUserName = document.getElementById('header-user-name');
-        const headerUserInfo = document.getElementById('header-user-info');
+        // Utiliser les nouveaux IDs dans le header inline
+        const headerUserRole = document.getElementById('header-user-role-inline');
+        const headerUserName = document.getElementById('header-user-name-inline');
+        const headerUserInfo = document.getElementById('header-user-info-inline');
         
         if (headerUserRole && headerUserName && headerUserInfo) {
             // Déterminer le rôle
@@ -1301,7 +1301,7 @@ Merci pour votre collaboration,`;
             // Afficher le nom d'utilisateur
             headerUserName.textContent = this.username || 'Non défini';
             
-            // Afficher la zone d'informations utilisateur
+            // Afficher la zone d'informations utilisateur (déjà visible par défaut)
             headerUserInfo.classList.remove('hidden');
             
             console.log('👤 Informations utilisateur mises à jour dans le header:', { role, username: this.username });
@@ -1660,13 +1660,13 @@ Merci pour votre collaboration,`;
         }
         
         // Afficher le message d'erreur dans le header au lieu des infos utilisateur
-        const headerUserRole = document.getElementById('header-user-role');
-        const headerUserName = document.getElementById('header-user-name');
-        const headerUserInfo = document.getElementById('header-user-info');
+        const headerUserRole = document.getElementById('header-user-role-inline');
+        const headerUserName = document.getElementById('header-user-name-inline');
+        const headerUserInfo = document.getElementById('header-user-info-inline');
         
         if (headerUserRole && headerUserName && headerUserInfo) {
             // Changer le style pour indiquer une erreur
-            headerUserInfo.className = 'mt-2 p-2 bg-red-100 dark:bg-red-900 border border-red-300 dark:border-red-700 rounded-lg';
+            headerUserInfo.className = 'text-sm p-2 bg-red-100 dark:bg-red-900 border border-red-300 dark:border-red-700 rounded-lg hidden sm:flex items-center gap-2';
             
             // Afficher le message d'erreur
             headerUserRole.textContent = '🚫 Connexion refusée';
