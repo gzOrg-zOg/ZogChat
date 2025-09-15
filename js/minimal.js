@@ -1,6 +1,6 @@
 // Configuration de l'application
 const APP_CONFIG = {
-    version: '2.10.1'
+    version: '2.38.0'
 };
 
 // JavaScript minimal pour QChat sobre
@@ -1454,11 +1454,8 @@ Merci pour votre collaboration,`;
     updateShareHistoryButton() {
         const shareHistoryBtn = document.getElementById('share-history-btn');
         if (shareHistoryBtn) {
-            // Afficher le bouton seulement si on est connecté et qu'il y a des messages
-            const chatContainer = document.getElementById('chat-container');
-            const hasMessages = chatContainer && chatContainer.querySelectorAll('.message:not(.system)').length > 0;
-            
-            if (this.isConnected && hasMessages) {
+            // Afficher le bouton seulement si on est connecté
+            if (this.isConnected) {
                 shareHistoryBtn.classList.remove('hidden');
                 console.log('📤 Bouton partage historique affiché');
             } else {
@@ -1475,7 +1472,7 @@ Merci pour votre collaboration,`;
 
         const history = this.collectChatHistory();
         if (history.length === 0) {
-            this.displaySystemMessage('Aucun historique à partager');
+            this.displaySystemMessage('Aucun message à partager pour le moment');
             return;
         }
 
