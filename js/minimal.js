@@ -83,13 +83,13 @@ class MinimalAudioManager {
 
 class MinimalThemeManager {
     constructor() {
-        // Récupérer le thème sauvegardé ou utiliser le mode clair par défaut
+        // Récupérer le thème sauvegardé ou utiliser le mode sombre par défaut
         const savedTheme = localStorage.getItem('qchat-theme');
         if (savedTheme) {
             this.isDark = savedTheme === 'dark';
         } else {
-            // Mode clair par défaut
-            this.isDark = false;
+            // Mode sombre par défaut
+            this.isDark = true;
         }
     }
 
