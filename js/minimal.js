@@ -246,6 +246,7 @@ class MinimalChatManager {
         
         // Afficher le bouton de copie du lien pour le maître
         this.updateCopyLinkButton();
+        this.updateShareHistoryButton();
         
         // S'assurer que le statut est affiché même pour le maître
         if (this.isCreator && this.isConnected) {
@@ -520,6 +521,9 @@ class MinimalChatManager {
             } else if (data.type === 'typing') {
                 // Recevoir l'indicateur de frappe
                 this.showTypingIndicator(data.isTyping);
+            } else if (data.type === 'history_share') {
+                // Recevoir un partage d'historique
+                this.handleHistoryShare(data);
             } else if (data.type === 'username') {
                 // Recevoir le nom d'utilisateur du correspondant
                 this.remoteUsername = data.username;
@@ -527,6 +531,9 @@ class MinimalChatManager {
                 
                 // Afficher un message système de connexion réussie
                 this.displaySystemMessage(`${this.remoteUsername} s'est connecté`);
+                
+                // Mettre à jour le titre de l'onglet avec le nom du correspondant
+                this.updateTabStatus('🟢', 'QChat - Connecté');
                 
                 // Vérifier la sécurité si un destinataire est attendu
                 if (this.expectedRecipient && this.isCreator) {
@@ -1000,6 +1007,12 @@ Merci pour votre collaboration,`;
             this.copyShareLink();
         });
 
+        // Bouton de partage d'historique
+        document.getElementById('share-history-btn').addEventListener('click', () => {
+            window.audioManager?.playSound('click');
+            this.shareHistory();
+        });
+
         // Bouton de déconnexion
         document.getElementById('disconnect-btn').addEventListener('click', () => {
             window.audioManager?.playSound('click');
@@ -1232,10 +1245,10 @@ Merci pour votre collaboration,`;
     }
 
     updateTabStatus(emoji, title) {
-        // Construire le titre avec le nom du participant
+        // Construire le titre avec le nom du correspondant (pas le sien)
         let fullTitle = title;
-        if (this.username) {
-            fullTitle = `${this.username} - ${title}`;
+        if (this.remoteUsername) {
+            fullTitle = `${this.remoteUsername} - ${title}`;
         }
         
         // Mettre à jour le titre de l'onglet
@@ -1436,6 +1449,161 @@ Merci pour votre collaboration,`;
                 copyBtn.classList.add('hidden');
             }
         }
+    }
+
+    updateShareHistoryButton() {
+        const shareHistoryBtn = document.getElementById('share-history-btn');
+        if (shareHistoryBtn) {
+            // Afficher le bouton seulement si on est connecté et qu'il y a des messages
+            const chatContainer = document.getElementById('chat-container');
+            const hasMessages = chatContainer && chatContainer.querySelectorAll('.message:not(.system)').length > 0;
+            
+            if (this.isConnected && hasMessages) {
+                shareHistoryBtn.classList.remove('hidden');
+                console.log('📤 Bouton partage historique affiché');
+            } else {
+                shareHistoryBtn.classList.add('hidden');
+            }
+        }
+    }
+
+    shareHistory() {
+        if (!this.connection || !this.isConnected) {
+            console.warn('Pas de connexion active pour partager l\'historique');
+            return;
+        }
+
+        const history = this.collectChatHistory();
+        if (history.length === 0) {
+            this.displaySystemMessage('Aucun historique à partager');
+            return;
+        }
+
+        // Envoyer l'historique au correspondant
+        this.connection.send({
+            type: 'history_share',
+            history: history,
+            sender: this.username
+        });
+
+        this.displaySystemMessage(`Historique partagé (${history.length} messages)`);
+        console.log('📤 Historique partagé:', history.length, 'messages');
+    }
+
+    collectChatHistory() {
+        const chatContainer = document.getElementById('chat-container');
+        if (!chatContainer) return [];
+
+        const messages = chatContainer.querySelectorAll('.message:not(.system)');
+        const history = [];
+
+        messages.forEach(messageDiv => {
+            const messageContent = messageDiv.querySelector('.message-content');
+            const messageTime = messageDiv.querySelector('.message-time');
+            
+            if (messageContent && messageTime) {
+                const isSent = messageDiv.classList.contains('sent');
+                const content = messageContent.innerHTML; // Garder le HTML pour les liens et fichiers
+                const time = messageTime.textContent;
+                
+                history.push({
+                    content: content,
+                    type: isSent ? 'sent' : 'received',
+                    time: time,
+                    sender: isSent ? this.username : this.remoteUsername
+                });
+            }
+        });
+
+        return history;
+    }
+
+    handleHistoryShare(data) {
+        const { history, sender } = data;
+        
+        if (!history || history.length === 0) {
+            this.displaySystemMessage(`${sender} a tenté de partager un historique vide`);
+            return;
+        }
+
+        // Demander confirmation avant d'écraser l'historique actuel
+        const confirmReplace = confirm(
+            `${sender} souhaite partager l'historique de conversation (${history.length} messages).\n\n` +
+            'Cela va remplacer votre historique actuel. Continuer ?'
+        );
+
+        if (!confirmReplace) {
+            this.displaySystemMessage('Partage d\'historique annulé');
+            return;
+        }
+
+        // Vider le chat actuel (sauf les messages système)
+        const chatContainer = document.getElementById('chat-container');
+        if (chatContainer) {
+            const systemMessages = chatContainer.querySelectorAll('.message.system');
+            chatContainer.innerHTML = '';
+            
+            // Remettre les messages système
+            systemMessages.forEach(msg => chatContainer.appendChild(msg));
+        }
+
+        // Afficher l'historique reçu
+        history.forEach(msg => {
+            this.displayReceivedHistoryMessage(msg);
+        });
+
+        this.displaySystemMessage(`Historique synchronisé (${history.length} messages reçus de ${sender})`);
+        console.log('📥 Historique reçu et affiché:', history.length, 'messages');
+    }
+
+    displayReceivedHistoryMessage(msg) {
+        const chatContainer = document.getElementById('chat-container');
+        if (!chatContainer) return;
+
+        // Masquer le message de bienvenue s'il existe
+        const welcomeMessage = document.getElementById('welcome-message');
+        if (welcomeMessage) {
+            welcomeMessage.style.display = 'none';
+        }
+
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${msg.type} flex items-end gap-2 mb-3`;
+        
+        // Déterminer les arrondis selon la position dans la conversation
+        const messages = chatContainer.querySelectorAll('.message');
+        const lastMessage = messages[messages.length - 1];
+        const isConsecutive = lastMessage && lastMessage.classList.contains(msg.type);
+        
+        let roundingClass = 'rounded-lg';
+        if (msg.type === 'sent') {
+            roundingClass = isConsecutive ? 'rounded-lg rounded-br-md' : 'rounded-lg';
+        } else {
+            roundingClass = isConsecutive ? 'rounded-lg rounded-bl-md' : 'rounded-lg';
+        }
+
+        messageDiv.innerHTML = `
+            <div class="message-content max-w-xs lg:max-w-md px-3 py-2 ${roundingClass} ${
+                msg.type === 'sent' 
+                    ? 'text-white' 
+                    : 'bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-slate-100'
+            }">
+                ${msg.content}
+            </div>
+            <div class="message-time text-xs text-slate-500 dark:text-slate-400 min-w-fit">
+                ${msg.time}
+            </div>
+        `;
+
+        // Ajouter une classe pour indiquer que c'est un message d'historique
+        messageDiv.classList.add('history-message');
+        messageDiv.style.opacity = '0.8'; // Légèrement transparent pour distinguer
+
+        chatContainer.appendChild(messageDiv);
+        
+        // Scroll automatique vers le bas
+        setTimeout(() => {
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }, 10);
     }
 
     showPendingSystemMessages() {
@@ -1752,6 +1920,9 @@ class MobileMenuManager {
 
         // Scroll automatique vers le bas
         this.scrollToBottom();
+        
+        // Mettre à jour le bouton de partage d'historique
+        this.updateShareHistoryButton();
     }
 
     // Gérer la réception de fichiers

@@ -101,6 +101,7 @@
 - [x] **Indicateur "en train d'écrire..."** dans la barre de titre
 - [x] **Indicateur de statut de connexion dans l'onglet du navigateur** (🟢🟡🔴)
 - [x] **Afficher le nom du participant dans la barre de titre** (Xavier - QChat)
+- [x] **Bouton "Partager l'historique"** pour synchroniser la conversation avec le correspondant
 
 ---
 
