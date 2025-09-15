@@ -91,17 +91,11 @@
 - [ ] **Adaptation taille police** selon l'écran
 - [ ] **Mode une main** (interface compacte)
 
-## 🐛 Bugs identifiés (Priorité haute)
-- [ ] **Diffusion des messages** - Un seul invité reçoit les messages du maître
-- [ ] **Statut de connexion maître** - Le maître n'affiche pas son statut de connexion
-- [ ] **Réception messages multiples** - Le maître reçoit les messages des deux invités (normal?)
-- [ ] **Affichage identité utilisateur** - Le nom et type d'utilisateur (maître/invité) n'apparaissent pas à l'écran
-
-## 🔧 Corrections techniques nécessaires
-- [ ] **Système de broadcast** - Implémenter diffusion vers toutes les connexions actives
-- [ ] **Gestion multi-connexions** - Support de plusieurs invités simultanés
-- [ ] **Interface utilisateur** - Affichage du rôle et nom dans l'en-tête
-- [ ] **Synchronisation statuts** - Statut visible pour tous les types d'utilisateurs
+## 🐛 Gestion remplacement de connexion (Priorité haute)
+- [x] **Message déconnexion remplacé** - L'ancien client doit voir "Vous avez été déconnecté par un autre destinataire du lien. Votre interlocuteur a été averti."
+- [x] **Message système maître** - Le maître doit voir "Bob a été déconnecté, car Alice l'a remplacé"
+- [x] **Nettoyage connexions** - Fermer proprement l'ancienne connexion
+- [x] **Notification utilisateurs** - Informer clairement du changement de correspondant
 
 ---
 

@@ -390,6 +390,28 @@ class MinimalChatManager {
     }
 
     handleConnection(conn) {
+        // Gérer le remplacement de connexion
+        if (this.connection && this.isConnected) {
+            const oldConnection = this.connection;
+            const oldUsername = this.remoteUsername || 'Un utilisateur';
+            
+            // Notifier l'ancienne connexion qu'elle est remplacée
+            try {
+                oldConnection.send({
+                    type: 'replaced',
+                    message: 'Vous avez été déconnecté par un autre destinataire du lien. Votre interlocuteur a été averti.'
+                });
+            } catch (error) {
+                console.log('Impossible de notifier l\'ancienne connexion:', error);
+            }
+            
+            // Fermer l'ancienne connexion
+            oldConnection.close();
+            
+            // Afficher un message système au maître
+            this.displaySystemMessage(`${oldUsername} a été déconnecté, car un nouvel utilisateur l'a remplacé`);
+        }
+        
         this.connection = conn;
         
         conn.on('open', () => {
@@ -425,6 +447,9 @@ class MinimalChatManager {
                 window.audioManager?.playSound('message');
             } else if (data.type === 'file') {
                 this.handleFileReceived(data);
+            } else if (data.type === 'replaced') {
+                // L'utilisateur a été remplacé par un autre
+                this.handleReplacedConnection(data.message);
             } else if (data.type === 'username') {
                 // Recevoir le nom d'utilisateur du correspondant
                 this.remoteUsername = data.username;
@@ -1085,6 +1110,59 @@ Merci pour votre collaboration,`;
             
             console.log('👤 Informations utilisateur mises à jour:', { role, username: this.username });
         }
+    }
+
+    displaySystemMessage(message) {
+        const chatContainer = document.getElementById('chat-container');
+        if (!chatContainer) return;
+
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'message system flex justify-center mb-3';
+        
+        const messageContent = document.createElement('div');
+        messageContent.className = 'bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-200 px-3 py-2 rounded-lg text-sm border border-amber-200 dark:border-amber-700';
+        messageContent.textContent = message;
+        
+        messageDiv.appendChild(messageContent);
+        chatContainer.appendChild(messageDiv);
+        
+        // Scroll automatique
+        setTimeout(() => {
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }, 10);
+        
+        console.log('📢 Message système affiché:', message);
+    }
+
+    handleReplacedConnection(message) {
+        // Afficher le message de remplacement
+        this.displaySystemMessage(message);
+        
+        // Mettre à jour le statut
+        this.updateStatus('Connexion fermée', 'disconnected');
+        this.updateConnectionStatus('disconnected');
+        
+        // Fermer la connexion
+        this.isConnected = false;
+        if (this.connection) {
+            this.connection = null;
+        }
+        
+        // Désactiver l'interface de chat
+        const messageInput = document.getElementById('message-input');
+        const sendBtn = document.getElementById('send-btn');
+        
+        if (messageInput) {
+            messageInput.disabled = true;
+            messageInput.placeholder = 'Connexion fermée - Vous avez été remplacé';
+        }
+        
+        if (sendBtn) {
+            sendBtn.disabled = true;
+        }
+        
+        console.log('🔄 Connexion remplacée, interface désactivée');
+        window.audioManager?.playSound('disconnect');
     }
 }
 
