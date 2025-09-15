@@ -1189,8 +1189,34 @@ Merci pour votre collaboration,`;
     }
 }
 
+// Fonction de nettoyage du localStorage
+function cleanupLocalStorage() {
+    console.log('🧹 Nettoyage du localStorage...');
+    
+    // Supprimer les anciennes entrées ZogChat qui peuvent causer des conflits
+    const keysToRemove = [
+        'zogchat-theme',
+        'zogchat-dark-mode', 
+        'zogchat_creator_session',
+        'zogchat-session',
+        'zogchat-username'
+    ];
+    
+    keysToRemove.forEach(key => {
+        if (localStorage.getItem(key)) {
+            localStorage.removeItem(key);
+            console.log('🗑️ Supprimé:', key);
+        }
+    });
+    
+    console.log('✅ Nettoyage terminé');
+}
+
 // Initialisation de l'application
 document.addEventListener('DOMContentLoaded', async () => {
+    // Nettoyer le localStorage des anciennes entrées
+    cleanupLocalStorage();
+    
     // Initialiser les managers
     window.audioManager = new MinimalAudioManager();
     window.themeManager = new MinimalThemeManager();
