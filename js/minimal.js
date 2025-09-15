@@ -990,6 +990,14 @@ ${this.shareLink || 'Lien non disponible'}
             chatTitle.textContent = `Conversation avec ${this.remoteUsername}`;
             console.log('📝 Titre mis à jour:', `Conversation avec ${this.remoteUsername}`);
         }
+        
+        // Mettre à jour le nom dans la barre de titre mobile
+        const peerNameMobile = document.getElementById('peer-name-mobile');
+        if (peerNameMobile && this.remoteUsername) {
+            peerNameMobile.textContent = this.remoteUsername;
+            peerNameMobile.classList.remove('hidden');
+            console.log('📱 Nom mobile mis à jour:', this.remoteUsername);
+        }
     }
 }
 
