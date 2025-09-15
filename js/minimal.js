@@ -189,6 +189,14 @@ class MinimalChatManager {
         document.getElementById('username-section').classList.remove('hidden');
         document.getElementById('share-section').classList.add('hidden');
         document.getElementById('chat-section').classList.add('hidden');
+        
+        // Mettre le focus dans le champ de nom
+        setTimeout(() => {
+            const usernameInput = document.getElementById('username-input');
+            if (usernameInput) {
+                usernameInput.focus();
+            }
+        }, 100);
     }
 
     showShareStep() {
