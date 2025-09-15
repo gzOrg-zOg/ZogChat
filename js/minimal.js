@@ -392,38 +392,38 @@ class MinimalChatManager {
     handleConnection(conn) {
         console.log('🔗 Nouvelle connexion reçue:', conn.peer);
         
-        // Gérer le remplacement de connexion
+        // Refuser la connexion si quelqu'un est déjà connecté
         if (this.connection && this.isConnected) {
-            console.log('⚠️ Remplacement de connexion détecté');
-            const oldConnection = this.connection;
-            const oldUsername = this.remoteUsername || 'Un utilisateur';
+            console.log('🚫 Connexion refusée - lien déjà utilisé');
             
-            // Notifier l'ancienne connexion qu'elle est remplacée
+            // Envoyer un message de refus à la nouvelle connexion
             try {
-                console.log('📤 Envoi notification de remplacement à:', oldUsername);
-                oldConnection.send({
-                    type: 'replaced',
-                    message: 'Vous avez été déconnecté par un autre destinataire du lien. Votre interlocuteur a été averti.'
+                console.log('📤 Envoi du message de refus');
+                conn.send({
+                    type: 'connection_refused',
+                    message: 'Désolé, ce lien a déjà été utilisé par un autre utilisateur. Veuillez demander un nouveau lien à votre interlocuteur.'
                 });
             } catch (error) {
-                console.log('❌ Impossible de notifier l\'ancienne connexion:', error);
+                console.log('❌ Erreur lors de l\'envoi du refus:', error);
             }
             
-            // Fermer l'ancienne connexion
+            // Fermer immédiatement la nouvelle connexion
             try {
-                oldConnection.close();
-                console.log('🔒 Ancienne connexion fermée');
+                conn.close();
+                console.log('🔒 Nouvelle connexion refusée et fermée');
             } catch (error) {
-                console.log('❌ Erreur lors de la fermeture:', error);
+                console.log('❌ Erreur lors de la fermeture de la connexion refusée:', error);
             }
             
-            // Afficher un message système au maître
+            // Afficher un message système au maître pour l'informer
             try {
-                this.displaySystemMessage(`${oldUsername} a été déconnecté, car un nouvel utilisateur l'a remplacé`);
-                console.log('📢 Message système affiché au maître');
+                this.displaySystemMessage(`Tentative de connexion refusée - le lien est déjà utilisé`);
+                console.log('📢 Message de refus affiché au maître');
             } catch (error) {
-                console.error('❌ Erreur affichage message système:', error);
+                console.error('❌ Erreur affichage message de refus:', error);
             }
+            
+            return; // Sortir sans traiter cette connexion
         }
         
         this.connection = conn;
@@ -465,6 +465,9 @@ class MinimalChatManager {
             } else if (data.type === 'replaced') {
                 // L'utilisateur a été remplacé par un autre
                 this.handleReplacedConnection(data.message);
+            } else if (data.type === 'connection_refused') {
+                // La connexion a été refusée car le lien est déjà utilisé
+                this.handleConnectionRefused(data.message);
             } else if (data.type === 'username') {
                 // Recevoir le nom d'utilisateur du correspondant
                 this.remoteUsername = data.username;
@@ -1185,6 +1188,52 @@ Merci pour votre collaboration,`;
             window.audioManager?.playSound('disconnect');
         } catch (error) {
             console.error('❌ Erreur lors du traitement du remplacement:', error);
+        }
+    }
+
+    handleConnectionRefused(message) {
+        console.log('🚫 Connexion refusée:', message);
+        
+        try {
+            // Afficher le message de refus
+            this.displaySystemMessage(message);
+            
+            // Mettre à jour le statut
+            this.updateConnectionStatus('disconnected');
+            
+            // Fermer la connexion
+            this.isConnected = false;
+            if (this.connection) {
+                this.connection = null;
+            }
+            
+            // Désactiver l'interface de chat et afficher un message d'erreur
+            const messageInput = document.getElementById('message-input');
+            const sendBtn = document.getElementById('send-btn');
+            
+            if (messageInput) {
+                messageInput.disabled = true;
+                messageInput.placeholder = 'Connexion refusée - lien déjà utilisé';
+                messageInput.style.backgroundColor = '#fee2e2';
+                messageInput.style.opacity = '0.7';
+            }
+            
+            if (sendBtn) {
+                sendBtn.disabled = true;
+                sendBtn.style.backgroundColor = '#ef4444';
+                sendBtn.style.opacity = '0.7';
+                sendBtn.textContent = 'Refusé';
+            }
+            
+            // Optionnel : rediriger vers la page d'accueil après quelques secondes
+            setTimeout(() => {
+                if (confirm('Ce lien a déjà été utilisé. Voulez-vous retourner à l\'accueil pour créer une nouvelle session ?')) {
+                    this.showUsernameStep();
+                }
+            }, 3000);
+            
+        } catch (error) {
+            console.error('❌ Erreur lors du traitement du refus:', error);
         }
     }
 }
