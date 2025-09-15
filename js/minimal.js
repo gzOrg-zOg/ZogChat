@@ -227,6 +227,9 @@ class MinimalChatManager {
         document.getElementById('chat-section').classList.remove('hidden');
         this.enterChatMode();
         
+        // Afficher les messages système en attente
+        this.showPendingSystemMessages();
+        
         // Mettre à jour les informations utilisateur
         this.updateUserInfo();
         
@@ -1187,8 +1190,25 @@ Merci pour votre collaboration,`;
     }
 
     displaySystemMessage(message) {
+        console.log('📢 Tentative d\'affichage message système:', message);
+        
         const chatContainer = document.getElementById('chat-container');
-        if (!chatContainer) return;
+        if (!chatContainer) {
+            console.log('❌ Chat container non trouvé');
+            return;
+        }
+
+        // Vérifier si le chat est visible
+        const chatSection = document.getElementById('chat-section');
+        if (!chatSection || chatSection.classList.contains('hidden')) {
+            console.log('❌ Chat section cachée, message différé');
+            // Stocker le message pour l'afficher quand le chat sera visible
+            if (!this.pendingSystemMessages) {
+                this.pendingSystemMessages = [];
+            }
+            this.pendingSystemMessages.push(message);
+            return;
+        }
 
         const messageDiv = document.createElement('div');
         messageDiv.className = 'message system flex justify-center mb-3';
@@ -1205,7 +1225,17 @@ Merci pour votre collaboration,`;
             chatContainer.scrollTop = chatContainer.scrollHeight;
         }, 10);
         
-        console.log('📢 Message système affiché:', message);
+        console.log('✅ Message système affiché:', message);
+    }
+
+    showPendingSystemMessages() {
+        if (this.pendingSystemMessages && this.pendingSystemMessages.length > 0) {
+            console.log('📢 Affichage des messages système en attente:', this.pendingSystemMessages.length);
+            this.pendingSystemMessages.forEach(message => {
+                this.displaySystemMessage(message);
+            });
+            this.pendingSystemMessages = [];
+        }
     }
 
     handleReplacedConnection(message) {
