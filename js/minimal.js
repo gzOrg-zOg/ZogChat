@@ -496,6 +496,7 @@ class MinimalChatManager {
                 this.handleReplacedConnection(data.message);
             } else if (data.type === 'connection_refused') {
                 // La connexion a été refusée car le lien est déjà utilisé
+                console.log('🚫 Message de refus reçu du serveur:', data.message);
                 this.isConnected = false; // Important pour éviter l'affichage du chat
                 this.showConnectionError(data.message);
             } else if (data.type === 'username') {
@@ -581,9 +582,9 @@ class MinimalChatManager {
             const connectionTimeout = setTimeout(() => {
                 if (!this.isConnected) {
                     console.log('⏰ Timeout de connexion - possible refus');
-                    this.showConnectionError('Connexion impossible - le lien est peut-être déjà utilisé');
+                    this.showConnectionError('Connexion refusée - lien déjà utilisé');
                 }
-            }, 5000); // 5 secondes
+            }, 2000); // 2 secondes
             
             // Annuler le timeout si la connexion réussit
             conn.on('open', () => {
