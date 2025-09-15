@@ -498,6 +498,13 @@ class MinimalChatManager {
                 // La connexion a été refusée car le lien est déjà utilisé
                 console.log('🚫 Message de refus reçu du serveur:', data.message);
                 this.isConnected = false; // Important pour éviter l'affichage du chat
+                
+                // Annuler le timeout puisqu'on a reçu le message
+                if (this.connectionTimeout) {
+                    clearTimeout(this.connectionTimeout);
+                    this.connectionTimeout = null;
+                }
+                
                 this.showConnectionError(data.message);
             } else if (data.type === 'username') {
                 // Recevoir le nom d'utilisateur du correspondant
@@ -579,16 +586,20 @@ class MinimalChatManager {
             this.updateStatus('Connexion en cours...', 'waiting');
             
             // Timeout pour détecter si la connexion est refusée
-            const connectionTimeout = setTimeout(() => {
+            this.connectionTimeout = setTimeout(() => {
                 if (!this.isConnected) {
                     console.log('⏰ Timeout de connexion - possible refus');
                     this.showConnectionError('Connexion refusée - lien déjà utilisé');
+                    this.connectionTimeout = null;
                 }
             }, 2000); // 2 secondes
             
             // Annuler le timeout si la connexion réussit
             conn.on('open', () => {
-                clearTimeout(connectionTimeout);
+                if (this.connectionTimeout) {
+                    clearTimeout(this.connectionTimeout);
+                    this.connectionTimeout = null;
+                }
             });
             
         } catch (error) {
@@ -1253,6 +1264,11 @@ Merci pour votre collaboration,`;
 
     showConnectionError(errorMessage) {
         console.log('🚨 Affichage erreur de connexion dans le header:', errorMessage);
+        
+        // S'assurer qu'on a un message
+        if (!errorMessage || errorMessage.trim() === '') {
+            errorMessage = 'Connexion refusée - lien déjà utilisé';
+        }
         
         // Afficher le message d'erreur dans le header au lieu des infos utilisateur
         const headerUserRole = document.getElementById('header-user-role');
