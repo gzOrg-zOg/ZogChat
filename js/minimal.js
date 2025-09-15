@@ -1157,18 +1157,23 @@ Merci pour votre collaboration,`;
     }
 
     updateUserInfo() {
-        const userRole = document.getElementById('user-role');
-        const userName = document.getElementById('user-name');
+        // Utiliser les nouveaux IDs dans le header
+        const headerUserRole = document.getElementById('header-user-role');
+        const headerUserName = document.getElementById('header-user-name');
+        const headerUserInfo = document.getElementById('header-user-info');
         
-        if (userRole && userName) {
+        if (headerUserRole && headerUserName && headerUserInfo) {
             // Déterminer le rôle
             const role = this.isCreator ? 'Maître' : 'Invité';
-            userRole.textContent = role;
+            headerUserRole.textContent = role;
             
             // Afficher le nom d'utilisateur
-            userName.textContent = this.username || 'Non défini';
+            headerUserName.textContent = this.username || 'Non défini';
             
-            console.log('👤 Informations utilisateur mises à jour:', { role, username: this.username });
+            // Afficher la zone d'informations utilisateur
+            headerUserInfo.classList.remove('hidden');
+            
+            console.log('👤 Informations utilisateur mises à jour dans le header:', { role, username: this.username });
         }
     }
 
