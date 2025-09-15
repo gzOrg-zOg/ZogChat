@@ -457,6 +457,7 @@ class MinimalChatManager {
             setTimeout(() => {
                 if (this.isConnected) { // Vérifier qu'on est toujours connecté
                     this.showChatStep();
+                    console.log('💬 Chat affiché après connexion');
                 }
             }, 150);
             
@@ -542,11 +543,20 @@ class MinimalChatManager {
                 console.log('🔄 Attente d\'une nouvelle tentative de connexion...');
                 // Garder le chat visible avec les messages existants
             } else {
-                // Fermeture normale ou définitive
-            this.updateStatus('Connexion fermée', 'disconnected');
-            this.updateConnectionStatus('disconnected');
-                this.hideChatSection(true); // Vider les messages lors d'une fermeture définitive
-            this.exitChatMode();
+                // Fermeture normale - pour le maître, rester en attente de reconnexion
+                this.updateStatus('Connexion fermée', 'disconnected');
+                this.updateConnectionStatus('disconnected');
+                
+                if (this.isCreator) {
+                    // Le maître reste en attente d'une nouvelle connexion
+                    console.log('🔄 Maître en attente de reconnexion...');
+                    this.updateStatus('En attente de reconnexion...', 'waiting');
+                    // Garder le chat visible mais inactif
+                } else {
+                    // L'invité retourne à l'accueil
+                    this.hideChatSection(true);
+                    this.exitChatMode();
+                }
             }
         });
 
