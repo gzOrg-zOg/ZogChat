@@ -1410,28 +1410,11 @@ Merci pour votre collaboration,`;
             connectBtn.className = connectBtn.className.replace('bg-primary-600', 'bg-red-600');
         }
         
-        // Réactiver après 8 secondes et nettoyer le header
+        // Rediriger vers l'accueil après 5 secondes
         setTimeout(() => {
-            if (connectBtn) {
-                connectBtn.disabled = false;
-                connectBtn.textContent = 'Se connecter';
-                connectBtn.className = connectBtn.className.replace('bg-red-600', 'bg-primary-600');
-            }
-            
-            // Nettoyer le header
-            if (headerUserInfo) {
-                headerUserInfo.classList.add('hidden');
-                headerUserInfo.className = 'mt-2 hidden';
-            }
-            if (headerUserRole) {
-                headerUserRole.className = 'font-medium';
-            }
-            if (headerUserName) {
-                headerUserName.className = '';
-            }
-            
-            console.log('🧹 Header nettoyé après refus de connexion');
-        }, 8000);
+            console.log('🔄 Redirection vers l\'accueil après refus de connexion');
+            window.location.href = '/';
+        }, 5000);
     }
 }
 
