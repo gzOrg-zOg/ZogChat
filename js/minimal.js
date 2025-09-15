@@ -664,7 +664,7 @@ class MinimalChatManager {
         }
         
         messageContent.className = roundingClass;
-        messageContent.innerHTML = content;
+        messageContent.innerHTML = this.makeLinksClickable(content);
         
         
         const messageTime = document.createElement('div');
@@ -1261,6 +1261,19 @@ Merci pour votre collaboration,`;
         }, 10);
         
         console.log('✅ Message système affiché:', message);
+    }
+
+    makeLinksClickable(text) {
+        // Regex pour détecter les URLs (http, https, www)
+        const urlRegex = /(https?:\/\/[^\s]+|www\.[^\s]+)/gi;
+        
+        return text.replace(urlRegex, (url) => {
+            // Ajouter https:// si l'URL commence par www
+            const href = url.startsWith('www.') ? `https://${url}` : url;
+            
+            // Créer un lien cliquable avec target="_blank" pour ouvrir dans un nouvel onglet
+            return `<a href="${href}" target="_blank" rel="noopener noreferrer" class="text-blue-600 dark:text-blue-400 underline hover:text-blue-800 dark:hover:text-blue-300 transition-colors">${url}</a>`;
+        });
     }
 
     copyShareLink() {
