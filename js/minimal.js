@@ -1273,7 +1273,7 @@ Merci pour votre collaboration,`;
         }
         
         // Retourner à l'étape de connexion
-        this.showConnectStep();
+        this.showUsernameStep();
         
         // Désactiver temporairement le bouton de connexion
         const connectBtn = document.getElementById('connect-btn');
