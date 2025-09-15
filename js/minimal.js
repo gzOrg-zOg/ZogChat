@@ -396,12 +396,42 @@ class MinimalChatManager {
         if (this.connection && this.isConnected) {
             console.log('🚫 Connexion refusée - lien déjà utilisé');
             
-            // Fermer immédiatement la nouvelle connexion
+            // Envoyer un message de refus puis fermer
             try {
-                console.log('🔒 Fermeture immédiate de la connexion refusée');
-                conn.close();
+                console.log('📤 Envoi du message de refus');
+                
+                // Envoyer le message si la connexion est ouverte
+                if (conn.open) {
+                    conn.send({
+                        type: 'connection_refused',
+                        message: 'Connexion refusée - lien déjà utilisé'
+                    });
+                }
+                
+                // Attendre l'ouverture si pas encore ouverte
+                conn.on('open', () => {
+                    console.log('🔗 Connexion ouverte, envoi du refus');
+                    conn.send({
+                        type: 'connection_refused',
+                        message: 'Connexion refusée - lien déjà utilisé'
+                    });
+                    conn.close();
+                });
+                
+                // Fermer après un court délai de sécurité
+                setTimeout(() => {
+                    if (!conn.destroyed) {
+                        conn.close();
+                    }
+                }, 100);
+                
             } catch (error) {
-                console.log('❌ Erreur lors de la fermeture de la connexion refusée:', error);
+                console.log('❌ Erreur lors de l\'envoi du refus:', error);
+                try {
+                    conn.close();
+                } catch (closeError) {
+                    console.log('❌ Erreur lors de la fermeture:', closeError);
+                }
             }
             
             // Afficher un message système au maître pour l'informer
@@ -454,6 +484,9 @@ class MinimalChatManager {
             } else if (data.type === 'replaced') {
                 // L'utilisateur a été remplacé par un autre
                 this.handleReplacedConnection(data.message);
+            } else if (data.type === 'connection_refused') {
+                // La connexion a été refusée car le lien est déjà utilisé
+                this.showConnectionError(data.message);
             } else if (data.type === 'username') {
                 // Recevoir le nom d'utilisateur du correspondant
                 this.remoteUsername = data.username;
