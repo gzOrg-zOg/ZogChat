@@ -1257,37 +1257,32 @@ Merci pour votre collaboration,`;
     }
 
     showConnectionError(errorMessage) {
-        console.log('🚨 Affichage erreur de connexion:', errorMessage);
+        console.log('🚨 Affichage erreur de connexion dans le header:', errorMessage);
         
-        // Retourner à l'étape de connexion avec un message d'erreur
-        this.showConnectStep();
+        // Afficher le message d'erreur dans le header au lieu des infos utilisateur
+        const headerUserRole = document.getElementById('header-user-role');
+        const headerUserName = document.getElementById('header-user-name');
+        const headerUserInfo = document.getElementById('header-user-info');
         
-        // Trouver ou créer une zone d'erreur
-        let errorDiv = document.getElementById('connection-error');
-        if (!errorDiv) {
-            errorDiv = document.createElement('div');
-            errorDiv.id = 'connection-error';
-            errorDiv.className = 'mt-4 p-4 bg-red-100 dark:bg-red-900 border border-red-300 dark:border-red-700 rounded-lg';
+        if (headerUserRole && headerUserName && headerUserInfo) {
+            // Changer le style pour indiquer une erreur
+            headerUserInfo.className = 'mt-2 p-2 bg-red-100 dark:bg-red-900 border border-red-300 dark:border-red-700 rounded-lg';
             
-            // Insérer après le bouton de connexion
-            const connectBtn = document.getElementById('connect-btn');
-            if (connectBtn && connectBtn.parentNode) {
-                connectBtn.parentNode.insertBefore(errorDiv, connectBtn.nextSibling);
-            }
+            // Afficher le message d'erreur
+            headerUserRole.textContent = '🚫 Connexion refusée';
+            headerUserRole.className = 'font-medium text-red-800 dark:text-red-200';
+            
+            headerUserName.textContent = 'Lien déjà utilisé';
+            headerUserName.className = 'text-red-700 dark:text-red-300';
+            
+            // Rendre visible
+            headerUserInfo.classList.remove('hidden');
+            
+            console.log('🚫 Message de refus affiché dans le header');
         }
         
-        errorDiv.innerHTML = `
-            <div class="flex items-center gap-3">
-                <span class="text-2xl">🚫</span>
-                <div>
-                    <h3 class="font-semibold text-red-800 dark:text-red-200">Connexion refusée</h3>
-                    <p class="text-red-700 dark:text-red-300">${errorMessage}</p>
-                    <p class="text-sm text-red-600 dark:text-red-400 mt-2">
-                        Veuillez demander un nouveau lien à votre interlocuteur.
-                    </p>
-                </div>
-            </div>
-        `;
+        // Retourner à l'étape de connexion
+        this.showConnectStep();
         
         // Désactiver temporairement le bouton de connexion
         const connectBtn = document.getElementById('connect-btn');
@@ -1297,17 +1292,28 @@ Merci pour votre collaboration,`;
             connectBtn.className = connectBtn.className.replace('bg-primary-600', 'bg-red-600');
         }
         
-        // Réactiver après 5 secondes
+        // Réactiver après 8 secondes et nettoyer le header
         setTimeout(() => {
             if (connectBtn) {
                 connectBtn.disabled = false;
                 connectBtn.textContent = 'Se connecter';
                 connectBtn.className = connectBtn.className.replace('bg-red-600', 'bg-primary-600');
             }
-            if (errorDiv) {
-                errorDiv.remove();
+            
+            // Nettoyer le header
+            if (headerUserInfo) {
+                headerUserInfo.classList.add('hidden');
+                headerUserInfo.className = 'mt-2 hidden';
             }
-        }, 5000);
+            if (headerUserRole) {
+                headerUserRole.className = 'font-medium';
+            }
+            if (headerUserName) {
+                headerUserName.className = '';
+            }
+            
+            console.log('🧹 Header nettoyé après refus de connexion');
+        }, 8000);
     }
 }
 
