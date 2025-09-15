@@ -1047,6 +1047,13 @@ Merci pour votre collaboration,`;
             window.location.href = window.location.origin + window.location.pathname;
         });
 
+        // Clic sur le titre QChat pour retourner à l'accueil
+        document.getElementById('qchat-title').addEventListener('click', () => {
+            window.audioManager?.playSound('click');
+            // Redirect vers l'accueil pour créer une nouvelle session
+            window.location.href = window.location.origin + window.location.pathname;
+        });
+
         // Gestion des fichiers (simplifié)
         const fileInput = document.getElementById('file-input');
         const fileDrop = document.getElementById('file-drop');
@@ -1481,10 +1488,10 @@ Merci pour votre collaboration,`;
     updateShareHistoryButton() {
         const shareHistoryBtn = document.getElementById('share-history-btn');
         if (shareHistoryBtn) {
-            // Afficher le bouton seulement si on est connecté
-            if (this.isConnected) {
+            // Afficher le bouton seulement si on est le maître ET connecté
+            if (this.isCreator && this.isConnected) {
                 shareHistoryBtn.classList.remove('hidden');
-                console.log('📤 Bouton partage historique affiché');
+                console.log('📤 Bouton partage historique affiché (maître seulement)');
             } else {
                 shareHistoryBtn.classList.add('hidden');
             }

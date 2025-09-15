@@ -385,7 +385,7 @@
     <header class="bg-slate-50/90 dark:bg-slate-900/95 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-50 backdrop-blur-sm transition-all duration-300" id="main-header">
         <div class="max-w-4xl mx-auto px-4 py-6">
             <div class="flex items-center gap-6">
-                <h1 class="text-2xl font-semibold text-primary-800 dark:text-primary-400">QChat</h1>
+                <h1 class="text-2xl font-semibold text-primary-800 dark:text-primary-400 cursor-pointer hover:text-primary-600 dark:hover:text-primary-300 transition-colors" id="qchat-title" title="Retour à l'accueil">QChat</h1>
                 <div class="text-sm text-slate-600 dark:text-slate-400 hidden sm:flex items-center gap-2" id="header-user-info-inline">
                     <span id="header-user-role-inline" class="font-medium">Utilisateur</span>
                     <span>•</span>
@@ -432,7 +432,7 @@
                         <input type="text" id="recipient-input" class="w-full p-3 border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 text-base focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all min-h-[48px]" placeholder="Nom de la personne attendue..." maxlength="30">
                         <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Si renseigné, seule cette personne pourra se connecter</p>
                     </div>
-                    <button id="create-session-btn" class="w-full px-6 py-3 bg-primary-800 text-white rounded-lg hover:bg-primary-900 disabled:opacity-50 disabled:cursor-not-allowed transition-colors min-h-[48px] font-medium" disabled>
+                    <button id="create-session-btn" class="w-full px-6 py-3 bg-primary-600 dark:bg-primary-500 text-white rounded-lg hover:bg-primary-700 dark:hover:bg-primary-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors min-h-[48px] font-medium" disabled>
                         Créer ma session
                     </button>
     </div>
@@ -495,10 +495,16 @@
                         <span id="typing-indicator-title" class="hidden text-sm text-slate-500 dark:text-slate-400 italic">en train d'écrire...</span>
                     </h2>
                     <div class="flex gap-2">
-                        <button id="copy-link-btn" class="hidden px-3 py-1 md:px-4 md:py-2 bg-primary-600 dark:bg-primary-700 text-white border border-primary-600 dark:border-primary-700 rounded-md hover:bg-primary-700 dark:hover:bg-primary-800 transition-colors text-sm" title="Copier le lien de connexion">
-                            📋 Lien
+                        <button id="copy-link-btn" class="hidden px-3 py-1 md:px-4 md:py-2 bg-slate-200 dark:bg-primary-700 text-slate-700 dark:text-white border border-slate-300 dark:border-primary-700 rounded-md hover:bg-slate-300 dark:hover:bg-primary-800 transition-colors text-sm flex items-center gap-2" title="Copier le lien de connexion">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                <path d="M9 15l6 -6" />
+                                <path d="M11 6l.463 -.536a5 5 0 0 1 7.071 7.072l-.534 .464" />
+                                <path d="M13 18l-.397 .534a5.068 5.068 0 0 1 -7.127 0a4.972 4.972 0 0 1 0 -7.071l.524 -.463" />
+                            </svg>
+                            Lien
                         </button>
-                        <button id="share-history-btn" class="hidden px-3 py-1 md:px-4 md:py-2 bg-amber-600 dark:bg-amber-700 text-white border border-amber-600 dark:border-amber-700 rounded-md hover:bg-amber-700 dark:hover:bg-amber-800 transition-colors text-sm flex items-center gap-2" title="Partager l'historique de conversation">
+                        <button id="share-history-btn" class="hidden px-3 py-1 md:px-4 md:py-2 bg-slate-200 dark:bg-primary-700 text-slate-700 dark:text-white border border-slate-300 dark:border-primary-700 rounded-md hover:bg-slate-300 dark:hover:bg-primary-800 transition-colors text-sm flex items-center gap-2" title="Partager l'historique de conversation">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
                                 <path d="M8 9h8" />
