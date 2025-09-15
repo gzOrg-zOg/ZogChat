@@ -779,8 +779,8 @@ class MinimalChatManager {
             `;
         }
         
-        // Retourner à l'étape de partage pour créer une nouvelle session
-        this.showShareStep();
+        // Retourner à l'étape d'accueil
+        this.showUsernameStep();
         this.exitChatMode();
     }
 
