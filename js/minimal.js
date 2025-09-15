@@ -862,11 +862,70 @@ ${this.shareLink || 'Lien non disponible'}
                     data: e.target.result,
                     size: file.size
                 });
-                this.displayMessage(`<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 32 32" class="inline mr-1"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v15c0 4 3 6 6 6s6-2 6-6V6c0-3-2-4-4-4s-4 1-4 4v17c0 1 1 2 2 2s2-1 2-2V9"/></svg>Fichier envoyé: ${file.name}`, 'sent');
+                
+                // Créer un lien de téléchargement pour l'expéditeur aussi
+                this.displayFileSent({
+                    name: file.name,
+                    data: e.target.result,
+                    size: file.size
+                });
                 window.audioManager?.playSound('notification');
             }
         };
         reader.readAsDataURL(file);
+    }
+
+    displayFileSent(data) {
+        const chatContainer = document.getElementById('chat-container');
+        const welcomeMessage = document.getElementById('welcome-message');
+        
+        // Vérifier si l'utilisateur était en bas avant d'ajouter le message
+        const wasAtBottom = chatContainer.scrollTop + chatContainer.clientHeight >= chatContainer.scrollHeight - 10;
+        
+        // Masquer le message d'accueil
+        if (welcomeMessage) {
+            welcomeMessage.style.display = 'none';
+        }
+        
+        // Créer un lien de téléchargement pour l'expéditeur
+        const link = document.createElement('a');
+        link.href = data.data;
+        link.download = data.name;
+        link.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 32 32" class="inline mr-1"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v15c0 4 3 6 6 6s6-2 6-6V6c0-3-2-4-4-4s-4 1-4 4v17c0 1 1 2 2 2s2-1 2-2V9"/></svg>${data.name}`;
+        link.className = 'text-blue-200 hover:text-blue-100 hover:underline font-medium';
+        
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'message sent';
+        
+        // Vérifier si le message précédent est du même type pour les arrondis
+        const messages = chatContainer.querySelectorAll('.message');
+        const lastMessage = messages[messages.length - 1];
+        const isConsecutive = lastMessage && lastMessage.classList.contains('sent');
+        
+        const messageContent = document.createElement('div');
+        let roundingClass = 'message-content px-4 py-2 max-w-xs break-words';
+        roundingClass += isConsecutive ? ' rounded-br-md' : '';
+        
+        messageContent.className = roundingClass;
+        messageContent.appendChild(link);
+        
+        const messageTime = document.createElement('div');
+        messageTime.className = 'message-time text-xs text-slate-500 dark:text-slate-400 mt-1';
+        messageTime.textContent = new Date().toLocaleTimeString('fr-FR', { 
+            hour: '2-digit', 
+            minute: '2-digit' 
+        });
+        
+        messageDiv.appendChild(messageContent);
+        messageDiv.appendChild(messageTime);
+        chatContainer.appendChild(messageDiv);
+        
+        // Scroll automatique si l'utilisateur était en bas
+        if (wasAtBottom) {
+            setTimeout(() => {
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }, 10);
+        }
     }
 
     handleFileReceived(data) {
