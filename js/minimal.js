@@ -1011,12 +1011,12 @@ ${this.shareLink || 'Lien non disponible'}
             console.log('📝 Titre mis à jour:', `Conversation avec ${this.remoteUsername}`);
         }
         
-        // Mettre à jour le nom dans la barre de titre mobile
-        const peerNameMobile = document.getElementById('peer-name-mobile');
-        if (peerNameMobile && this.remoteUsername) {
-            peerNameMobile.textContent = this.remoteUsername;
-            peerNameMobile.classList.remove('hidden');
-            console.log('📱 Nom mobile mis à jour:', this.remoteUsername);
+        
+        // Mettre à jour le nom dans la barre de conversation mobile
+        const chatPeerNameMobile = document.getElementById('chat-peer-name-mobile');
+        if (chatPeerNameMobile && this.remoteUsername) {
+            chatPeerNameMobile.textContent = this.remoteUsername;
+            console.log('💬 Nom conversation mobile mis à jour:', this.remoteUsername);
         }
     }
 }

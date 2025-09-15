@@ -328,11 +328,8 @@
     <!-- Header compact qui se réduit après connexion -->
     <header class="bg-slate-50/90 dark:bg-slate-900/95 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-50 backdrop-blur-sm transition-all duration-300" id="main-header">
         <div class="max-w-4xl mx-auto px-4 py-6 flex items-center gap-6">
-            <h1 class="text-2xl font-semibold text-primary-800 dark:text-primary-400 hidden sm:block">QChat</h1>
+            <h1 class="text-2xl font-semibold text-primary-800 dark:text-primary-400">QChat</h1>
             <span class="text-sm text-slate-600 dark:text-slate-400 hidden sm:inline">Communication P2P sécurisée</span>
-            <div id="peer-name-mobile" class="text-xl font-semibold text-primary-800 dark:text-primary-400 sm:hidden hidden">
-                <!-- Nom de l'interlocuteur en mobile -->
-            </div>
             <div class="ml-auto flex items-center gap-2">
                 <button id="sound-toggle" class="p-2 border border-slate-200 dark:border-slate-600 rounded-md hover:bg-primary-800 hover:text-white transition-colors min-w-[40px] min-h-[40px] flex items-center justify-center" title="Sons">🔊</button>
                 <button id="theme-toggle" class="p-2 border border-slate-200 dark:border-slate-600 rounded-md hover:bg-primary-800 hover:text-white transition-colors min-w-[40px] min-h-[40px] flex items-center justify-center" title="Basculer le thème">🌙</button>
@@ -422,17 +419,14 @@
         <section class="flex flex-col flex-1 min-h-0 hidden bg-white dark:bg-slate-900" id="chat-section">
             <!-- Header du chat -->
             <div class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-t-lg p-2 md:p-4 shadow-sm">
-                <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-2">
+                <div class="flex justify-between items-center">
                     <h2 class="text-lg font-semibold text-slate-900 dark:text-slate-100">
                         <span class="hidden md:inline">Conversation</span>
-                        <span class="md:hidden">💬</span>
+                        <span id="chat-peer-name-mobile" class="md:hidden">Conversation</span>
                     </h2>
-                    <div class="flex items-center justify-end gap-4">
-                        <button id="disconnect-btn" class="px-3 py-1 md:px-4 md:py-2 bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-600 rounded-md hover:bg-slate-100 dark:hover:bg-slate-600 transition-colors text-sm">
-                            <span class="hidden md:inline">Déconnecter</span>
-                            <span class="md:hidden">✕</span>
-                        </button>
-                    </div>
+                    <button id="disconnect-btn" class="px-3 py-1 md:px-4 md:py-2 bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-600 rounded-md hover:bg-slate-100 dark:hover:bg-slate-600 transition-colors text-sm">
+                        Déconnecter
+                    </button>
                 </div>
             </div>
             
