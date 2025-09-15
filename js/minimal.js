@@ -496,16 +496,8 @@ class MinimalChatManager {
                 this.handleReplacedConnection(data.message);
             } else if (data.type === 'connection_refused') {
                 // La connexion a été refusée car le lien est déjà utilisé
-                console.log('🚫 Message de refus reçu du serveur:', data.message);
                 this.isConnected = false; // Important pour éviter l'affichage du chat
-                
-                // Annuler le timeout puisqu'on a reçu le message
-                if (this.connectionTimeout) {
-                    clearTimeout(this.connectionTimeout);
-                    this.connectionTimeout = null;
-                }
-                
-                this.showConnectionError(data.message);
+                this.showConnectionError('Connexion refusée - lien déjà utilisé');
             } else if (data.type === 'username') {
                 // Recevoir le nom d'utilisateur du correspondant
                 this.remoteUsername = data.username;
@@ -585,26 +577,12 @@ class MinimalChatManager {
             this.handleConnection(conn);
             this.updateStatus('Connexion en cours...', 'waiting');
             
-            // Timeout pour détecter si la connexion est refusée
-            console.log('⏰ Démarrage du timeout de 2 secondes');
-            this.connectionTimeout = setTimeout(() => {
-                console.log('⏰ Timeout déclenché, isConnected:', this.isConnected);
+            // Timeout simple : si pas connecté après 1 seconde, afficher l'erreur
+            setTimeout(() => {
                 if (!this.isConnected) {
-                    console.log('⏰ Timeout de connexion - affichage message d\'erreur');
                     this.showConnectionError('Connexion refusée - lien déjà utilisé');
-                    this.connectionTimeout = null;
-                } else {
-                    console.log('⏰ Timeout ignoré car connecté');
                 }
-            }, 2000); // 2 secondes
-            
-            // Annuler le timeout si la connexion réussit
-            conn.on('open', () => {
-                if (this.connectionTimeout) {
-                    clearTimeout(this.connectionTimeout);
-                    this.connectionTimeout = null;
-                }
-            });
+            }, 1000); // 1 seconde
             
         } catch (error) {
             console.error('Erreur de connexion:', error);
@@ -1267,12 +1245,9 @@ Merci pour votre collaboration,`;
 
 
     showConnectionError(errorMessage) {
-        console.log('🚨 showConnectionError appelée avec:', errorMessage);
-        
         // S'assurer qu'on a un message
         if (!errorMessage || errorMessage.trim() === '') {
             errorMessage = 'Connexion refusée - lien déjà utilisé';
-            console.log('🚨 Message par défaut utilisé:', errorMessage);
         }
         
         // Afficher le message d'erreur dans le header au lieu des infos utilisateur
