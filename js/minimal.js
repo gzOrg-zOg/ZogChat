@@ -75,13 +75,16 @@ class MinimalAudioManager {
         const soundBtn = document.getElementById('sound-toggle');
 
         if (soundBtn) {
-            // Utiliser les icônes SVG au lieu des emojis
+            // Utiliser les icônes SVG au lieu des emojis (adaptées au thème)
+            const isDark = document.body.classList.contains('dark');
+            const strokeColor = isDark ? 'white' : '#374151';
+            
             soundBtn.innerHTML = this.soundEnabled ? 
                 `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
-                    <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 8a5 5 0 0 1 0 8m2.7-11a9 9 0 0 1 0 14M6 15H4a1 1 0 0 1-1-1v-4a1 1 0 0 1 1-1h2l3.5-4.5A.8.8 0 0 1 11 5v14a.8.8 0 0 1-1.5.5z"/>
+                    <path fill="none" stroke="${strokeColor}" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 8a5 5 0 0 1 0 8m2.7-11a9 9 0 0 1 0 14M6 15H4a1 1 0 0 1-1-1v-4a1 1 0 0 1 1-1h2l3.5-4.5A.8.8 0 0 1 11 5v14a.8.8 0 0 1-1.5.5z"/>
                 </svg>` :
                 `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
-                    <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 15H4a1 1 0 0 1-1-1v-4a1 1 0 0 1 1-1h2l3.5-4.5A.8.8 0 0 1 11 5v14a.8.8 0 0 1-1.5.5zm10-5l4 4m0-4l-4 4"/>
+                    <path fill="none" stroke="${strokeColor}" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 15H4a1 1 0 0 1-1-1v-4a1 1 0 0 1 1-1h2l3.5-4.5A.8.8 0 0 1 11 5v14a.8.8 0 0 1-1.5.5zm10-5l4 4m0-4l-4 4"/>
                 </svg>`;
             soundBtn.classList.toggle('disabled', !this.soundEnabled);
         }
@@ -123,6 +126,11 @@ class MinimalThemeManager {
         localStorage.setItem('qchat-theme', this.isDark ? 'dark' : 'light');
         
         this.updateIcons();
+        
+        // Mettre à jour les icônes audio après changement de thème
+        if (window.audioManager && window.audioManager.updateAudioControls) {
+            window.audioManager.updateAudioControls();
+        }
     }
 
     toggleTheme() {
@@ -134,11 +142,23 @@ class MinimalThemeManager {
     updateIcons() {
         const themeToggle = document.getElementById('theme-toggle');
         
-        const icon = this.isDark ? '☀️' : '🌙';
+        // Utiliser les icônes SVG au lieu des emojis
+        const icon = this.isDark ? 
+            // Icône soleil pour passer au mode clair (blanc en mode sombre)
+            `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                <path d="M12 12m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" />
+                <path d="M3 12h1m8 -9v1m8 8h1m-9 8v1m-6.4 -15.4l.7 .7m12.1 -.7l-.7 .7m0 11.4l.7 .7m-12.1 -.7l-.7 .7" />
+            </svg>` :
+            // Icône lune pour passer au mode sombre (sombre en mode clair)
+            `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                <path fill="#374151" d="M12 1.992a10 10 0 1 0 9.236 13.838c.341-.82-.476-1.644-1.298-1.31a6.5 6.5 0 0 1-6.864-10.787l.077-.08c.551-.63.113-1.653-.758-1.653h-.266l-.068-.006z"/>
+            </svg>`;
+        
         const title = this.isDark ? 'Passer au thème clair' : 'Passer au thème sombre';
         
         if (themeToggle) {
-            themeToggle.textContent = icon;
+            themeToggle.innerHTML = icon;
             themeToggle.title = title;
         }
     }
