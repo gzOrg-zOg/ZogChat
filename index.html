@@ -322,6 +322,37 @@
         }
         
         /* Force cache refresh v2.2.5 - Retrait justify-content conflictuel */
+        
+        /* Animations pour indicateur de statut */
+        @keyframes pulse-connection {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.1); }
+        }
+        
+        @keyframes connecting-spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .status-connecting {
+            animation: connecting-spin 2s linear infinite;
+        }
+        
+        .status-pulse {
+            animation: pulse-connection 1.5s ease-in-out infinite;
+        }
+        
+        .status-connected {
+            color: #10b981; /* green-500 */
+        }
+        
+        .status-waiting {
+            color: #f59e0b; /* amber-500 */
+        }
+        
+        .status-disconnected {
+            color: #ef4444; /* red-500 */
+        }
     </style>
     
     <!-- Script inline pour éviter le flash de thème -->
@@ -445,9 +476,10 @@
             <!-- Header du chat -->
             <div class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-t-lg p-2 md:p-4 shadow-sm">
                 <div class="flex justify-between items-center">
-                    <h2 class="text-lg font-semibold text-slate-900 dark:text-slate-100">
+                    <h2 class="text-lg font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-2">
                         <span class="hidden md:inline">Conversation</span>
                         <span id="chat-peer-name-mobile" class="md:hidden">Conversation</span>
+                        <span id="connection-status" class="text-sm transition-all duration-300" title="Statut de connexion">🔴</span>
                     </h2>
                     <button id="disconnect-btn" class="px-3 py-1 md:px-4 md:py-2 bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-600 rounded-md hover:bg-slate-100 dark:hover:bg-slate-600 transition-colors text-sm">
                         Déconnecter

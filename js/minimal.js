@@ -243,6 +243,7 @@ class MinimalChatManager {
             this.peer.on('open', (id) => {
                 this.generateShareLink(id);
                 this.updateStatus('En attente de connexion...', 'waiting');
+                this.updateConnectionStatus('waiting');
                 
                 // Marquer comme créateur
                 this.isCreator = true;
@@ -360,6 +361,7 @@ class MinimalChatManager {
                 console.log('Connexion automatique à:', this.sessionIdToConnect);
                 this.connectToPeer(this.sessionIdToConnect);
                 this.updateStatus('Connexion automatique en cours...', 'waiting');
+                this.updateConnectionStatus('connecting');
                 
                 // Masquer la section de partage puisqu'on se connecte
                 const shareSection = document.querySelector('section:first-child');
@@ -382,6 +384,7 @@ class MinimalChatManager {
         conn.on('open', () => {
             this.isConnected = true;
             this.updateStatus('Connecté', 'connected');
+            this.updateConnectionStatus('connected', true); // Avec animation de pulsation
             this.showChatStep();
             
             // Envoyer le nom d'utilisateur au correspondant
@@ -461,6 +464,7 @@ class MinimalChatManager {
             } else {
                 // Fermeture normale ou définitive
             this.updateStatus('Connexion fermée', 'disconnected');
+            this.updateConnectionStatus('disconnected');
                 this.hideChatSection(true); // Vider les messages lors d'une fermeture définitive
             this.exitChatMode();
             }
@@ -638,6 +642,7 @@ class MinimalChatManager {
             this.connection.close();
             this.connection = null;
         }
+        this.updateConnectionStatus('disconnected');
         
         if (this.peer) {
             this.peer.destroy();
@@ -1019,6 +1024,40 @@ Merci pour votre collaboration,`;
             chatPeerNameMobile.textContent = this.remoteUsername;
             console.log('💬 Nom conversation mobile mis à jour:', this.remoteUsername);
         }
+    }
+
+    updateConnectionStatus(status, animate = false) {
+        const statusIndicator = document.getElementById('connection-status');
+        if (!statusIndicator) return;
+
+        // Supprimer toutes les classes d'animation et de statut
+        statusIndicator.classList.remove('status-connecting', 'status-pulse', 'status-connected', 'status-waiting', 'status-disconnected');
+
+        switch (status) {
+            case 'connected':
+                statusIndicator.textContent = '🟢';
+                statusIndicator.classList.add('status-connected');
+                statusIndicator.title = 'Connecté';
+                if (animate) {
+                    statusIndicator.classList.add('status-pulse');
+                    setTimeout(() => statusIndicator.classList.remove('status-pulse'), 3000);
+                }
+                break;
+            case 'waiting':
+            case 'connecting':
+                statusIndicator.textContent = '🟡';
+                statusIndicator.classList.add('status-waiting', 'status-connecting');
+                statusIndicator.title = 'Connexion en cours...';
+                break;
+            case 'disconnected':
+            default:
+                statusIndicator.textContent = '🔴';
+                statusIndicator.classList.add('status-disconnected');
+                statusIndicator.title = 'Déconnecté';
+                break;
+        }
+
+        console.log('🔄 Statut de connexion mis à jour:', status);
     }
 }
 

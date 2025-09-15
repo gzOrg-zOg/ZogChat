@@ -1,12 +1,12 @@
 # 📋 Backlog QChat - Améliorations
 
 ## 🎯 Statut de connexion
-- [ ] **Indicateur visuel de statut**
+- [x] **Indicateur visuel de statut**
   - 🟢 Connecté
   - 🟡 En attente de connexion
   - 🔴 Déconnecté
-- [ ] **Animation subtile** pour montrer l'activité de connexion
-- [ ] **Pulsation** lors de la reconnexion automatique
+- [x] **Animation subtile** pour montrer l'activité de connexion
+- [x] **Pulsation** lors de la reconnexion automatique
 
 ## 📊 Informations contextuelles
 - [ ] **Compteur de messages** échangés dans la conversation
