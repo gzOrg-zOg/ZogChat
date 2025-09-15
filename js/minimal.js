@@ -233,6 +233,9 @@ class MinimalChatManager {
         // Mettre à jour les informations utilisateur
         this.updateUserInfo();
         
+        // Afficher le bouton de copie du lien pour le maître
+        this.updateCopyLinkButton();
+        
         // S'assurer que le statut est affiché même pour le maître
         if (this.isCreator && this.isConnected) {
             this.updateConnectionStatus('connected', true);
@@ -946,6 +949,12 @@ Merci pour votre collaboration,`;
         });
 
 
+        // Bouton de copie du lien (pour le maître seulement)
+        document.getElementById('copy-link-btn').addEventListener('click', () => {
+            window.audioManager?.playSound('click');
+            this.copyShareLink();
+        });
+
         // Bouton de déconnexion
         document.getElementById('disconnect-btn').addEventListener('click', () => {
             window.audioManager?.playSound('click');
@@ -1245,6 +1254,64 @@ Merci pour votre collaboration,`;
         }, 10);
         
         console.log('✅ Message système affiché:', message);
+    }
+
+    copyShareLink() {
+        if (!this.shareLink) {
+            console.log('❌ Pas de lien de partage disponible');
+            return;
+        }
+
+        navigator.clipboard.writeText(this.shareLink).then(() => {
+            console.log('📋 Lien copié dans le presse-papiers');
+            
+            // Feedback visuel temporaire
+            const copyBtn = document.getElementById('copy-link-btn');
+            if (copyBtn) {
+                const originalText = copyBtn.innerHTML;
+                copyBtn.innerHTML = '✅ Copié';
+                copyBtn.classList.add('bg-green-600', 'dark:bg-green-700');
+                copyBtn.classList.remove('bg-primary-600', 'dark:bg-primary-700');
+                
+                setTimeout(() => {
+                    copyBtn.innerHTML = originalText;
+                    copyBtn.classList.remove('bg-green-600', 'dark:bg-green-700');
+                    copyBtn.classList.add('bg-primary-600', 'dark:bg-primary-700');
+                }, 2000);
+            }
+            
+            // Afficher un message système
+            this.displaySystemMessage('Lien de connexion copié');
+            
+        }).catch(err => {
+            console.error('❌ Erreur lors de la copie:', err);
+            // Fallback : sélectionner le texte
+            this.selectShareLinkText();
+        });
+    }
+
+    selectShareLinkText() {
+        // Créer un élément temporaire avec le lien
+        const tempInput = document.createElement('input');
+        tempInput.value = this.shareLink;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        document.execCommand('copy');
+        document.body.removeChild(tempInput);
+        
+        console.log('📋 Lien sélectionné (fallback)');
+    }
+
+    updateCopyLinkButton() {
+        const copyBtn = document.getElementById('copy-link-btn');
+        if (copyBtn) {
+            if (this.isCreator && this.shareLink) {
+                copyBtn.classList.remove('hidden');
+                console.log('📋 Bouton copie lien affiché pour le maître');
+            } else {
+                copyBtn.classList.add('hidden');
+            }
+        }
     }
 
     showPendingSystemMessages() {
