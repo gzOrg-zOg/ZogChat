@@ -501,6 +501,8 @@ class MinimalChatManager {
 
         conn.on('data', (data) => {
             if (data.type === 'message') {
+                // Cacher l'indicateur de frappe quand un message arrive
+                this.showTypingIndicator(false);
                 this.displayMessage(data.content, 'received', data.username);
                 window.audioManager?.playSound('message');
             } else if (data.type === 'file') {
@@ -512,6 +514,9 @@ class MinimalChatManager {
                 // La connexion a été refusée car le lien est déjà utilisé
                 this.isConnected = false; // Important pour éviter l'affichage du chat
                 this.showConnectionError('Connexion refusée - lien déjà utilisé');
+            } else if (data.type === 'typing') {
+                // Recevoir l'indicateur de frappe
+                this.showTypingIndicator(data.isTyping);
             } else if (data.type === 'username') {
                 // Recevoir le nom d'utilisateur du correspondant
                 this.remoteUsername = data.username;
@@ -948,10 +953,37 @@ Merci pour votre collaboration,`;
             }
         });
 
-        // Envoyer avec Entrée
-        document.getElementById('message-input').addEventListener('keypress', (e) => {
+        // Gestion de l'envoi avec Entrée et détection de frappe
+        const messageInput = document.getElementById('message-input');
+        let typingTimer;
+        let isTyping = false;
+        
+        messageInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 document.getElementById('send-btn').click();
+                return;
+            }
+            
+            // Détecter le début de la frappe
+            if (!isTyping) {
+                isTyping = true;
+                this.sendTypingIndicator(true);
+            }
+            
+            // Réinitialiser le timer
+            clearTimeout(typingTimer);
+            typingTimer = setTimeout(() => {
+                isTyping = false;
+                this.sendTypingIndicator(false);
+            }, 2000); // Arrêter l'indicateur après 2 secondes d'inactivité
+        });
+        
+        messageInput.addEventListener('input', (e) => {
+            // Si le champ devient vide, arrêter l'indicateur
+            if (e.target.value.trim() === '' && isTyping) {
+                isTyping = false;
+                clearTimeout(typingTimer);
+                this.sendTypingIndicator(false);
             }
         });
 
@@ -1172,22 +1204,62 @@ Merci pour votre collaboration,`;
                     statusIndicator.classList.add('status-pulse');
                     setTimeout(() => statusIndicator.classList.remove('status-pulse'), 3000);
                 }
+                this.updateTabStatus('🟢', 'QChat - Connecté');
                 break;
             case 'waiting':
             case 'connecting':
                 statusIndicator.textContent = '🟡';
                 statusIndicator.classList.add('status-waiting', 'status-connecting');
                 statusIndicator.title = 'Connexion en cours...';
+                this.updateTabStatus('🟡', 'QChat - Connexion...');
                 break;
             case 'disconnected':
             default:
                 statusIndicator.textContent = '🔴';
                 statusIndicator.classList.add('status-disconnected');
                 statusIndicator.title = 'Déconnecté';
+                this.updateTabStatus('🔴', 'QChat - Déconnecté');
                 break;
         }
 
         console.log('🔄 Statut de connexion mis à jour:', status);
+    }
+
+    updateTabStatus(emoji, title) {
+        // Mettre à jour le titre de l'onglet
+        document.title = title;
+        
+        // Créer un favicon dynamique avec l'emoji de statut
+        this.createFaviconWithStatus(emoji);
+    }
+
+    createFaviconWithStatus(statusEmoji) {
+        // Créer un canvas pour dessiner le favicon
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = 32;
+        canvas.height = 32;
+
+        // Fond transparent
+        ctx.clearRect(0, 0, 32, 32);
+
+        // Dessiner l'emoji de statut
+        ctx.font = '20px Arial';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(statusEmoji, 16, 16);
+
+        // Convertir en data URL
+        const dataURL = canvas.toDataURL('image/png');
+
+        // Mettre à jour le favicon
+        let favicon = document.querySelector('link[rel="icon"]');
+        if (!favicon) {
+            favicon = document.createElement('link');
+            favicon.rel = 'icon';
+            document.head.appendChild(favicon);
+        }
+        favicon.href = dataURL;
     }
 
     updateUserInfo() {
@@ -1320,6 +1392,26 @@ Merci pour votre collaboration,`;
         document.body.removeChild(tempInput);
         
         console.log('📋 Lien sélectionné (fallback)');
+    }
+
+    sendTypingIndicator(isTyping) {
+        if (this.connection && this.isConnected) {
+            this.connection.send({
+                type: 'typing',
+                isTyping: isTyping
+            });
+        }
+    }
+
+    showTypingIndicator(show) {
+        const indicator = document.getElementById('typing-indicator-title');
+        if (indicator) {
+            if (show) {
+                indicator.classList.remove('hidden');
+            } else {
+                indicator.classList.add('hidden');
+            }
+        }
     }
 
     updateCopyLinkButton() {
@@ -1683,6 +1775,9 @@ class MobileMenuManager {
         }
 
         try {
+            // Cacher l'indicateur de frappe quand on envoie un message
+            this.showTypingIndicator(false);
+            
             // Envoyer le message via PeerJS
             this.connection.send({
                 type: 'message',

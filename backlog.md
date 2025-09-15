@@ -97,6 +97,10 @@
 - [x] **Nettoyage connexions** - Fermer proprement l'ancienne connexion
 - [x] **Notification utilisateurs** - Informer clairement du changement de correspondant
 
+## ✨ Nouvelles fonctionnalités
+- [x] **Indicateur "en train d'écrire..."** dans la barre de titre
+- [x] **Indicateur de statut de connexion dans l'onglet du navigateur** (🟢🟡🔴)
+
 ---
 
 *Backlog créé le : $(date)*
