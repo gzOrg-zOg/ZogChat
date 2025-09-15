@@ -399,20 +399,48 @@ class MinimalChatManager {
             // Envoyer un message de refus à la nouvelle connexion
             try {
                 console.log('📤 Envoi du message de refus');
-                conn.send({
-                    type: 'connection_refused',
-                    message: 'Désolé, ce lien a déjà été utilisé par un autre utilisateur. Veuillez demander un nouveau lien à votre interlocuteur.'
+                
+                // Attendre que la connexion soit ouverte avant d'envoyer
+                conn.on('open', () => {
+                    console.log('🔗 Connexion ouverte, envoi du refus');
+                    try {
+                        conn.send({
+                            type: 'connection_refused',
+                            message: 'Désolé, ce lien a déjà été utilisé par un autre utilisateur. Veuillez demander un nouveau lien à votre interlocuteur.'
+                        });
+                        
+                        // Fermer après un petit délai pour s'assurer que le message est reçu
+                        setTimeout(() => {
+                            conn.close();
+                            console.log('🔒 Connexion refusée fermée après envoi du message');
+                        }, 500);
+                        
+                    } catch (error) {
+                        console.log('❌ Erreur lors de l\'envoi du refus:', error);
+                        conn.close();
+                    }
                 });
+                
+                // Si la connexion est déjà ouverte
+                if (conn.open) {
+                    conn.send({
+                        type: 'connection_refused',
+                        message: 'Désolé, ce lien a déjà été utilisé par un autre utilisateur. Veuillez demander un nouveau lien à votre interlocuteur.'
+                    });
+                    
+                    setTimeout(() => {
+                        conn.close();
+                        console.log('🔒 Connexion refusée fermée (connexion déjà ouverte)');
+                    }, 500);
+                }
+                
             } catch (error) {
                 console.log('❌ Erreur lors de l\'envoi du refus:', error);
-            }
-            
-            // Fermer immédiatement la nouvelle connexion
-            try {
-                conn.close();
-                console.log('🔒 Nouvelle connexion refusée et fermée');
-            } catch (error) {
-                console.log('❌ Erreur lors de la fermeture de la connexion refusée:', error);
+                try {
+                    conn.close();
+                } catch (closeError) {
+                    console.log('❌ Erreur lors de la fermeture de la connexion refusée:', closeError);
+                }
             }
             
             // Afficher un message système au maître pour l'informer
@@ -537,6 +565,20 @@ class MinimalChatManager {
             const conn = this.peer.connect(peerId);
             this.handleConnection(conn);
             this.updateStatus('Connexion en cours...', 'waiting');
+            
+            // Timeout pour détecter si la connexion est refusée
+            const connectionTimeout = setTimeout(() => {
+                if (!this.isConnected) {
+                    console.log('⏰ Timeout de connexion - possible refus');
+                    this.showConnectionError('Connexion impossible - le lien est peut-être déjà utilisé');
+                }
+            }, 5000); // 5 secondes
+            
+            // Annuler le timeout si la connexion réussit
+            conn.on('open', () => {
+                clearTimeout(connectionTimeout);
+            });
+            
         } catch (error) {
             console.error('Erreur de connexion:', error);
             this.updateStatus('Impossible de se connecter', 'disconnected');
