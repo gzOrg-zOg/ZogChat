@@ -452,7 +452,13 @@ class MinimalChatManager {
             this.isConnected = true;
             this.updateStatus('Connecté', 'connected');
             this.updateConnectionStatus('connected', true); // Avec animation de pulsation
-            this.showChatStep();
+            
+            // Petit délai pour éviter le flash si la connexion est refusée
+            setTimeout(() => {
+                if (this.isConnected) { // Vérifier qu'on est toujours connecté
+                    this.showChatStep();
+                }
+            }, 150);
             
             // Envoyer le nom d'utilisateur au correspondant
             if (this.username) {
@@ -486,6 +492,7 @@ class MinimalChatManager {
                 this.handleReplacedConnection(data.message);
             } else if (data.type === 'connection_refused') {
                 // La connexion a été refusée car le lien est déjà utilisé
+                this.isConnected = false; // Important pour éviter l'affichage du chat
                 this.showConnectionError(data.message);
             } else if (data.type === 'username') {
                 // Recevoir le nom d'utilisateur du correspondant
