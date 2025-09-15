@@ -436,7 +436,10 @@ class MinimalChatManager {
             
             // Afficher un message système au maître pour l'informer
             try {
-                this.displaySystemMessage(`Alice a tenté un accès à la conversation en cours`);
+                // Essayer d'extraire un nom ou utiliser l'ID partiel
+                const peerId = conn.peer || 'inconnu';
+                const shortId = peerId.length > 8 ? peerId.substring(0, 8) + '...' : peerId;
+                this.displaySystemMessage(`Tentative d'accès refusée (${shortId})`);
                 console.log('📢 Message de tentative affiché au maître');
             } catch (error) {
                 console.error('❌ Erreur affichage message de tentative:', error);
@@ -544,7 +547,7 @@ class MinimalChatManager {
                 // Garder le chat visible avec les messages existants
             } else {
                 // Fermeture normale - pour le maître, rester en attente de reconnexion
-                this.updateStatus('Connexion fermée', 'disconnected');
+            this.updateStatus('Connexion fermée', 'disconnected');
                 this.updateConnectionStatus('disconnected');
                 
                 if (this.isCreator) {
@@ -555,7 +558,7 @@ class MinimalChatManager {
                 } else {
                     // L'invité retourne à l'accueil
                     this.hideChatSection(true);
-                    this.exitChatMode();
+            this.exitChatMode();
                 }
             }
         });
